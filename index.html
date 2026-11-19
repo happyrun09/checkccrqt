@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CheckCCRQT v0.3.1 — Cổng Giám sát Rừng Chứng chỉ &amp; Thẩm định EUDR Quảng Trị</title>
+  <meta name="description" content="Hệ thống kiểm tra tính xác thực, giám sát rừng trồng chứng chỉ FSC/PEFC và thẩm định EUDR EU 2023/1115 của Phòng Sử dụng và Phát triển rừng — Chi cục Kiểm lâm tỉnh Quảng Trị." />
+  <link rel="icon" type="image/png" href="./assets/logo_kiemlam.png" />
+
+  <!-- Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Leaflet, Turf, Chart.js, QRCode.js -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+  <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/@turf/turf@6.5.0/turf.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+  <link rel="stylesheet" href="./styles.css" />
+  <script defer src="./app.js"></script>
+</head>
+<body>
+  <!-- Navigation -->
+  <header class="navbar">
+    <div class="container nav-inner">
+      <a href="#top" class="brand">
+        <img src="./assets/logo_kiemlam.png" alt="Logo Kiểm lâm Việt Nam" />
+        <div>
+          <div class="brand-title">CheckCCRQT <span class="badge-ver">v0.3.1</span></div>
+          <div class="brand-sub">Chi cục Kiểm lâm tỉnh Quảng Trị</div>
+        </div>
+      </a>
+      <nav class="nav-links" aria-label="Điều hướng chính">
+        <a href="#workbench">Trạm EUDR Trực tuyến</a>
+        <a href="#converter">Chuyển VN-2000</a>
+        <a href="#architecture">6 Phân hệ Plugin</a>
+        <a href="#science">Cơ sở Khoa học</a>
+        <a href="#install">Tải &amp; Cài đặt QR</a>
+        <a href="#authors">Tác giả</a>
+      </nav>
+      <div class="nav-actions">
+        <button id="themeToggle" class="theme-toggle" title="Chuyển đổi Dark / Light Mode" aria-label="Chuyển đổi giao diện sáng tối">☀️</button>
+        <a href="./downloads/CheckCCRQT_v0.3.1.zip" download class="btn btn-primary btn-sm">⬇ Tải v0.3.1 (.zip)</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="top">
+    <!-- Hero Command Banner -->
+    <section class="hero">
+      <div class="container">
+        <div class="hero-card">
+          <div class="hero-top">
+            <div class="hero-pill">🌿 CheckCCRQT v0.3.1 • Chuẩn EUDR EU 2023/1115 &amp; RFC 7946 TRACES NT</div>
+            <div class="mono" style="font-size:0.78rem;color:#a7f3d0;">VN-2000 7-Param Helmert · Sentinel-2A/2B/2C · EC JRC TMF v1_2025</div>
+          </div>
+          <div class="hero-grid">
+            <div>
+              <h1>Hệ thống Giám sát Rừng Chứng chỉ &amp; <span>Thẩm định EUDR Tự động</span></h1>
+              <p class="hero-desc">
+                Sáng kiến chuyển đổi số của <strong>Phòng Sử dụng và Phát triển rừng — Chi cục Kiểm lâm tỉnh Quảng Trị</strong>
+                (Sở Nông nghiệp và Môi trường tỉnh Quảng Trị). Tự động hóa khép kín từ chuẩn hóa VN-2000, phát hiện trùng mã lô
+                <code class="mono">DUPLICATE_ID</code>, truy xuất khai thác Sentinel-2A/2B/2C đến xuất hồ sơ GeoJSON chuẩn TRACES NT.
+              </p>
+              <div class="hero-cta">
+                <a href="#workbench" class="btn btn-gold">🛰️ Mở Trạm Kiểm tra EUDR Trực tuyến</a>
+                <a href="./downloads/CheckCCRQT_v0.3.1.zip" download class="btn btn-primary">📦 Tải Plugin QGIS v0.3.1</a>
+                <a href="#science" class="btn btn-outline" style="color:#ecfdf5;border-color:rgba(255,255,255,0.35);">📚 Cơ sở Khoa học</a>
+              </div>
+            </div>
+            <div class="kpi-grid">
+              <div class="kpi-box">
+                <div class="kpi-val">&gt;80%</div>
+                <div class="kpi-label">Rút ngắn thời gian thẩm định<br/>(2–3 ngày → 15–30 phút)</div>
+              </div>
+              <div class="kpi-box">
+                <div class="kpi-val">0 đồng</div>
+                <div class="kpi-label">Bản quyền 100% mã nguồn mở<br/>(Tiết kiệm &gt;300 triệu đ)</div>
+              </div>
+              <div class="kpi-box">
+                <div class="kpi-val">963+</div>
+                <div class="kpi-label">Lô rừng kiểm thử thực tế<br/>tại tỉnh Quảng Trị</div>
+              </div>
+              <div class="kpi-box">
+                <div class="kpi-val">3 vệ tinh</div>
+                <div class="kpi-label">Sentinel-2A / 2B / 2C<br/>&amp; EC JRC TMF v1_2025</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Interactive Spatial Workbench -->
+    <section id="workbench">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <div class="section-kicker">Trái tim trang web • 100% Client-Side (Không cần máy chủ)</div>
+            <h2 class="section-title">Trạm Kiểm tra EUDR &amp; GeoJSON Trực tuyến (Interactive Spatial Workbench)</h2>
+          </div>
+          <div style="font-size:0.82rem;color:var(--text-muted);">Hỗ trợ kéo-thả <code class="mono">.geojson</code> / <code class="mono">.json</code> / <code class="mono">.kml</code> — Tính toán trực tiếp trên trình duyệt</div>
+        </div>
+
+        <div class="workbench-toolbar">
+          <div class="toolbar-group">
+            <button id="btnLoadSample" class="btn btn-primary btn-sm">🌲 Nạp 8 lô mẫu Keo lai Quảng Trị</button>
+            <div id="dropzone" class="dropzone" tabindex="0">
+              <span>📂 Kéo-thả hoặc chọn tệp <strong>.geojson / .json / .kml</strong></span>
+              <input id="fileInput" type="file" accept=".geojson,.json,.kml" hidden />
+            </div>
+          </div>
+          <div class="toolbar-group">
+            <label class="switch-label">
+              <input id="chkPointUnder4Ha" type="checkbox" />
+              Rút gọn lô &lt; 4 ha thành Point (Điều 9 EUDR)
+            </label>
+            <button id="btnExportEudrGeoJson" class="btn btn-gold btn-sm">🌍 Xuất GeoJSON EUDR (TRACES NT)</button>
+            <button id="btnExportCsv" class="btn btn-outline btn-sm">📊 Xuất Báo cáo CSV/Excel</button>
+          </div>
+          <div class="org-input-bar">
+            <label for="executingUnitInput" style="font-weight:700;color:var(--text-muted);">Đơn vị thực hiện (ExecutingUnit):</label>
+            <input id="executingUnitInput" type="text" value="Phòng Sử dụng và Phát triển rừng — Chi cục Kiểm lâm tỉnh Quảng Trị" />
+          </div>
+        </div>
+
+        <!-- Telemetry Strip -->
+        <div class="stat-strip">
+          <div class="stat-chip"><div id="statTotal" class="num">0</div><div class="lbl">Tổng số lô phân tích</div></div>
+          <div class="stat-chip"><div id="statArea" class="num c-ok">0 ha</div><div class="lbl">Tổng diện tích bản đồ</div></div>
+          <div class="stat-chip"><div id="statViol" class="num c-err">0</div><div class="lbl">Vi phạm EUDR (&gt;2020)</div></div>
+          <div class="stat-chip"><div id="statTopo" class="num c-warn">0</div><div class="lbl">Trùng mã / Chồng lấn</div></div>
+          <div class="stat-chip"><div id="statLarge" class="num c-gold">0</div><div class="lbl">Lô ≥ 4 ha (Bắt buộc Polygon)</div></div>
+        </div>
+
+        <div class="workbench-grid">
+          <!-- Map -->
+          <div class="card" style="padding:12px;">
+            <div class="map-controls-bar">
+              <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+                <label>Độ mờ lớp rừng: <input id="opacityRange" type="range" min="0" max="100" value="28" /> <span id="opacityVal" class="mono">28%</span></label>
+                <label style="cursor:pointer;"><input id="chkShowLabels" type="checkbox" checked /> Hiển thị nhãn Mã lô</label>
+              </div>
+              <button id="btnZoomExtent" class="btn btn-outline btn-sm">🎯 Phóng to toàn vùng</button>
+            </div>
+            <div id="map" aria-label="Bản đồ vệ tinh kiểm tra lô rừng Quảng Trị"></div>
+          </div>
+
+          <!-- Chart & Lot Inspector -->
+          <div class="card chart-panel">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;">
+              <div>
+                <strong style="font-size:0.95rem;">Chuỗi thời gian Viễn thám Sentinel-2</strong>
+                <div style="font-size:0.76rem;color:var(--text-muted);">Hiển thị đỉnh tán Baseline, điểm gãy khai thác &amp; tái sinh keo</div>
+              </div>
+              <div class="index-tabs">
+                <button class="index-btn active" data-index="NDVI">NDVI</button>
+                <button class="index-btn" data-index="NBR">NBR</button>
+                <button class="index-btn" data-index="NDMI">NDMI</button>
+              </div>
+            </div>
+            <div class="chart-wrap">
+              <canvas id="tsChart"></canvas>
+            </div>
+            <div id="lotDetailBox" class="lot-detail-box">
+              Bấm vào một lô trên bản đồ hoặc bảng bên dưới để xem chi tiết trắc địa và chuỗi chỉ số thực vật.
+            </div>
+          </div>
+        </div>
+
+        <!-- Live VN-2000 <-> WGS-84 Helmert 7-Param Converter -->
+        <div id="converter" class="card converter-card">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+            <div>
+              <div class="section-kicker" style="color:var(--gold);margin:0;">Trắc địa thực chiến • 7 tham số Helmert chuẩn QĐ 05/2007/QĐ-BTNMT</div>
+              <h3 style="margin:2px 0 0;font-size:1.08rem;">🧭 Bộ Chuyển đổi Tọa độ Sống VN-2000 ↔ WGS-84</h3>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <button id="btnVnToWgs" class="btn btn-primary btn-sm">VN-2000 → WGS-84</button>
+              <button id="btnWgsToVn" class="btn btn-gold btn-sm">WGS-84 → VN-2000</button>
+              <button id="btnCopyCoord" class="btn btn-outline btn-sm">📋 Copy tọa độ</button>
+              <button id="btnFlyToCoord" class="btn btn-outline btn-sm">📍 Bay tới vị trí trên bản đồ</button>
+            </div>
+          </div>
+
+          <div class="converter-grid">
+            <div class="field-group">
+              <label for="convMeridian">Kinh tuyến trục VN-2000 (Múi 3°)</label>
+              <select id="convMeridian">
+                <option value="106.0" selected>Quảng Trị (Mới — 106°00')</option>
+                <option value="106.25">Quảng Trị (Cũ — 106°15')</option>
+                <option value="106.0">Quảng Bình (Cũ — 106°00')</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label for="convVnX">X (Easting — mét, 2 số lẻ)</label>
+              <input id="convVnX" type="number" step="0.01" value="601320.00" />
+            </div>
+            <div class="field-group">
+              <label for="convVnY">Y (Northing — mét, 2 số lẻ)</label>
+              <input id="convVnY" type="number" step="0.01" value="1859700.00" />
+            </div>
+            <div class="field-group">
+              <label for="convWgsLat">Vĩ độ WGS-84 (Lat, 6 số lẻ)</label>
+              <input id="convWgsLat" type="number" step="0.000001" value="16.817000" />
+            </div>
+            <div class="field-group">
+              <label for="convWgsLon">Kinh độ WGS-84 (Lon, 6 số lẻ)</label>
+              <input id="convWgsLon" type="number" step="0.000001" value="106.948000" />
+            </div>
+          </div>
+
+          <div id="convOutput" class="converter-result">
+            Sẵn sàng chuyển đổi tọa độ VN-2000 ↔ WGS-84 bằng bộ 7 tham số Helmert.
+          </div>
+        </div>
+
+        <!-- Results Table -->
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Mã lô</th>
+                <th>Chủ hộ / Đơn vị</th>
+                <th>DT (ha)</th>
+                <th>Chu vi (m)</th>
+                <th>JRC TMF (EUDR)</th>
+                <th>Lỗi Không gian &amp; Mã lô</th>
+                <th>Phân ngưỡng Điều 9</th>
+                <th>Tâm WGS-84 (6 số lẻ)</th>
+              </tr>
+            </thead>
+            <tbody id="lotsTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6-Tab Architecture & Before/After -->
+    <section id="architecture">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <div class="section-kicker">Kiến trúc Plugin QGIS CheckCCRQT v0.3.0</div>
+            <h2 class="section-title">06 Phân hệ Nghiệp vụ Khép kín &amp; Hiệu quả Đối chiếu</h2>
+          </div>
+        </div>
+
+        <div class="arch-tabs" role="tablist">
+          <button class="arch-tab active" data-tab="t1">1. Dữ liệu &amp; Hệ tọa độ</button>
+          <button class="arch-tab" data-tab="t2">2. Kiểm tra lỗi &amp; Diện tích</button>
+          <button class="arch-tab" data-tab="t3">3. Truy xuất khai thác</button>
+          <button class="arch-tab" data-tab="t4">4. Kiểm tra JRC TMF &amp; EUDR</button>
+          <button class="arch-tab" data-tab="t5">5. Báo cáo chu kỳ</button>
+          <button class="arch-tab" data-tab="t6">6. Cấu hình &amp; Nhật ký</button>
+        </div>
+
+        <div class="card">
+          <div id="t1" class="arch-panel active">
+            <div>
+              <h3>Tab 1: Dữ liệu &amp; Hệ tọa độ VN-2000 (7 tham số Helmert)</h3>
+              <p>Đồng bộ hằng số 7 tham số Helmert <code class="mono">+towgs84=-191.90441429,...</code> giữa <code class="mono">crs_manager.py</code> và <code class="mono">coordinate_utils.py</code>, loại bỏ hoàn toàn sai số dịch chuyển 105–200m. Ghim sẵn Quảng Trị mới (106°00'), Quảng Trị cũ (106°15'), Quảng Bình cũ (106°00') và danh mục toàn quốc chuẩn QĐ 05/2007/QĐ-BTNMT.</p>
+            </div>
+            <div>
+              <h4>Ánh xạ trường thuộc tính tự động (HTX / FRMS)</h4>
+              <p>Chuẩn hóa tiếng Việt Unicode NFKD (kể cả Đ/đ), vá lỗi <code class="mono">malo</code> và mở rộng nhận diện <code class="mono">churung</code>, <code class="mono">dientichha</code>, <code class="mono">chungchi</code>, <code class="mono">fsc</code>, <code class="mono">pefc</code>.</p>
+            </div>
+          </div>
+
+          <div id="t2" class="arch-panel">
+            <div>
+              <h3>Tab 2: Kiểm tra lỗi Hình học, Trùng mã lô &amp; Diện tích</h3>
+              <p>Quét toàn diện đa giác rỗng, tự cắt, đỉnh trùng, mảnh vụn, chồng lấn (<code class="mono">OVERLAP</code>), chênh lệch diện tích và đặc biệt bổ sung mã lỗi mức đỏ <code class="mono">DUPLICATE_ID</code> (Trùng mã lô) giải quyết trọn vẹn rủi ro kê khai trùng lặp giữa nhiều chủ rừng/nhóm chứng chỉ.</p>
+            </div>
+            <div>
+              <h4>Khe hở nội bộ thông minh (Không cảnh báo giả)</h4>
+              <p>Thay thuật toán bao lồi bằng phát hiện vòng rỗng nội bộ (interior rings) kết hợp vùng đệm cục bộ 10m giữa các lô giáp ranh, loại bỏ cảnh báo giả trên nhóm hộ phân tán.</p>
+            </div>
+          </div>
+
+          <div id="t3" class="arch-panel">
+            <div>
+              <h3>Tab 3: Truy xuất Khai thác Sentinel-2A / 2B / 2C</h3>
+              <p>Hỗ trợ đầy đủ vệ tinh mới <strong>Sentinel-2C</strong>, tự động phân trang <strong>STAC Pagination</strong> (lên tới 1.000 cảnh không cắt cụt chuỗi 1–2 năm) kèm Retry 3 lần Exponential Backoff và chạy Offline GeoTIFF.</p>
+            </div>
+            <div>
+              <h4>Thuật toán Cửa sổ Xác nhận K=2 (Chống sót keo tái sinh)</h4>
+              <p>Xác nhận khai thác khi có ≥2 kỳ hợp lệ liên tiếp (hoặc sụt giảm sâu ≥40% kéo dài ≥30 ngày), không bị bỏ sót khi rừng keo khai thác đầu kỳ rồi trồng lại phục hồi xanh cuối kỳ.</p>
+            </div>
+          </div>
+
+          <div id="t4" class="arch-panel">
+            <div>
+              <h3>Tab 4: Thẩm định JRC TMF v1_2025 &amp; Xuất GeoJSON EUDR</h3>
+              <p>Kiểm tra mất rừng sau mốc 31/12/2020 với cơ chế giao cắt hộp pixel dự phòng cho <strong>lô dải hẹp &lt;30m</strong>, đồng bộ lớp <code class="mono">TransitionMap_Subtypes</code> và hỗ trợ đa tile 10°×10°.</p>
+            </div>
+            <div>
+              <h4>Mô-đun mới <code class="mono">exporters/eudr_geojson.py</code></h4>
+              <p>Xuất hồ sơ GeoJSON chuẩn RFC 7946 / TRACES NT (WGS-84 6 chữ số thập phân, vòng ngoài CCW, tự phân ngưỡng 4 ha theo Điều 9 EUDR) ngay từ nút độc lập hoặc quy trình 1-Click EUDR (4 tệp).</p>
+            </div>
+          </div>
+
+          <div id="t5" class="arch-panel">
+            <div>
+              <h3>Tab 5: Báo cáo chu kỳ (Excel Công thức động &amp; Word)</h3>
+              <p>Tự động sinh sổ tính Excel với công thức động <code class="mono">COUNTIF/SUMIF</code> (không ghi cứng kết quả) và Báo cáo Word 7 cột có Logo Kiểm lâm, Đơn vị thực hiện, Ngày phát hiện khai thác và ảnh minh họa Sentinel-2.</p>
+            </div>
+            <div>
+              <h4>Sạch quyền tác giả &amp; Tương thích PDF hiện đại</h4>
+              <p>Thuộc tính Author đặt động theo Đơn vị thực hiện; gộp PDF đa tầng tương thích cả <code class="mono">pypdf</code> mới lẫn <code class="mono">PyPDF2</code>, tỷ lệ bản đồ A3 mở rộng tới 1:1.000.000.</p>
+            </div>
+          </div>
+
+          <div id="t6" class="arch-panel">
+            <div>
+              <h3>Tab 6: Cấu hình &amp; Nhật ký vận hành</h3>
+              <p>Lưu trữ bền vững qua <code class="mono">QSettings</code> các ngưỡng mảnh vụn, lệch diện tích, ngưỡng sụt giảm chỉ số khai thác (đồng bộ động vào bộ phân loại), STAC URL, thư mục cache JRC TMF và tên Đơn vị thực hiện.</p>
+            </div>
+            <div>
+              <h4>An toàn vòng đời Plugin (QGIS 3.28 – 3.44+)</h4>
+              <p>Chủ động hủy tác vụ nền <code class="mono">QgsTask</code> và giải phóng hộp thoại an toàn khi tắt hoặc cập nhật Plugin, tương thích Shapely 2.1+ và Pillow mọi phiên bản.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Comparison Table -->
+        <div class="table-wrap" style="margin-top:22px;">
+          <table>
+            <thead>
+              <tr>
+                <th>Chỉ tiêu đánh giá</th>
+                <th>Quy trình thủ công trước đây</th>
+                <th>Giải pháp CheckCCRQT v0.3.0</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Thời gian xử lý (~1.000 lô)</strong></td>
+                <td>02 – 03 ngày làm việc / đợt</td>
+                <td><span class="pill pill-ok">15 – 30 phút / đợt (giảm &gt;80%)</span></td>
+              </tr>
+              <tr>
+                <td><strong>Chi phí bản quyền phần mềm</strong></td>
+                <td>Trên 300 triệu đồng (GIS thương mại / thuê viết)</td>
+                <td><span class="pill pill-ok">0 đồng (100% mã nguồn mở QGIS)</span></td>
+              </tr>
+              <tr>
+                <td><strong>Độ nhất quán tọa độ &amp; hình học</strong></td>
+                <td>Thủ công, dễ sót trùng mã lô &amp; lệch múi chiếu</td>
+                <td>Nhất quán theo chuẩn toán học VN-2000 (7 tham số Helmert), bắt tự động <code class="mono">DUPLICATE_ID</code> &amp; <code class="mono">OVERLAP</code></td>
+              </tr>
+              <tr>
+                <td><strong>Thẩm định EUDR &amp; Xuất khẩu EU</strong></td>
+                <td>Soi ảnh thủ công, chưa có hồ sơ định vị TRACES NT</td>
+                <td>Tự động Sentinel-2A/2B/2C + JRC TMF v1_2025 + Xuất GeoJSON chuẩn RFC 7946 (phân ngưỡng 4 ha)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Scientific Basis & v0.4.0 Roadmap -->
+    <section id="science">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <div class="section-kicker">Nền tảng Học thuật &amp; Pháp lý</div>
+            <h2 class="section-title">06 Nguồn Trích dẫn Khoa học – Pháp lý &amp; Lộ trình v0.4.0</h2>
+          </div>
+        </div>
+
+        <div class="sci-grid">
+          <article class="sci-card">
+            <h4>1. Công trình khoa học gốc EC JRC TMF</h4>
+            <p>Vancutsem, C., Achard, F., Pekel, J.-F., Vieilledent, G., Carboni, S., Simonetti, D., Gallego, J., Aragão, L. E. O. C., &amp; Nasi, R. (2021). <em>Long-term (1990–2019) monitoring of forest cover changes in the humid tropics.</em> Science Advances, 7(10), eabe1603 — mở rộng phiên bản v1_2025.</p>
+          </article>
+          <article class="sci-card">
+            <h4>2. Quy định chống phá rừng Châu Âu (EUDR)</h4>
+            <p>Regulation (EU) 2023/1115 của Nghị viện và Hội đồng châu Âu: mốc pháp lý 31/12/2020; Điều 2(4) định nghĩa rừng chuẩn FAO (≥0,5 ha, tàn che ≥10%, chiều cao ≥5 m); Điều 9 định vị địa lý GeoJSON phân ngưỡng 4 ha.</p>
+          </article>
+          <article class="sci-card">
+            <h4>3. Viễn thám ESA Copernicus Sentinel-2A/2B/2C</h4>
+            <p>Sản phẩm phản xạ bề mặt L2A (10–20 m), đặc tả STAC API v1.0 có phân trang, Cloud-Optimized GeoTIFF (COG) qua GDAL <code class="mono">/vsicurl/</code> và mặt nạ mây từ lớp phân loại cảnh SCL.</p>
+          </article>
+          <article class="sci-card">
+            <h4>4. Thông tư 25/2022/TT-BNNPTNT &amp; FRMS</h4>
+            <p>Quy định về trồng rừng thay thế và theo dõi diễn biến rừng của Bộ Nông nghiệp và Phát triển nông thôn, kết hợp tương thích từ điển dữ liệu cơ sở dữ liệu FRMS và Quyết định 406/QĐ-CCKL ngày 08/7/2025.</p>
+          </article>
+          <article class="sci-card">
+            <h4>5. Hệ quy chiếu quốc gia VN-2000</h4>
+            <p>Quyết định 83/2000/QĐ-TTg, Thông tư 973/2001/TT-TCĐC và Quyết định 05/2007/QĐ-BTNMT quy định bộ 7 tham số Helmert tính chuyển giữa WGS-84 và VN-2000 múi 3°.</p>
+          </article>
+          <article class="sci-card">
+            <h4>6. Chuẩn dữ liệu mở OGC GeoPackage</h4>
+            <p>ISO/IEC 19100 / OGC 12-128r18 thay thế Shapefile cũ: loại bỏ giới hạn 2 GB, giữ nguyên tên trường tiếng Việt không cắt ngắn 10 ký tự và đóng gói gọn trong 01 tệp duy nhất.</p>
+          </article>
+        </div>
+
+        <div class="card" style="margin-top:18px;border-color:rgba(212,175,55,0.4);">
+          <div class="section-kicker" style="color:var(--gold);">Định hướng nâng cấp chiến lược • Phiên bản v0.4.0</div>
+          <h3 style="margin:4px 0 8px;">🛰️ Tích hợp Radar khẩu độ tổng hợp xuyên mây Sentinel-1 SAR (C-band, phân cực VV/VH)</h3>
+          <p style="margin:0;color:var(--text-muted);font-size:0.88rem;">
+            Giải quyết triệt để điểm mù thời tiết đặc thù mùa mưa bão kéo dài từ tháng 9 đến tháng 1 hằng năm tại tỉnh Quảng Trị khi ảnh quang học Sentinel-2 bị mây che phủ dày đặc, đảm bảo giám sát biến động tán rừng và khai thác liên tục 24/7 quanh năm.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Download & QR Center -->
+    <section id="install">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <div class="section-kicker">Trung tâm Cài đặt &amp; Chia sẻ Nhanh</div>
+            <h2 class="section-title">Tải Plugin CheckCCRQT v0.3.1 &amp; Tạo mã QR cho Báo cáo</h2>
+          </div>
+        </div>
+
+        <div class="card install-grid">
+          <div>
+            <h3 style="margin-top:0;">Hướng dẫn cài đặt trên QGIS (3.28 LTR → 3.44+)</h3>
+            <ol style="padding-left:20px;color:var(--text-muted);font-size:0.9rem;">
+              <li>Tải tệp gói cài đặt sạch <code class="mono">CheckCCRQT_v0.3.1.zip</code> bằng nút bên dưới.</li>
+              <li>Mở phần mềm <strong>QGIS Desktop</strong> → chọn thực đơn <strong>Plugins → Manage and Install Plugins...</strong></li>
+              <li>Chọn thẻ <strong>Install from ZIP</strong> → chọn tệp <code class="mono">CheckCCRQT_v0.3.1.zip</code> → bấm <strong>Install Plugin</strong>.</li>
+              <li>Biểu tượng <strong>CheckCCRQT</strong> xuất hiện ngay trên thanh công cụ QGIS, sẵn sàng vận hành 1-Click.</li>
+            </ol>
+            <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:16px;">
+              <a href="./downloads/CheckCCRQT_v0.3.1.zip" download class="btn btn-primary">⬇ Tải CheckCCRQT_v0.3.1.zip</a>
+              <a href="mailto:sdptrklqt@gmail.com?subject=Gop%20y%20Plugin%20CheckCCRQT%20v0.3.1" class="btn btn-outline">✉️ Gửi góp ý kỹ thuật</a>
+            </div>
+          </div>
+
+          <div class="qr-box">
+            <div style="font-weight:700;font-size:0.9rem;">Mã QR Cài đặt nhanh CheckCCRQT v0.3.1</div>
+            <div id="qrcode" aria-label="Mã QR tải Plugin CheckCCRQT"></div>
+            <div class="qr-input-row">
+              <input id="qrUrlInput" type="url" aria-label="Đường dẫn tạo mã QR" />
+              <button id="btnGenQr" class="btn btn-outline btn-sm">Tạo lại</button>
+            </div>
+            <button id="btnDownloadQr" class="btn btn-gold btn-sm">🖼️ Tải ảnh QR (.png) dán vào Báo cáo</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Authors Table -->
+    <section id="authors">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <div class="section-kicker">Tập thể Tác giả Sáng kiến</div>
+            <h2 class="section-title">Phòng Sử dụng và Phát triển rừng — Chi cục Kiểm lâm tỉnh Quảng Trị</h2>
+          </div>
+          <div class="mono" style="font-size:0.84rem;color:var(--emerald-bright);">Email hỗ trợ: sdptrklqt@gmail.com · ĐT: 0905 822 335</div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>STT</th>
+                <th>Họ và tên</th>
+                <th>Trình độ chuyên môn</th>
+                <th>Chức vụ / Đơn vị công tác</th>
+                <th>Tỷ lệ đóng góp</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td class="mono">1</td><td><strong>Phạm Thanh Trung</strong></td><td>Đại học Lâm nghiệp</td><td>Trưởng phòng – Phòng SD&amp;PTR</td><td class="mono">10%</td></tr>
+              <tr><td class="mono">2</td><td><strong>Phạm Xuân Thành</strong></td><td>Thạc sỹ Lâm học</td><td>Phó Trưởng phòng – Phòng SD&amp;PTR</td><td class="mono">10%</td></tr>
+              <tr><td class="mono">3</td><td><strong>Nguyễn Tuấn Anh</strong></td><td>Thạc sỹ Lâm nghiệp</td><td>Phó Trưởng phòng – Phòng SD&amp;PTR</td><td class="mono">10%</td></tr>
+              <tr><td class="mono">4</td><td>Nguyễn Việt Tú</td><td>Thạc sỹ Lâm học</td><td>Kiểm lâm viên – Phòng SD&amp;PTR</td><td class="mono">10%</td></tr>
+              <tr><td class="mono">5</td><td>Phạm Hoàng Hà</td><td>Thạc sỹ Lâm học</td><td>Kiểm lâm viên – Phòng SD&amp;PTR</td><td class="mono">10%</td></tr>
+              <tr><td class="mono">6</td><td>Nguyễn Thanh Lý</td><td>Thạc sỹ Lâm học</td><td>Kiểm lâm viên – Phòng SD&amp;PTR</td><td class="mono">10%</td></tr>
+              <tr><td class="mono">7</td><td>Dương Chí Anh</td><td>Thạc sỹ Khoa học cây trồng</td><td>Kiểm lâm viên – Phòng SD&amp;PTR</td><td class="mono">10%</td></tr>
+              <tr><td class="mono">8</td><td>Nguyễn Văn Thăng</td><td>Đại học Lâm nghiệp</td><td>Kiểm lâm viên – Phòng SD&amp;PTR</td><td class="mono">10%</td></tr>
+              <tr><td class="mono">9</td><td>Trần Phước Lâm</td><td>Thạc sỹ Lâm học</td><td>Kiểm lâm viên – Phòng SD&amp;PTR</td><td class="mono">10%</td></tr>
+              <tr><td class="mono">10</td><td>Lê Ngọc Cường</td><td>Thạc sỹ Quản lý tài nguyên rừng</td><td>Kiểm lâm viên – Phòng SD&amp;PTR</td><td class="mono">10%</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container" style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+      <div>© 2026 <strong>Phòng Sử dụng và Phát triển rừng — Chi cục Kiểm lâm tỉnh Quảng Trị</strong> (Sở Nông nghiệp và Môi trường tỉnh Quảng Trị).</div>
+      <div class="mono">CheckCCRQT v0.3.1 · GPL-3.0 Open Source · sdptrklqt@gmail.com</div>
+    </div>
+  </footer>
+
+  <!-- Floating AI Copilot Button & Drawer -->
+  <button id="aiFab" class="ai-fab" type="button" aria-label="Mở Trợ lý AI Kiểm lâm EUDR">
+    🤖 Hỏi Trợ lý AI EUDR
+  </button>
+
+  <aside id="aiDrawer" class="ai-drawer" aria-label="Trợ lý AI Kiểm lâm CheckCCRQT">
+    <div class="ai-header">
+      <div>
+        <div class="ai-header-title">🤖 Trợ lý AI CheckCCRQT v0.3.1</div>
+        <div id="aiModeBadge" class="ai-header-sub">Chế độ: Tri thức nội bộ (Sẵn sàng 24/7)</div>
+      </div>
+      <div style="display:flex;gap:6px;">
+        <button id="aiSettingsBtn" class="ai-icon-btn" type="button" title="Cấu hình API Key (Gemini / DeepSeek / OpenAI)">⚙️ API</button>
+        <button id="aiCloseBtn" class="ai-icon-btn" type="button" title="Đóng">✕</button>
+      </div>
+    </div>
+
+    <div id="aiSettingsPanel" class="ai-settings">
+      <div style="font-weight:700;color:var(--gold);">🔐 Kết nối API AI trực tuyến (Lưu cục bộ trên trình duyệt — Không lộ khóa lên GitHub)</div>
+      <select id="aiProviderSelect" aria-label="Nhà cung cấp AI">
+        <option value="gemini">Google Gemini (gemini-2.5-flash)</option>
+        <option value="deepseek">DeepSeek (deepseek-chat)</option>
+        <option value="openai">OpenAI (gpt-4o-mini)</option>
+      </select>
+      <input id="aiApiKeyInput" type="password" placeholder="Dán khóa API của bạn tại đây (để trống = dùng Tri thức nội bộ)..." autocomplete="off" />
+      <div style="display:flex;gap:6px;justify-content:flex-end;">
+        <button id="aiClearKeyBtn" class="btn btn-outline btn-sm" type="button">Xóa khóa</button>
+        <button id="aiSaveKeyBtn" class="btn btn-primary btn-sm" type="button">Lưu khóa cục bộ</button>
+      </div>
+    </div>
+
+    <div class="ai-quick-chips">
+      <button class="ai-chip" type="button" data-q="Phân tích chi tiết lô rừng tôi đang chọn trên bản đồ">📍 Phân tích lô đang chọn</button>
+      <button class="ai-chip" type="button" data-q="Quy định Điều 9 EUDR và ngưỡng 4 ha áp dụng thế nào?">🌍 Luật EUDR 4 ha</button>
+      <button class="ai-chip" type="button" data-q="Khai thác rừng trồng keo luân canh có bị coi là phá rừng EUDR không?">🌲 Rừng keo luân canh</button>
+      <button class="ai-chip" type="button" data-q="Cách xử lý lỗi trùng mã lô DUPLICATE_ID và chồng lấn OVERLAP?">⚠️ Lỗi DUPLICATE_ID</button>
+      <button class="ai-chip" type="button" data-q="Hướng dẫn cài đặt CheckCCRQT v0.3.1 trên QGIS">📦 Cách cài QGIS</button>
+    </div>
+
+    <div id="aiMessages" class="ai-messages"></div>
+
+    <form id="aiForm" class="ai-input-row">
+      <input id="aiInput" type="text" placeholder="Nhập câu hỏi về EUDR, VN-2000, Sentinel-2, lô rừng..." autocomplete="off" />
+      <button id="aiSendBtn" class="btn btn-primary btn-sm" type="submit">Gửi</button>
+    </form>
+  </aside>
+</body>
+</html>
