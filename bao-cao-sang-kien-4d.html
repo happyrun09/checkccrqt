@@ -1292,6 +1292,263 @@
       letter-spacing: 0.5px;
     }
 
+  
+    /* =========================================================================
+       PODCAST WORKSPACE & FLOATING AUDIO PLAYER
+       ========================================================================= */
+    body.workspace-podcast #podcastWorkspace { display: block; }
+    body.workspace-podcast .deck-viewport { display: none !important; }
+    body.workspace-podcast #matrixWorkspace { display: none !important; }
+    body.workspace-podcast #paperWorkspace { display: none !important; }
+
+    .podcast-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px 20px 80px;
+    }
+    .podcast-hero-card {
+      background: linear-gradient(135deg, rgba(6, 36, 20, 0.95), rgba(15, 23, 42, 0.95));
+      border: 1.5px solid rgba(46, 229, 157, 0.4);
+      border-radius: 20px;
+      padding: 28px 32px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(46, 229, 157, 0.15);
+      margin-bottom: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .podcast-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .podcast-badge-live {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(46, 229, 157, 0.15);
+      border: 1px solid #2ee59d;
+      color: #2ee59d;
+      font-size: 0.78rem;
+      font-weight: 800;
+      padding: 4px 12px;
+      border-radius: 999px;
+    }
+    .podcast-dot-pulse {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #2ee59d;
+      box-shadow: 0 0 10px #2ee59d;
+      animation: pulseAnim 1.4s infinite;
+    }
+    @keyframes pulseAnim {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(1.4); }
+    }
+    .podcast-title {
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: #f8fafc;
+      margin-top: 4px;
+    }
+    .podcast-subtitle {
+      font-size: 0.9rem;
+      color: #94a3b8;
+      line-height: 1.5;
+    }
+    .podcast-player-box {
+      background: rgba(2, 6, 23, 0.8);
+      border: 1px solid rgba(46, 229, 157, 0.3);
+      border-radius: 14px;
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .podcast-ctrl-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .btn-podcast-play {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 52px;
+      height: 52px;
+      font-size: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 0 20px rgba(16, 185, 129, 0.6);
+      transition: all 0.2s ease;
+    }
+    .btn-podcast-play:hover {
+      transform: scale(1.08);
+      box-shadow: 0 0 28px rgba(46, 229, 157, 0.9);
+    }
+    .podcast-progress-wrap {
+      flex: 1;
+      min-width: 200px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .podcast-progress-bar {
+      width: 100%;
+      height: 8px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.15);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+    .podcast-progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #2ee59d, #f5c451);
+      border-radius: 4px;
+      transition: width 0.1s linear;
+    }
+    .podcast-time-row {
+      display: flex;
+      justify-content: space-between;
+      color: #94a3b8;
+      font-size: 0.75rem;
+      font-family: monospace;
+      font-weight: 700;
+    }
+    .podcast-speed-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #cbd5e1;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .podcast-speed-btn:hover, .podcast-speed-btn.active {
+      background: rgba(46, 229, 157, 0.2);
+      color: #2ee59d;
+      border-color: #2ee59d;
+    }
+    .podcast-chapters-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 14px;
+      margin-top: 10px;
+    }
+    .podcast-chapter-card {
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(46, 229, 157, 0.2);
+      border-radius: 12px;
+      padding: 14px 16px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .podcast-chapter-card:hover {
+      border-color: #2ee59d;
+      background: rgba(6, 36, 20, 0.85);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+    }
+    .chapter-time-pill {
+      background: rgba(46, 229, 157, 0.15);
+      border: 1px solid rgba(46, 229, 157, 0.4);
+      color: #2ee59d;
+      font-size: 0.72rem;
+      font-family: monospace;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 6px;
+      white-space: nowrap;
+    }
+    .chapter-info h4 {
+      margin: 0 0 4px;
+      font-size: 0.85rem;
+      color: #f1f5f9;
+      font-weight: 700;
+    }
+    .chapter-info p {
+      margin: 0;
+      font-size: 0.75rem;
+      color: #94a3b8;
+      line-height: 1.35;
+    }
+
+    /* Floating Mini Podcast Bar across all views */
+    .floating-podcast-bar {
+      position: fixed;
+      bottom: 78px;
+      right: 20px;
+      z-index: 9999;
+      background: rgba(6, 36, 20, 0.94);
+      border: 1.5px solid #2ee59d;
+      border-radius: 999px;
+      padding: 6px 16px 6px 10px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), 0 0 20px rgba(46, 229, 157, 0.35);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      backdrop-filter: blur(12px);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .floating-podcast-bar:hover {
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.9), 0 0 30px rgba(46, 229, 157, 0.6);
+    }
+    .mini-play-btn {
+      background: #10b981;
+      border: none;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(16, 185, 129, 0.6);
+    }
+    .mini-podcast-title {
+      font-size: 0.75rem;
+      font-weight: 800;
+      color: #f8fafc;
+      white-space: nowrap;
+    }
+    .mini-wave-bars {
+      display: flex;
+      align-items: flex-end;
+      gap: 2px;
+      height: 16px;
+    }
+    .wave-bar {
+      width: 3px;
+      background: #2ee59d;
+      border-radius: 2px;
+      height: 4px;
+      transition: height 0.2s ease;
+    }
+    .floating-podcast-bar.is-playing .wave-bar:nth-child(1) { animation: waveAnim 0.6s infinite alternate 0.1s; }
+    .floating-podcast-bar.is-playing .wave-bar:nth-child(2) { animation: waveAnim 0.8s infinite alternate 0.2s; }
+    .floating-podcast-bar.is-playing .wave-bar:nth-child(3) { animation: waveAnim 0.5s infinite alternate 0.3s; }
+    .floating-podcast-bar.is-playing .wave-bar:nth-child(4) { animation: waveAnim 0.7s infinite alternate 0.15s; }
+    @keyframes waveAnim {
+      0% { height: 4px; }
+      100% { height: 16px; }
+    }
+
   </style>
 </head>
 <body class="mode-horizontal style-forestry workspace-deck">
@@ -1314,6 +1571,9 @@
     <div class="workspace-tabs" role="tablist">
       <button class="ws-tab-btn active" id="tabBtnDeck" onclick="switchWorkspace('deck')">
         🎬 12 Slide Sáng Kiến
+      </button>
+      <button class="ws-tab-btn" id="tabBtnPodcast" onclick="switchWorkspace('podcast')" style="border-color:#2ee59d; color:#2ee59d;">
+        🎙️ Tọa Đàm Podcast AI (22:12)
       </button>
       <button class="ws-tab-btn" id="tabBtnMatrix" onclick="switchWorkspace('matrix')">
         📊 Đối Chiếu Desktop v0.2.3 vs Web v0.5.0
@@ -1379,6 +1639,153 @@
   </main>
 
   <!-- TẦNG 2B: BẢNG SO SÁNH KỸ THUẬT (MATRIX) -->
+  
+  <!-- TẦNG 2D: PHÒNG THU TỌA ĐÀM PODCAST AI (22 PHÚT) -->
+  <section class="studio-workspace" id="podcastWorkspace" style="display:none; width:100%; min-height:85vh; padding-top:var(--topbar-h); overflow-y:auto;">
+    <div class="podcast-container">
+      <div class="podcast-hero-card">
+        <div class="podcast-header-row">
+          <div class="podcast-badge-live">
+            <span class="podcast-dot-pulse"></span>
+            <span>PODCAST ĐỐI THOẠI CHUYÊN SÂU • 22 PHÚT 12 GIÂY</span>
+          </div>
+          <span style="font-size:0.8rem; color:#f5c451; font-weight:700;">Google NotebookLM Deep Dive AI</span>
+        </div>
+        
+        <div>
+          <h2 class="podcast-title">HÀNH TRÌNH TỰ LỰC NỘI SINH: CHECKCCRQT &amp; BÀI TOÁN EUDR QUẢNG TRỊ</h2>
+          <p class="podcast-subtitle">
+            Cuộc đối thoại chuyên sâu giữa 2 chuyên gia AI bằng tiếng Việt, phân tích bản chất cuộc khủng hoảng EUDR, 
+            thách thức thời tiết sương mù đặc thù miền Trung, và quá trình tự thân nghiên cứu của 10 cán bộ Chi cục Kiểm lâm Quảng Trị 
+            từ bản thử nghiệm v0.2.3 đến hệ sinh thái viễn thám đa cảm biến v0.5.0.
+          </p>
+        </div>
+
+        <!-- Audio Player Box -->
+        <div class="podcast-player-box">
+          <audio id="mainPodcastAudio" preload="metadata">
+            <source src="./assets/podcast_checkccrqt.m4a" type="audio/mp4" />
+            <source src="./assets/podcast_checkccrqt.m4a" type="audio/x-m4a" />
+          </audio>
+
+          <div class="podcast-ctrl-row">
+            <button class="btn-podcast-play" id="btnPodcastPlay" onclick="togglePodcastPlayback()">▶</button>
+            
+            <div class="podcast-progress-wrap">
+              <div class="podcast-progress-bar" id="podcastProgressBar" onclick="seekPodcast(event)">
+                <div class="podcast-progress-fill" id="podcastProgressFill"></div>
+              </div>
+              <div class="podcast-time-row">
+                <span id="podcastCurTime">00:00</span>
+                <span id="podcastTotalTime">22:12</span>
+              </div>
+            </div>
+
+            <div style="display:flex; gap:6px; align-items:center;">
+              <button class="podcast-speed-btn active" id="spd1" onclick="setPodcastSpeed(1.0)">1.0x</button>
+              <button class="podcast-speed-btn" id="spd125" onclick="setPodcastSpeed(1.25)">1.25x</button>
+              <button class="podcast-speed-btn" id="spd15" onclick="setPodcastSpeed(1.5)">1.5x</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chapter Navigation -->
+      <h3 style="color:#2ee59d; font-size:1.05rem; margin-bottom:12px; display:flex; align-items:center; gap:8px;">
+        📌 MỤC LỤC CÁC CHỦ ĐỀ THẢO LUẬN (BẤM ĐỂ PHÁT NGAY ĐOẠN ĐÓ):
+      </h3>
+
+      <div class="podcast-chapters-grid">
+        <div class="podcast-chapter-card" onclick="jumpPodcast(0)">
+          <span class="chapter-time-pill">00:00</span>
+          <div class="chapter-info">
+            <h4>Bối Cảnh &amp; Tối Hậu Thư EUDR</h4>
+            <p>Sức ép mốc 31/12/2020 và thách thức thời tiết sương mù 8 tháng/năm tại Quảng Trị.</p>
+          </div>
+        </div>
+
+        <div class="podcast-chapter-card" onclick="jumpPodcast(140)">
+          <span class="chapter-time-pill">02:20</span>
+          <div class="chapter-info">
+            <h4>Điểm Nghẽn Thủ Công &amp; 10 Cán Bộ</h4>
+            <p>GPS cầm tay 3-5 ngày/lô và quyết tâm đồng đều của 10 tác giả phòng nghiệp vụ.</p>
+          </div>
+        </div>
+
+        <div class="podcast-chapter-card" onclick="jumpPodcast(330)">
+          <span class="chapter-time-pill">05:30</span>
+          <div class="chapter-info">
+            <h4>Khởi Nguyên v0.2.3 &amp; 4 Hạn Chế</h4>
+            <p>Kiểm nghiệm 963 lô rừng thực tế và bài học "thiết kế ngược" đập đi xây lại.</p>
+          </div>
+        </div>
+
+        <div class="podcast-chapter-card" onclick="jumpPodcast(495)">
+          <span class="chapter-time-pill">08:15</span>
+          <div class="chapter-info">
+            <h4>Web-GIS Zero-Install &amp; Radar SAR</h4>
+            <p>Chạy Client-side mượt mà và sóng C-band xuyên mây bão 24/7/365.</p>
+          </div>
+        </div>
+
+        <div class="podcast-chapter-card" onclick="jumpPodcast(680)">
+          <span class="chapter-time-pill">11:20</span>
+          <div class="chapter-info">
+            <h4>Chu Kỳ Sinh Học Keo Lai (NDVI)</h4>
+            <p>Đường cong sinh học 4-6 năm phân biệt thu hoạch rừng trồng với phá rừng.</p>
+          </div>
+        </div>
+
+        <div class="podcast-chapter-card" onclick="jumpPodcast(825)">
+          <span class="chapter-time-pill">13:45</span>
+          <div class="chapter-info">
+            <h4>Lõi Topo RFC 7946 &amp; Map Composer</h4>
+            <p>Chống đè ranh, hở ranh 1mm², xuất bản đồ CAD khung đôi và Excel/Word tự động.</p>
+          </div>
+        </div>
+
+        <div class="podcast-chapter-card" onclick="jumpPodcast(975)">
+          <span class="chapter-time-pill">16:15</span>
+          <div class="chapter-info">
+            <h4>Trợ Lý AI Cục Bộ (Local Edge AI)</h4>
+            <p>Tra cứu Nghị định 102, 120 VNTLAS, bảo mật dữ liệu tuyệt đối trên RAM máy tính.</p>
+          </div>
+        </div>
+
+        <div class="podcast-chapter-card" onclick="jumpPodcast(1105)">
+          <span class="chapter-time-pill">18:25</span>
+          <div class="chapter-info">
+            <h4>Hiệu Quả Làm Lợi &amp; Kinh Tế</h4>
+            <p>Giảm trên 98% thời gian thẩm định (dưới 5 phút) và tiết kiệm trên 300 triệu/năm.</p>
+          </div>
+        </div>
+
+        <div class="podcast-chapter-card" onclick="jumpPodcast(1225)">
+          <span class="chapter-time-pill">20:25</span>
+          <div class="chapter-info">
+            <h4>Thông Điệp Tự Lực &amp; Nhân Rộng</h4>
+            <p>Sức mạnh của ý chí con người, mã nguồn mở và tầm nhìn số hóa lâm nghiệp quốc gia.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FLOATING MINI PODCAST BAR (Hiển thị xuyên suốt khi xem slide) -->
+  <div class="floating-podcast-bar" id="floatingPodcastBar" title="Nhấp để Phát/Dừng Tọa đàm Podcast AI">
+    <button class="mini-play-btn" id="miniPlayBtn" onclick="togglePodcastPlayback()">▶</button>
+    <div style="cursor:pointer;" onclick="switchWorkspace('podcast')">
+      <div class="mini-podcast-title">🎙️ TỌA ĐÀM AI (22:12)</div>
+      <div style="font-size:0.65rem; color:#2ee59d;" id="miniPodcastStatus">Bấm để nghe đối thoại</div>
+    </div>
+    <div class="mini-wave-bars">
+      <div class="wave-bar"></div>
+      <div class="wave-bar"></div>
+      <div class="wave-bar"></div>
+      <div class="wave-bar"></div>
+    </div>
+  </div>
+
   <section class="studio-workspace" id="matrixWorkspace">
     <div class="studio-banner">
       <div>
@@ -2783,15 +3190,106 @@
       openLightbox(slideIdx);
     }
 
+    
+    // =========================================================================
+    // PODCAST AUDIO PLAYER ENGINE
+    // =========================================================================
+    const pAudio = document.getElementById("mainPodcastAudio");
+    const pPlayBtn = document.getElementById("btnPodcastPlay");
+    const pMiniPlayBtn = document.getElementById("miniPlayBtn");
+    const pFloatBar = document.getElementById("floatingPodcastBar");
+    const pFill = document.getElementById("podcastProgressFill");
+    const pCur = document.getElementById("podcastCurTime");
+    const pTotal = document.getElementById("podcastTotalTime");
+    const pMiniStatus = document.getElementById("miniPodcastStatus");
+
+    function formatPodcastTime(sec) {
+      if (isNaN(sec)) return "00:00";
+      const m = Math.floor(sec / 60);
+      const s = Math.floor(sec % 60);
+      return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+    }
+
+    function togglePodcastPlayback() {
+      if (!pAudio) return;
+      if (pAudio.paused) {
+        pAudio.play().then(() => {
+          updatePodcastUI(true);
+          showToast("🎙️ Đang phát Tọa đàm Chuyên gia AI (22:12)");
+        }).catch(err => console.log("Audio play error:", err));
+      } else {
+        pAudio.pause();
+        updatePodcastUI(false);
+        showToast("⏸️ Đã tạm dừng Tọa đàm Podcast");
+      }
+    }
+
+    function updatePodcastUI(isPlaying) {
+      if (pPlayBtn) pPlayBtn.textContent = isPlaying ? "⏸" : "▶";
+      if (pMiniPlayBtn) pMiniPlayBtn.textContent = isPlaying ? "⏸" : "▶";
+      if (pFloatBar) pFloatBar.classList.toggle("is-playing", isPlaying);
+      if (pMiniStatus) pMiniStatus.textContent = isPlaying ? "Đang phát..." : "Tạm dừng";
+    }
+
+    if (pAudio) {
+      pAudio.addEventListener("timeupdate", () => {
+        if (!pAudio.duration) return;
+        const pct = (pAudio.currentTime / pAudio.duration) * 100;
+        if (pFill) pFill.style.width = pct + "%";
+        if (pCur) pCur.textContent = formatPodcastTime(pAudio.currentTime);
+        if (pMiniStatus && !pAudio.paused) {
+          pMiniStatus.textContent = formatPodcastTime(pAudio.currentTime) + " / " + formatPodcastTime(pAudio.duration);
+        }
+      });
+
+      pAudio.addEventListener("loadedmetadata", () => {
+        if (pTotal) pTotal.textContent = formatPodcastTime(pAudio.duration);
+      });
+
+      pAudio.addEventListener("ended", () => {
+        updatePodcastUI(false);
+      });
+    }
+
+    function seekPodcast(e) {
+      const bar = document.getElementById("podcastProgressBar");
+      if (!bar || !pAudio || !pAudio.duration) return;
+      const rect = bar.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const pct = clickX / rect.width;
+      pAudio.currentTime = pct * pAudio.duration;
+    }
+
+    function jumpPodcast(seconds) {
+      if (!pAudio) return;
+      pAudio.currentTime = seconds;
+      if (pAudio.paused) {
+        togglePodcastPlayback();
+      }
+      showToast("⏩ Đã chuyển đến " + formatPodcastTime(seconds));
+    }
+
+    function setPodcastSpeed(spd) {
+      if (!pAudio) return;
+      pAudio.playbackRate = spd;
+      document.querySelectorAll(".podcast-speed-btn").forEach(b => b.classList.remove("active"));
+      if (spd === 1.0) document.getElementById("spd1").classList.add("active");
+      if (spd === 1.25) document.getElementById("spd125").classList.add("active");
+      if (spd === 1.5) document.getElementById("spd15").classList.add("active");
+      showToast("⚡ Tốc độ podcast: " + spd + "x");
+    }
+
     // Navigation & Workspace
     function switchWorkspace(ws) {
       currentWorkspace = ws;
-      document.body.classList.remove("workspace-deck", "workspace-matrix", "workspace-paper");
-      document.documentElement.classList.remove("workspace-deck", "workspace-matrix", "workspace-paper");
+      document.body.classList.remove("workspace-deck", "workspace-matrix", "workspace-paper", "workspace-podcast");
+      document.documentElement.classList.remove("workspace-deck", "workspace-matrix", "workspace-paper", "workspace-podcast");
       document.body.classList.add("workspace-" + ws);
       document.documentElement.classList.add("workspace-" + ws);
 
       document.getElementById("tabBtnDeck").classList.toggle("active", ws === "deck");
+      const pTab = document.getElementById("tabBtnPodcast");
+      if (pTab) pTab.classList.toggle("active", ws === "podcast");
       document.getElementById("tabBtnMatrix").classList.toggle("active", ws === "matrix");
       document.getElementById("tabBtnPaper").classList.toggle("active", ws === "paper");
 
