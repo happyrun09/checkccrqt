@@ -1,10 +1,13 @@
-/* CheckCCRQT v0.4.0 — Offline-First PWA Service Worker */
-const CACHE_NAME = "checkccrqt-v040-shell-v1";
+/* CheckCCRQT v0.4.0+ — Offline-First PWA Service Worker */
+const CACHE_NAME = "checkccrqt-v040-modular-v2";
 const APP_SHELL = [
   "./",
   "./index.html",
-  "./styles.css",
-  "./app.js",
+  "./css/style.css",
+  "./js/eudr-validator.js",
+  "./js/knowledge-base.js",
+  "./js/app.js",
+  "./data/sample-cam-lo.geojson",
   "./manifest.webmanifest",
   "./assets/logo_kiemlam.png"
 ];
@@ -28,17 +31,18 @@ self.addEventListener("activate", (event) => {
 self.addEventListener("fetch", (event) => {
   const req = event.request;
   if (req.method !== "GET") return;
-
-  // Never intercept AI API POSTs or third-party auth endpoints
   const url = new URL(req.url);
-  if (url.hostname.includes("googleapis.com") && url.pathname.includes("generateContent")) return;
-  if (url.hostname.includes("api.deepseek.com") || url.hostname.includes("api.openai.com")) return;
-
-  // Network-first for HTML/JS/CSS, fallback to cache when offline in the forest
   event.respondWith(
     fetch(req)
       .then((res) => {
-        if (res && res.status === 200 && (url.origin === self.location.origin || url.hostname.includes("unpkg.com") || url.hostname.includes("jsdelivr.net") || url.hostname.includes("cdnjs.cloudflare.com"))) {
+        if (
+          res &&
+          res.status === 200 &&
+          (url.origin === self.location.origin ||
+            url.hostname.includes("unpkg.com") ||
+            url.hostname.includes("jsdelivr.net") ||
+            url.hostname.includes("cdnjs.cloudflare.com"))
+        ) {
           const clone = res.clone();
           caches.open(CACHE_NAME).then((cache) => cache.put(req, clone)).catch(() => {});
         }
