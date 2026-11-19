@@ -991,22 +991,23 @@
 
   
     /* =========================================================================
-       MAGNIFIER LENS & HUD CROSSHAIR
+       MAGNIFIER LENS & HUD CROSSHAIR (TRANSPARENT, ANTI-BLACK-CIRCLE)
        ========================================================================= */
     .magnifier-lens-4d {
       position: absolute;
-      width: 220px;
-      height: 220px;
+      width: 230px;
+      height: 230px;
       border-radius: 50%;
       border: 3px solid #2ee59d;
-      box-shadow: 0 0 35px rgba(46, 229, 157, 0.9), inset 0 0 25px rgba(0, 0, 0, 0.7);
+      box-shadow: 0 0 35px rgba(46, 229, 157, 0.9), inset 0 0 25px rgba(0, 0, 0, 0.4);
       pointer-events: none;
       z-index: 100;
       display: none;
       background-repeat: no-repeat;
-      background-color: #030c07;
+      background-color: transparent !important;
       transform: translate(-50%, -50%);
       overflow: hidden;
+      backdrop-filter: blur(0px);
     }
     .magnifier-lens-4d::before {
       content: "";
@@ -1033,12 +1034,12 @@
       bottom: 12px;
       left: 50%;
       transform: translateX(-50%);
-      background: rgba(3, 12, 7, 0.88);
+      background: rgba(3, 12, 7, 0.9);
       color: #f5c451;
       font-size: 11px;
       font-family: monospace;
       font-weight: bold;
-      padding: 2px 8px;
+      padding: 3px 10px;
       border-radius: 999px;
       border: 1px solid rgba(245, 196, 81, 0.5);
       white-space: nowrap;
@@ -1047,8 +1048,9 @@
     .giant-art-frame.lens-active {
       cursor: crosshair !important;
     }
-    .giant-art-frame.lens-active .magnifier-lens-4d {
-      display: block;
+    /* Strictly managed by JS mouse events - never display by default */
+    .giant-art-frame .magnifier-lens-4d {
+      display: none;
     }
 
     /* =========================================================================
@@ -1202,6 +1204,92 @@
       .bullet-item-4d { font-size: 0.7rem !important; padding: 4px 8px !important; }
       .giant-art-frame { max-height: 36vh !important; }
       .transform-row-large { padding: 4px 8px !important; font-size: 0.72rem !important; }
+    }
+
+  
+    /* =========================================================================
+       HD PAN-ZOOM LIGHTBOX MODAL
+       ========================================================================= */
+    #hdLightboxModal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(2, 6, 23, 0.96);
+      backdrop-filter: blur(12px);
+      z-index: 9999999;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+    }
+    .lightbox-toolbar {
+      position: absolute;
+      top: 18px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1.5px solid rgba(46, 229, 157, 0.4);
+      border-radius: 999px;
+      padding: 6px 18px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+      z-index: 10;
+    }
+    .lightbox-btn {
+      background: transparent;
+      border: none;
+      color: #e2e8f0;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      padding: 4px 10px;
+      border-radius: 6px;
+      transition: all 0.2s ease;
+    }
+    .lightbox-btn:hover {
+      background: rgba(46, 229, 157, 0.25);
+      color: #2ee59d;
+    }
+    .lightbox-btn.close-btn {
+      color: #f87171;
+    }
+    .lightbox-btn.close-btn:hover {
+      background: rgba(239, 68, 68, 0.25);
+      color: #ef4444;
+    }
+    .lightbox-stage {
+      width: 92vw;
+      height: 84vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      cursor: grab;
+      position: relative;
+    }
+    .lightbox-stage:active {
+      cursor: grabbing;
+    }
+    #lightboxImg {
+      max-width: 90vw;
+      max-height: 82vh;
+      object-fit: contain;
+      border-radius: 12px;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9), 0 0 25px rgba(46, 229, 157, 0.3);
+      border: 2px solid rgba(46, 229, 157, 0.3);
+      transition: transform 0.12s ease-out;
+      transform-origin: center center;
+    }
+    .lightbox-hint {
+      position: absolute;
+      bottom: 14px;
+      color: #94a3b8;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
     }
 
   </style>
@@ -2242,7 +2330,7 @@
                     <img src="./assets/slides/slide_${String(idx + 1).padStart(2, "0")}.png" 
                          alt="Slide ${idx + 1} - NotebookLM" 
                          id="slideImg_${idx}"
-                         class="slide-hd-image"
+                         class="slide-hd-image" onclick="openLightbox(${idx})" title="Nhấp đúp hoặc nhấp chuột để Soi Chi Tiết Cực Đại (HD Lightbox)"
                          style="width:100%; height:100%; object-fit:contain; border-radius:10px; display:block;"
                          onerror="this.style.display='none'; document.getElementById('svgFallback_${idx}').style.display='block';" />
                     <div id="svgFallback_${idx}" style="display:none; width:100%; height:100%;">
@@ -2521,6 +2609,180 @@
       }
     });
 
+    
+    // =========================================================================
+    // ADVANCED MAGNIFIER LENS ENGINE (ANTI-BLACK-CIRCLE, PURE ZOOM)
+    // =========================================================================
+    function toggleMagnifier(slideIdx) {
+      const frame = document.getElementById("artFrame_" + slideIdx);
+      const btn = document.getElementById("btnLens_" + slideIdx);
+      const subBtn = document.getElementById("btnSubLens_" + slideIdx);
+      const lens = document.getElementById("magLens_" + slideIdx);
+      const img = document.getElementById("slideImg_" + slideIdx);
+      if (!frame || !lens) return;
+
+      const willBeActive = !frame.classList.contains("lens-active");
+      frame.classList.toggle("lens-active", willBeActive);
+      if (btn) btn.classList.toggle("active", willBeActive);
+      if (subBtn) subBtn.classList.toggle("active", willBeActive);
+
+      // ALWAYS hide lens on toggle; it ONLY displays when mouse moves inside frame!
+      lens.style.display = "none";
+
+      if (willBeActive && img) {
+        lens.style.backgroundImage = `url('${img.src}')`;
+        showToast("🔍 Đã kích hoạt Kính lúp (Di chuyển chuột lên ảnh để soi)");
+      } else {
+        showToast("🔍 Đã tắt Kính lúp");
+      }
+    }
+
+    function initMagnifierForSlide(slideIdx) {
+      const frame = document.getElementById("artFrame_" + slideIdx);
+      const lens = document.getElementById("magLens_" + slideIdx);
+      const img = document.getElementById("slideImg_" + slideIdx);
+      if (!frame || !lens || !img) return;
+
+      // Ensure coordinate badge inside lens
+      if (!lens.querySelector(".lens-coords-badge")) {
+        const badge = document.createElement("div");
+        badge.className = "lens-coords-badge";
+        badge.textContent = "VN-2000 • 2.5X";
+        lens.appendChild(badge);
+      }
+
+      frame.addEventListener("mouseenter", (e) => {
+        if (!frame.classList.contains("lens-active")) return;
+        lens.style.backgroundImage = `url('${img.src}')`;
+        lens.style.display = "block";
+      });
+
+      frame.addEventListener("mousemove", (e) => {
+        if (!frame.classList.contains("lens-active")) {
+          lens.style.display = "none";
+          return;
+        }
+
+        const rect = frame.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        if (x < 0 || x > rect.width || y < 0 || y > rect.height) {
+          lens.style.display = "none";
+          return;
+        }
+
+        lens.style.display = "block";
+        lens.style.left = x + "px";
+        lens.style.top = y + "px";
+
+        const zoom = 2.5;
+        const bgW = rect.width * zoom;
+        const bgH = rect.height * zoom;
+        lens.style.backgroundImage = `url('${img.src}')`;
+        lens.style.backgroundSize = `${bgW}px ${bgH}px`;
+
+        const bgX = -(x * zoom - lens.offsetWidth / 2);
+        const bgY = -(y * zoom - lens.offsetHeight / 2);
+        lens.style.backgroundPosition = `${bgX}px ${bgY}px`;
+
+        const badge = lens.querySelector(".lens-coords-badge");
+        if (badge) {
+          const pctX = Math.round((x / rect.width) * 100);
+          const pctY = Math.round((y / rect.height) * 100);
+          badge.textContent = `Tọa độ: ${pctX}%, ${pctY}% • Zoom 2.5X`;
+        }
+      });
+
+      frame.addEventListener("mouseleave", () => {
+        lens.style.display = "none";
+      });
+    }
+
+    // =========================================================================
+    // HD LIGHTBOX PAN-ZOOM CONTROLS (SO CHI TIẾT CỰC ĐẠI)
+    // =========================================================================
+    let lbZoom = 1.0;
+    let lbPanX = 0, lbPanY = 0;
+    let isPanning = false, startPanX = 0, startPanY = 0;
+
+    function openLightbox(slideIdx) {
+      const img = document.getElementById("slideImg_" + slideIdx);
+      const modal = document.getElementById("hdLightboxModal");
+      const lbImg = document.getElementById("lightboxImg");
+      if (!img || !modal || !lbImg) return;
+
+      lbImg.src = img.src;
+      lbZoom = 1.0;
+      lbPanX = 0;
+      lbPanY = 0;
+      updateLightboxTransform();
+      modal.style.display = "flex";
+      showToast("🔎 Đã mở Soi Chi Tiết HD (Cuộn chuột để Phóng to, Kéo để Di chuyển)");
+    }
+
+    function closeLightbox() {
+      const modal = document.getElementById("hdLightboxModal");
+      if (modal) modal.style.display = "none";
+    }
+
+    function zoomLightbox(delta) {
+      lbZoom = Math.min(4.0, Math.max(0.6, lbZoom + delta));
+      updateLightboxTransform();
+    }
+
+    function resetLightboxZoom() {
+      lbZoom = 1.0;
+      lbPanX = 0;
+      lbPanY = 0;
+      updateLightboxTransform();
+    }
+
+    function updateLightboxTransform() {
+      const lbImg = document.getElementById("lightboxImg");
+      const badge = document.getElementById("lightboxZoomLevel");
+      if (lbImg) {
+        lbImg.style.transform = `translate(${lbPanX}px, ${lbPanY}px) scale(${lbZoom})`;
+      }
+      if (badge) {
+        badge.textContent = Math.round(lbZoom * 100) + "%";
+      }
+    }
+
+    // Lightbox Mouse Drag & Wheel Listeners
+    const lbStage = document.getElementById("lightboxStage");
+    if (lbStage) {
+      lbStage.addEventListener("wheel", (e) => {
+        e.preventDefault();
+        const delta = e.deltaY < 0 ? 0.2 : -0.2;
+        zoomLightbox(delta);
+      }, { passive: false });
+
+      lbStage.addEventListener("mousedown", (e) => {
+        if (e.target.id === "lightboxImg" || e.target.id === "lightboxStage") {
+          isPanning = true;
+          startPanX = e.clientX - lbPanX;
+          startPanY = e.clientY - lbPanY;
+        }
+      });
+
+      window.addEventListener("mousemove", (e) => {
+        if (!isPanning) return;
+        lbPanX = e.clientX - startPanX;
+        lbPanY = e.clientY - startPanY;
+        updateLightboxTransform();
+      });
+
+      window.addEventListener("mouseup", () => {
+        isPanning = false;
+      });
+    }
+
+    // Map toggleSlideZoom to openLightbox
+    function toggleSlideZoom(slideIdx) {
+      openLightbox(slideIdx);
+    }
+
     // Navigation & Workspace
     function switchWorkspace(ws) {
       currentWorkspace = ws;
@@ -2778,5 +3040,21 @@
     renderAllSlides();
     animateOverlaysLoop();
   </script>
+  <!-- HD PAN-ZOOM LIGHTBOX MODAL -->
+  <div id="hdLightboxModal">
+    <div class="lightbox-toolbar">
+      <span style="color:#2ee59d; font-weight:800; font-size:13px; margin-right:8px;">🔍 SOI CHI TIẾT HD</span>
+      <button class="lightbox-btn" onclick="zoomLightbox(0.25)" title="Phóng to">➕ Phóng To</button>
+      <button class="lightbox-btn" onclick="zoomLightbox(-0.25)" title="Thu nhỏ">➖ Thu Nhỏ</button>
+      <button class="lightbox-btn" onclick="resetLightboxZoom()" title="Về ban đầu">↺ Ban Đầu</button>
+      <span style="color:#f5c451; font-family:monospace; font-size:12px;" id="lightboxZoomLevel">100%</span>
+      <button class="lightbox-btn close-btn" onclick="closeLightbox()" title="Đóng (ESC)">✕ Đóng (ESC)</button>
+    </div>
+    <div class="lightbox-stage" id="lightboxStage">
+      <img id="lightboxImg" src="" alt="Slide HD Zoom" />
+    </div>
+    <div class="lightbox-hint">💡 Cuộn chuột để Phóng to/Thu nhỏ • Giữ chuột kéo để Di chuyển ảnh • Bấm ESC để đóng</div>
+  </div>
+
 </body>
 </html>
