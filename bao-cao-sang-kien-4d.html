@@ -1749,88 +1749,47 @@
       }
     }
 
-    /* Multimedia Shortcut Banner on Slide Deck */
+    /* Multimedia Shortcut Banner on Slide Deck (Sleek Studio Pills) */
     .multimedia-shortcut-banner {
       display: flex;
-      gap: 12px;
-      margin-top: 10px;
-      margin-bottom: 4px;
+      gap: 10px;
+      margin-top: 8px;
+      margin-bottom: 2px;
       width: 100%;
     }
-    .mm-shortcut-card {
+    .mm-quick-pill {
       flex: 1;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(6, 36, 20, 0.85));
-      border: 1px solid rgba(46, 229, 157, 0.35);
-      border-radius: 10px;
-      padding: 8px 14px;
-      cursor: pointer;
-      transition: all 0.25s ease;
-      text-decoration: none;
-    }
-    .mm-shortcut-card:hover {
-      transform: translateY(-2px);
-      border-color: #2ee59d;
-      box-shadow: 0 6px 18px rgba(46, 229, 157, 0.25);
-      background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(16, 185, 129, 0.2));
-    }
-    .mm-shortcut-card.video-style {
-      border-color: rgba(245, 196, 81, 0.4);
-    }
-    .mm-shortcut-card.video-style:hover {
-      border-color: #f5c451;
-      box-shadow: 0 6px 18px rgba(245, 196, 81, 0.25);
-      background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(245, 196, 81, 0.15));
-    }
-    .mm-icon-circle {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      display: flex;
+      display: inline-flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.1rem;
-      background: rgba(255, 255, 255, 0.1);
-      flex-shrink: 0;
-    }
-    .mm-text-wrap {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 1px;
-    }
-    .mm-title {
-      font-size: 0.82rem;
-      font-weight: 800;
-      color: #f8fafc;
-    }
-    .mm-shortcut-card.video-style .mm-title { color: #f5c451; }
-    .mm-shortcut-card:not(.video-style) .mm-title { color: #2ee59d; }
-    .mm-sub {
-      font-size: 0.7rem;
-      color: #94a3b8;
-    }
-    .mm-pill-action {
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 999px;
-      padding: 3px 10px;
-      font-size: 0.7rem;
-      font-weight: 800;
+      gap: 8px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(46, 229, 157, 0.3);
       color: #cbd5e1;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 0.74rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.25s ease;
       white-space: nowrap;
     }
-    .mm-shortcut-card:hover .mm-pill-action {
-      background: #2ee59d;
-      color: #030c07;
+    .mm-quick-pill:hover {
+      background: rgba(46, 229, 157, 0.15);
       border-color: #2ee59d;
+      color: #2ee59d;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(46, 229, 157, 0.2);
     }
-    .mm-shortcut-card.video-style:hover .mm-pill-action {
-      background: #f5c451;
-      color: #030c07;
+    .mm-quick-pill.video-style {
+      border-color: rgba(245, 196, 81, 0.35);
+      color: #cbd5e1;
+    }
+    .mm-quick-pill.video-style:hover {
+      background: rgba(245, 196, 81, 0.15);
       border-color: #f5c451;
+      color: #f5c451;
+      box-shadow: 0 4px 14px rgba(245, 196, 81, 0.2);
     }
 
     /* Visual Podcast Studio Enhanced */
@@ -2733,20 +2692,8 @@
     </div>
   </section>
 
-  <!-- FLOATING MINI PODCAST BAR (Hiển thị xuyên suốt khi xem slide) -->
-  <div class="floating-podcast-bar" id="floatingPodcastBar" title="Nhấp để Phát/Dừng Tọa đàm Podcast AI">
-    <button class="mini-play-btn" id="miniPlayBtn" onclick="togglePodcastPlayback()">▶</button>
-    <div style="cursor:pointer;" onclick="switchWorkspace('podcast')">
-      <div class="mini-podcast-title">🎙️ TỌA ĐÀM AI (22:12)</div>
-      <div style="font-size:0.65rem; color:#2ee59d;" id="miniPodcastStatus">Bấm để nghe đối thoại</div>
-    </div>
-    <div class="mini-wave-bars">
-      <div class="wave-bar"></div>
-      <div class="wave-bar"></div>
-      <div class="wave-bar"></div>
-      <div class="wave-bar"></div>
-    </div>
-  </div>
+  
+
 
   <section class="studio-workspace" id="matrixWorkspace">
     <div class="studio-banner">
@@ -3687,9 +3634,6 @@
                 <span class="slide-tag-pill">${slide.tag}</span>
                 <h1 class="slide-title">${slide.title}</h1>
               </div>
-              <div class="slide-header-actions">
-                <button class="btn-slide-voice" onclick="speakSingleSlide(${idx})">🔊 Nghe Thuyết Minh Slide</button>
-              </div>
             </div>
 
             <div class="stage-grid-4d">
@@ -3716,22 +3660,12 @@
                   <button class="btn-sub-tool" onclick="toggleTrueFullscreen()" title="Bật Rạp Chiếu Tràn Màn Hình">🖥️ Tràn Toàn Màn Hình (F)</button>
                 </div>
                 <div class="multimedia-shortcut-banner">
-                  <div class="mm-shortcut-card video-style" onclick="switchWorkspace('video')">
-                    <div class="mm-icon-circle">🎥</div>
-                    <div class="mm-text-wrap">
-                      <span class="mm-title">Video Thuyết Minh (06:30)</span>
-                      <span class="mm-sub">Phòng chiếu HD 720p &amp; 7 phân cảnh có dịch Tiếng Việt</span>
-                    </div>
-                    <span class="mm-pill-action">Xem Video ▶</span>
-                  </div>
-                  <div class="mm-shortcut-card" onclick="switchWorkspace('podcast')">
-                    <div class="mm-icon-circle">🎙️</div>
-                    <div class="mm-text-wrap">
-                      <span class="mm-title">Tọa Đàm Podcast AI (22:12)</span>
-                      <span class="mm-sub">9 chủ đề chuyên sâu có ảnh minh họa đồng bộ</span>
-                    </div>
-                    <span class="mm-pill-action">Nghe Ngay ▶</span>
-                  </div>
+                  <button class="mm-quick-pill video-style" onclick="switchWorkspace('video')">
+                    🎥 Xem Video Thuyết Minh (06:30 HD)
+                  </button>
+                  <button class="mm-quick-pill" onclick="switchWorkspace('podcast')">
+                    🎙️ Nghe Tọa Đàm Podcast AI (22:12)
+                  </button>
                 </div>
 
                 <div class="transform-row-large" onclick="flipAllCardsForSlide(${idx})" title="Nhấp để lật nhanh 4 thẻ đối chiếu">
@@ -4180,12 +4114,12 @@
     // =========================================================================
     const pAudio = document.getElementById("mainPodcastAudio");
     const pPlayBtn = document.getElementById("btnPodcastPlay");
-    const pMiniPlayBtn = document.getElementById("miniPlayBtn");
-    const pFloatBar = document.getElementById("floatingPodcastBar");
+    // miniPlayBtn removed
+    // pFloatBar removed
     const pFill = document.getElementById("podcastProgressFill");
     const pCur = document.getElementById("podcastCurTime");
     const pTotal = document.getElementById("podcastTotalTime");
-    const pMiniStatus = document.getElementById("miniPodcastStatus");
+    // pMiniStatus removed
 
     const PODCAST_CHAPTERS = [
       {
@@ -4358,9 +4292,9 @@
 
     function updatePodcastUI(isPlaying) {
       if (pPlayBtn) pPlayBtn.textContent = isPlaying ? "⏸" : "▶";
-      if (pMiniPlayBtn) pMiniPlayBtn.textContent = isPlaying ? "⏸" : "▶";
-      if (pFloatBar) pFloatBar.classList.toggle("is-playing", isPlaying);
-      if (pMiniStatus) pMiniStatus.textContent = isPlaying ? "Đang phát..." : "Tạm dừng";
+      
+      
+      
     }
 
     if (pAudio) {
@@ -4369,9 +4303,7 @@
         const pct = (pAudio.currentTime / pAudio.duration) * 100;
         if (pFill) pFill.style.width = pct + "%";
         if (pCur) pCur.textContent = formatPodcastTime(pAudio.currentTime);
-        if (pMiniStatus && !pAudio.paused) {
-          pMiniStatus.textContent = formatPodcastTime(pAudio.currentTime) + " / " + formatPodcastTime(pAudio.duration);
-        }
+        
         syncPodcastVisuals(pAudio.currentTime);
       });
 
