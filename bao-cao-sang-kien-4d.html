@@ -1549,6 +1549,147 @@
       100% { height: 16px; }
     }
 
+  
+    /* =========================================================================
+       VIDEO THEATER & MULTIMEDIA WORKSPACE
+       ========================================================================= */
+    body.workspace-video #videoWorkspace { display: block; }
+    body.workspace-video .deck-viewport { display: none !important; }
+    body.workspace-video #podcastWorkspace { display: none !important; }
+    body.workspace-video #matrixWorkspace { display: none !important; }
+    body.workspace-video #paperWorkspace { display: none !important; }
+
+    .video-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 20px 20px 80px;
+    }
+    .video-hero-grid {
+      display: grid;
+      grid-template-columns: 1.6fr 1fr;
+      gap: 22px;
+      margin-top: 10px;
+      transition: grid-template-columns 0.35s ease;
+    }
+    body.video-wide .video-hero-grid {
+      grid-template-columns: 1fr;
+    }
+    .video-player-card {
+      background: #020617;
+      border: 1.5px solid rgba(245, 196, 81, 0.4);
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9), 0 0 30px rgba(245, 196, 81, 0.15);
+      display: flex;
+      flex-direction: column;
+    }
+    .video-screen-wrap {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #mainProjectVideo {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      background: #000;
+    }
+    .video-controls-bar {
+      background: rgba(15, 23, 42, 0.95);
+      border-top: 1px solid rgba(245, 196, 81, 0.3);
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .video-tool-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(245, 196, 81, 0.4);
+      color: #f5c451;
+      padding: 5px 12px;
+      border-radius: 6px;
+      font-size: 0.76rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+    .video-tool-btn:hover {
+      background: rgba(245, 196, 81, 0.2);
+      border-color: #f5c451;
+      transform: translateY(-1px);
+    }
+    .video-transcript-card {
+      background: rgba(15, 23, 42, 0.95);
+      border: 1.5px solid rgba(46, 229, 157, 0.35);
+      border-radius: 18px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+      max-height: 680px;
+    }
+    .video-chapters-scroll {
+      overflow-y: auto;
+      padding-right: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(46, 229, 157, 0.4) transparent;
+      margin-top: 14px;
+    }
+    .v-chap-item {
+      background: rgba(2, 6, 23, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-left: 3px solid #f5c451;
+      border-radius: 10px;
+      padding: 12px 14px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .v-chap-item:hover {
+      background: rgba(6, 36, 20, 0.7);
+      border-color: #2ee59d;
+      border-left-color: #2ee59d;
+      transform: translateX(4px);
+    }
+    .v-chap-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+    .v-chap-time {
+      background: rgba(245, 196, 81, 0.15);
+      color: #f5c451;
+      font-family: monospace;
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 5px;
+      border: 1px solid rgba(245, 196, 81, 0.4);
+    }
+    .v-chap-title {
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: #f8fafc;
+    }
+    .v-chap-desc {
+      font-size: 0.76rem;
+      color: #cbd5e1;
+      line-height: 1.45;
+      margin: 0;
+    }
+
   </style>
 </head>
 <body class="mode-horizontal style-forestry workspace-deck">
@@ -1572,11 +1713,14 @@
       <button class="ws-tab-btn active" id="tabBtnDeck" onclick="switchWorkspace('deck')">
         🎬 12 Slide Sáng Kiến
       </button>
+      <button class="ws-tab-btn" id="tabBtnVideo" onclick="switchWorkspace('video')" style="border-color:#f5c451; color:#f5c451;">
+        🎥 Video Thuyết Minh (06:30)
+      </button>
       <button class="ws-tab-btn" id="tabBtnPodcast" onclick="switchWorkspace('podcast')" style="border-color:#2ee59d; color:#2ee59d;">
         🎙️ Tọa Đàm Podcast AI (22:12)
       </button>
       <button class="ws-tab-btn" id="tabBtnMatrix" onclick="switchWorkspace('matrix')">
-        📊 Đối Chiếu Desktop v0.2.3 vs Web v0.5.0
+        📊 Đối Chiếu v0.2.3 vs v0.5.0
       </button>
       <button class="ws-tab-btn" id="tabBtnPaper" onclick="switchWorkspace('paper')">
         📑 Văn Bản Thuyết Minh A4
@@ -1641,6 +1785,137 @@
   <!-- TẦNG 2B: BẢNG SO SÁNH KỸ THUẬT (MATRIX) -->
   
   <!-- TẦNG 2D: PHÒNG THU TỌA ĐÀM PODCAST AI (22 PHÚT) -->
+  
+  <!-- TẦNG 2C: PHÒNG CHIẾU VIDEO THUYẾT MINH SÁNG KIẾN (06:30) -->
+  <section class="studio-workspace" id="videoWorkspace" style="display:none; width:100%; min-height:85vh; padding-top:var(--topbar-h); overflow-y:auto;">
+    <div class="video-container">
+      <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-bottom:14px;">
+        <div>
+          <span style="background:rgba(245,196,81,0.2); color:#f5c451; padding:3px 10px; border-radius:999px; font-weight:800; font-size:0.75rem; border:1px solid rgba(245,196,81,0.5);">
+            🎥 PHÒNG CHIẾU ĐIỆN ẢNH ĐA PHƯƠNG TIỆN • ĐỘ PHÂN GIẢI CAO 720P HD
+          </span>
+          <h2 style="margin:6px 0 0; color:#f8fafc; font-size:1.35rem; font-weight:900;">
+            VIDEO THUYẾT MINH KIẾN TRÚC KỸ THUẬT: CHECKCCRQT &amp; CHUẨN MỰC EUDR
+          </h2>
+          <p style="margin:2px 0 0; font-size:0.82rem; color:#94a3b8;">
+            Thời lượng: 06 phút 30 giây • Kèm Bản dịch Thuyết minh Tiếng Việt Chuyên ngành Lâm nghiệp đồng bộ theo mốc thời gian
+          </p>
+        </div>
+
+        <div style="display:flex; gap:8px;">
+          <button class="video-tool-btn" onclick="toggleVideoWideMode()" id="btnVideoWide">↔ Kéo Dài Màn Ảnh Rộng</button>
+          <button class="video-tool-btn" onclick="toggleVideoFullscreen()">⛶ Toàn Màn Hình</button>
+        </div>
+      </div>
+
+      <div class="video-hero-grid" id="videoHeroGrid">
+        <!-- Cột Trái: Trình Phát Video HD -->
+        <div class="video-player-card">
+          <div class="video-screen-wrap" id="videoScreenWrap">
+            <video id="mainProjectVideo" controls preload="metadata" playsinline>
+              <source src="./assets/video_checkccrqt.mp4" type="video/mp4" />
+              Trình duyệt của bạn không hỗ trợ thẻ phát video.
+            </video>
+          </div>
+          <div class="video-controls-bar">
+            <span style="font-size:0.75rem; color:#94a3b8;">
+              💡 <strong>Mẹo:</strong> Nhấp vào các mốc bên phải để nhảy ngay tới đoạn thuyết minh tương ứng.
+            </span>
+            <div style="display:flex; gap:6px;">
+              <button class="video-tool-btn" onclick="setVideoSpeed(1.0)">1.0x</button>
+              <button class="video-tool-btn" onclick="setVideoSpeed(1.25)">1.25x</button>
+              <button class="video-tool-btn" onclick="setVideoSpeed(1.5)">1.5x</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cột Phải: Bản Dịch Thuyết Minh Tiếng Việt Chuyên Nghiệp -->
+        <div class="video-transcript-card">
+          <div style="border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:10px;">
+            <span style="color:#2ee59d; font-weight:800; font-size:0.95rem; display:block;">
+              📜 BẢN DỊCH THUYẾT MINH TIẾNG VIỆT CHUYÊN NGÀNH
+            </span>
+            <span style="font-size:0.72rem; color:#94a3b8;">
+              Dịch thuật &amp; chuẩn hóa thuật ngữ lâm nghiệp: Mốc 31/12/2020, Radar SAR, Keo lai, RFC 7946
+            </span>
+          </div>
+
+          <div class="video-chapters-scroll">
+            <div class="v-chap-item" onclick="jumpVideo(0)">
+              <div class="v-chap-header">
+                <span class="v-chap-title">1. Mốc Cắt Giảm Mất Rừng EUDR (31/12/2020)</span>
+                <span class="v-chap-time">▶ 00:00</span>
+              </div>
+              <p class="v-chap-desc">
+                <strong>Bản dịch:</strong> Quy định EUDR áp đặt thời hạn nghiêm ngặt: Mọi lô gỗ khai thác sau ngày 31/12/2020 nếu liên quan đến phá rừng tự nhiên đều bị cấm nhập khẩu vào châu Âu. Yêu cầu 100% lô rừng phải có tọa độ số đa giác chuẩn xác.
+              </p>
+            </div>
+
+            <div class="v-chap-item" onclick="jumpVideo(55)">
+              <div class="v-chap-header">
+                <span class="v-chap-title">2. Điểm Nghẽn Quy Trình Sổ Sách Giấy &amp; Đo GPS</span>
+                <span class="v-chap-time">▶ 00:55</span>
+              </div>
+              <p class="v-chap-desc">
+                <strong>Bản dịch:</strong> Phương pháp truyền thống dựa vào đo đạc thực địa bằng máy GPS cầm tay và nhập liệu thủ công vào bảng tính Excel. Quá trình này mất 3–5 ngày/lô, tạo ra hàng núi hồ sơ giấy tờ tồn đọng và tiềm ẩn nguy cơ sai sót tọa độ nghiêm trọng.
+              </p>
+            </div>
+
+            <div class="v-chap-item" onclick="jumpVideo(110)">
+              <div class="v-chap-header">
+                <span class="v-chap-title">3. Rào Cản Kỹ Thuật: Bản Cài Nặng &amp; Lỗi Mạng</span>
+                <span class="v-chap-time">▶ 01:50</span>
+              </div>
+              <p class="v-chap-desc">
+                <strong>Bản dịch:</strong> Các phần mềm máy trạm GIS truyền thống quá nặng nề, đòi hỏi cấu hình máy tính đồ họa mạnh và kỹ năng cài đặt phức tạp. Khi mạng chập chờn hoặc máy tính xã quá yếu, hệ thống thường xuyên bị treo và đứng máy (System Crash).
+              </p>
+            </div>
+
+            <div class="v-chap-item" onclick="jumpVideo(165)">
+              <div class="v-chap-header">
+                <span class="v-chap-title">4. Đột Phá Radar SAR: Xuyên Mây Mù Bão Lũ</span>
+                <span class="v-chap-time">▶ 02:45</span>
+              </div>
+              <p class="v-chap-desc">
+                <strong>Bản dịch:</strong> Ứng dụng vệ tinh Sentinel-1 SAR băng tần C chủ động phát sóng xuyên qua mây mù, mưa bão 24/7/365. Hệ số tán xạ ngược phân biệt rõ rệt giữa tán rừng rậm (-6 dB) và đất trống sau khai thác (-18 dB), giải quyết dứt điểm điểm mù thời tiết tại miền Trung.
+              </p>
+            </div>
+
+            <div class="v-chap-item" onclick="jumpVideo(235)">
+              <div class="v-chap-header">
+                <span class="v-chap-title">5. Chu Kỳ Hồi Phục Sinh Học Keo Lai (Biological Recovery)</span>
+                <span class="v-chap-time">▶ 03:55</span>
+              </div>
+              <p class="v-chap-desc">
+                <strong>Bản dịch:</strong> Khác với phá rừng tự nhiên (chỉ số thực vật rớt vĩnh viễn), cây keo lai sau khi khai thác hợp pháp sẽ phục hồi nhanh chóng theo đường chữ V trong 6–12 tháng. Thuật toán nhận diện sự hồi phục sinh học này, loại trừ 100% cảnh báo oan sai.
+              </p>
+            </div>
+
+            <div class="v-chap-item" onclick="jumpVideo(295)">
+              <div class="v-chap-header">
+                <span class="v-chap-title">6. Chuẩn Hóa Hình Học Topology RFC 7946</span>
+                <span class="v-chap-time">▶ 04:55</span>
+              </div>
+              <p class="v-chap-desc">
+                <strong>Bản dịch:</strong> Tự động kiểm định ranh giới hình học theo chuẩn quốc tế RFC 7946. Phát hiện và xử lý triệt để lỗi đè ranh (Overlap) và hở ranh (Gap), tự động chuyển đổi tọa độ VN-2000 sang WGS-84 toàn cầu, đảm bảo hồ sơ vượt qua cổng hải quan TRACES NT.
+              </p>
+            </div>
+
+            <div class="v-chap-item" onclick="jumpVideo(345)">
+              <div class="v-chap-header">
+                <span class="v-chap-title">7. Kết Luận: Nền Tảng Web-GIS Tự Trị Zero-Install</span>
+                <span class="v-chap-time">▶ 05:45</span>
+              </div>
+              <p class="v-chap-desc">
+                <strong>Bản dịch:</strong> Hệ thống CheckCCRQT v0.5.0 chạy hoàn toàn phía Client trên mọi trình duyệt web, không tốn chi phí bản quyền, bảo mật dữ liệu tuyệt đối trên RAM. Minh chứng cho ý chí tự lực làm chủ công nghệ của tập thể 10 cán bộ Kiểm lâm Quảng Trị.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section class="studio-workspace" id="podcastWorkspace" style="display:none; width:100%; min-height:85vh; padding-top:var(--topbar-h); overflow-y:auto;">
     <div class="podcast-container">
       <div class="podcast-hero-card">
@@ -3192,6 +3467,44 @@
 
     
     // =========================================================================
+    
+    // =========================================================================
+    // VIDEO CONTROLS & CHAPTER NAVIGATION
+    // =========================================================================
+    const vPlayer = document.getElementById("mainProjectVideo");
+
+    function jumpVideo(seconds) {
+      if (!vPlayer) return;
+      vPlayer.currentTime = seconds;
+      vPlayer.play().catch(() => {});
+      showToast("🎥 Đã chuyển đến " + formatPodcastTime(seconds) + " của Video");
+    }
+
+    function setVideoSpeed(spd) {
+      if (!vPlayer) return;
+      vPlayer.playbackRate = spd;
+      showToast("⚡ Tốc độ video: " + spd + "x");
+    }
+
+    function toggleVideoWideMode() {
+      const grid = document.getElementById("videoHeroGrid");
+      const btn = document.getElementById("btnVideoWide");
+      if (!grid) return;
+      const isWide = document.body.classList.toggle("video-wide");
+      if (btn) btn.textContent = isWide ? "◫ Trở Về 2 Cột Song Song" : "↔ Kéo Dài Màn Ảnh Rộng";
+      showToast(isWide ? "🎬 Đã kéo dài video toàn bề ngang" : "⚖️ Đã chuyển về chế độ 2 cột");
+    }
+
+    function toggleVideoFullscreen() {
+      const wrap = document.getElementById("videoScreenWrap");
+      if (!wrap) return;
+      if (!document.fullscreenElement) {
+        wrap.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen().catch(() => {});
+      }
+    }
+
     // PODCAST AUDIO PLAYER ENGINE
     // =========================================================================
     const pAudio = document.getElementById("mainPodcastAudio");
@@ -3280,14 +3593,16 @@
     }
 
     // Navigation & Workspace
-    function switchWorkspace(ws) {
+        function switchWorkspace(ws) {
       currentWorkspace = ws;
-      document.body.classList.remove("workspace-deck", "workspace-matrix", "workspace-paper", "workspace-podcast");
-      document.documentElement.classList.remove("workspace-deck", "workspace-matrix", "workspace-paper", "workspace-podcast");
+      document.body.classList.remove("workspace-deck", "workspace-matrix", "workspace-paper", "workspace-podcast", "workspace-video");
+      document.documentElement.classList.remove("workspace-deck", "workspace-matrix", "workspace-paper", "workspace-podcast", "workspace-video");
       document.body.classList.add("workspace-" + ws);
       document.documentElement.classList.add("workspace-" + ws);
 
       document.getElementById("tabBtnDeck").classList.toggle("active", ws === "deck");
+      const vTab = document.getElementById("tabBtnVideo");
+      if (vTab) vTab.classList.toggle("active", ws === "video");
       const pTab = document.getElementById("tabBtnPodcast");
       if (pTab) pTab.classList.toggle("active", ws === "podcast");
       document.getElementById("tabBtnMatrix").classList.toggle("active", ws === "matrix");
