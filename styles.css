@@ -996,6 +996,130 @@ tbody tr.selected-row { background: rgba(212, 175, 55, 0.16); }
   font-size: 0.83rem;
 }
 
+/* Network / PWA Status Pill */
+.net-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  border: 1px solid rgba(16, 185, 129, 0.45);
+  background: rgba(16, 185, 129, 0.14);
+  color: #34D399;
+  white-space: nowrap;
+}
+.net-pill.offline {
+  border-color: rgba(245, 158, 11, 0.55);
+  background: rgba(245, 158, 11, 0.16);
+  color: #fbbf24;
+}
+[data-theme="light"] .net-pill { color: #047857; }
+[data-theme="light"] .net-pill.offline { color: #b45309; }
+
+/* Table Search & Quick Filter Bar */
+.table-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 16px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+}
+
+.table-filter-bar input[type="search"] {
+  flex: 1;
+  min-width: 210px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg-input);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.83rem;
+}
+
+.filter-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.filter-pill {
+  padding: 6px 11px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--bg-input);
+  color: var(--text-muted);
+  font-size: 0.76rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.filter-pill.active {
+  background: var(--emerald);
+  color: #fff;
+  border-color: var(--emerald);
+}
+
+/* Interactive RVI & FRMS Mini-Lab */
+.rvi-lab {
+  margin-top: 16px;
+  padding: 16px;
+  border-radius: 14px;
+  background: rgba(7, 23, 16, 0.72);
+  border: 1px dashed rgba(46, 229, 157, 0.45);
+}
+[data-theme="light"] .rvi-lab {
+  background: #ffffff;
+  border-color: rgba(16, 185, 129, 0.5);
+}
+
+.rvi-lab-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 10px;
+  margin-top: 10px;
+  align-items: end;
+}
+
+.rvi-lab-out {
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  font-size: 0.82rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+/* Print / Save PDF Standard A4 Styling */
+@media print {
+  body { background: #ffffff !important; color: #111827 !important; }
+  .navbar, .ai-fab, .ai-drawer, .workbench-toolbar, .map-controls-bar, .table-filter-bar, .hero-cta, #install, .rvi-lab, .theme-toggle {
+    display: none !important;
+  }
+  .hero-card, .card, .v04-board, .sci-card, .stat-chip {
+    background: #ffffff !important;
+    color: #111827 !important;
+    border: 1px solid #cbd5e1 !important;
+    box-shadow: none !important;
+  }
+  .sci-grid { grid-template-columns: repeat(2, 1fr) !important; }
+  .sci-card h4, .v04-pillar h4 { color: #0D3B26 !important; }
+  .sci-card p, .v04-pillar ul, .hero-desc, .kpi-label { color: #334155 !important; }
+  th { background: #0D3B26 !important; color: #ffffff !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
+
 footer {
   margin-top: 32px;
   padding: 28px 0 40px;

@@ -6,6 +6,8 @@
   <title>CheckCCRQT v0.4.0 — Cổng Giám sát Rừng Chứng chỉ &amp; Thẩm định EUDR Quảng Trị</title>
   <meta name="description" content="Hệ thống kiểm tra tính xác thực, giám sát rừng trồng chứng chỉ FSC/PEFC và thẩm định EUDR EU 2023/1115 (Sentinel-2 + Sentinel-1 SAR RTC + EC JRC GFC2020/TMF) của Phòng Sử dụng và Phát triển rừng — Chi cục Kiểm lâm tỉnh Quảng Trị." />
   <link rel="icon" type="image/png" href="./assets/logo_kiemlam.png" />
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <meta name="theme-color" content="#0D3B26" />
 
   <!-- Typography -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -42,6 +44,7 @@
         <a href="#authors">Tác giả</a>
       </nav>
       <div class="nav-actions">
+        <span id="netBadge" class="net-pill" title="Hỗ trợ PWA Offline khi đi rừng">🟢 Trực tuyến · PWA</span>
         <button id="themeToggle" class="theme-toggle" title="Chuyển đổi Dark / Light Mode" aria-label="Chuyển đổi giao diện sáng tối">☀️</button>
         <a href="./downloads/CheckCCRQT_v0.3.1.zip" download class="btn btn-primary btn-sm">⬇ Tải v0.3.1 (.zip)</a>
       </div>
@@ -119,7 +122,8 @@
               Rút gọn lô &lt; 4 ha thành Point (Điều 9 EUDR)
             </label>
             <button id="btnExportEudrGeoJson" class="btn btn-gold btn-sm">🌍 Xuất GeoJSON EUDR (TRACES NT)</button>
-            <button id="btnExportCsv" class="btn btn-outline btn-sm">📊 Xuất Báo cáo CSV/Excel</button>
+            <button id="btnExportCsv" class="btn btn-outline btn-sm">📊 Xuất CSV/Excel</button>
+            <button id="btnPrintPdf" class="btn btn-outline btn-sm">🖨️ In / Lưu PDF</button>
           </div>
           <div class="org-input-bar">
             <label for="executingUnitInput" style="font-weight:700;color:var(--text-muted);">Đơn vị thực hiện (ExecutingUnit):</label>
@@ -144,7 +148,10 @@
                 <label>Độ mờ lớp rừng: <input id="opacityRange" type="range" min="0" max="100" value="28" /> <span id="opacityVal" class="mono">28%</span></label>
                 <label style="cursor:pointer;"><input id="chkShowLabels" type="checkbox" checked /> Hiển thị nhãn Mã lô</label>
               </div>
-              <button id="btnZoomExtent" class="btn btn-outline btn-sm">🎯 Phóng to toàn vùng</button>
+              <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                <button id="btnMyGps" class="btn btn-primary btn-sm" title="Lấy tọa độ GPS thực địa và chuyển sang VN-2000">📡 GPS Thực địa</button>
+                <button id="btnZoomExtent" class="btn btn-outline btn-sm">🎯 Toàn vùng</button>
+              </div>
             </div>
             <div id="map" aria-label="Bản đồ vệ tinh kiểm tra lô rừng Quảng Trị"></div>
           </div>
@@ -153,13 +160,14 @@
           <div class="card chart-panel">
             <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;">
               <div>
-                <strong style="font-size:0.95rem;">Chuỗi thời gian Viễn thám Sentinel-2</strong>
-                <div style="font-size:0.76rem;color:var(--text-muted);">Hiển thị đỉnh tán Baseline, điểm gãy khai thác &amp; tái sinh keo</div>
+                <strong style="font-size:0.95rem;">Chuỗi thời gian Đa cảm biến (S2 + S1 SAR)</strong>
+                <div style="font-size:0.76rem;color:var(--text-muted);">Hiển thị đỉnh Baseline, điểm gãy khai thác, tái sinh &amp; Radar RVI mùa mưa</div>
               </div>
               <div class="index-tabs">
                 <button class="index-btn active" data-index="NDVI">NDVI</button>
                 <button class="index-btn" data-index="NBR">NBR</button>
                 <button class="index-btn" data-index="NDMI">NDMI</button>
+                <button class="index-btn" data-index="RVI">RVI (SAR)</button>
               </div>
             </div>
             <div class="chart-wrap">
@@ -218,6 +226,17 @@
           </div>
         </div>
 
+        <!-- Quick Search & Filter Bar -->
+        <div class="table-filter-bar">
+          <input id="lotSearchInput" type="search" placeholder="🔎 Tìm nhanh theo Mã lô, Chủ hộ, Tiểu khu..." aria-label="Tìm nhanh lô rừng" />
+          <div class="filter-pills" role="group" aria-label="Lọc trạng thái lô rừng">
+            <button class="filter-pill active" data-filter="all">Tất cả</button>
+            <button class="filter-pill" data-filter="violation">🔴 Vi phạm EUDR</button>
+            <button class="filter-pill" data-filter="issue">⚠️ Trùng mã / Chồng lấn</button>
+            <button class="filter-pill" data-filter="large">📐 Lô ≥ 4 ha</button>
+          </div>
+        </div>
+
         <!-- Results Table -->
         <div class="table-wrap">
           <table>
@@ -227,7 +246,7 @@
                 <th>Chủ hộ / Đơn vị</th>
                 <th>DT (ha)</th>
                 <th>Chu vi (m)</th>
-                <th>JRC TMF (EUDR)</th>
+                <th>JRC TMF &amp; FRMS v0.4</th>
                 <th>Lỗi Không gian &amp; Mã lô</th>
                 <th>Phân ngưỡng Điều 9</th>
                 <th>Tâm WGS-84 (6 số lẻ)</th>
@@ -452,6 +471,35 @@
                 <li>🔴 <strong>Cảnh báo Đỏ (<code class="mono">DEFORESTATION_ALERT</code>):</strong> Suy giảm sinh khối trên diện tích <em>Rừng tự nhiên</em> sau mốc 31/12/2020 (Vi phạm EUDR).</li>
                 <li>🟡 <strong>Ghi nhận Vàng (<code class="mono">LEGAL_PLANTATION_CYCLE</code>):</strong> Khai thác/trồng lại theo chu kỳ trên <em>Rừng trồng (Keo lai)</em> thuộc đất quy hoạch lâm nghiệp (Hợp pháp VNTLAS).</li>
               </ul>
+            </div>
+          </div>
+
+          <!-- Interactive RVI & FRMS Mini-Lab -->
+          <div class="rvi-lab">
+            <div style="font-weight:800;font-size:0.86rem;color:#2EE59D;">🧪 Bộ Kiểm chứng Nhanh RVI (dB → Tuyến tính) &amp; Phân tách FRMS Trực tiếp</div>
+            <div class="rvi-lab-grid">
+              <div class="field-group">
+                <label for="labVvDb">Tán xạ VV (dB)</label>
+                <input id="labVvDb" type="number" step="0.1" value="-8.2" />
+              </div>
+              <div class="field-group">
+                <label for="labVhDb">Tán xạ VH (dB)</label>
+                <input id="labVhDb" type="number" step="0.1" value="-14.5" />
+              </div>
+              <div class="field-group">
+                <label for="labRviBase">RVI Baseline trước biến động</label>
+                <input id="labRviBase" type="number" step="0.01" value="0.72" />
+              </div>
+              <div class="field-group">
+                <label for="labLoaiRung">Trạng thái Rừng FRMS</label>
+                <select id="labLoaiRung">
+                  <option value="Rừng tự nhiên">Rừng tự nhiên (TXG / TXB / TXN)</option>
+                  <option value="Rừng trồng (Keo lai)">Rừng trồng (Keo lai sản xuất)</option>
+                </select>
+              </div>
+            </div>
+            <div id="rviLabOutput" class="rvi-lab-out">
+              Đang tính toán chỉ số thực vật Radar RVI và phân loại FRMS...
             </div>
           </div>
         </div>

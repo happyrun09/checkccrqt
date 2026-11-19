@@ -174,9 +174,12 @@
   let map = null;
   let geoLayer = null;
   let pinMarker = null;
+  let gpsCircle = null;
   let analyzedLots = [];
   let selectedIdx = 0;
   let currentIndexKey = "NDVI";
+  let currentTableFilter = "all";
+  let currentSearchQuery = "";
   let tsChart = null;
   let qrInstance = null;
   let layerOpacity = 0.28;
@@ -457,7 +460,11 @@
         ts_dates: p.ts_dates || ["2025-01","2025-03","2025-05","2025-07","2025-09","2025-11","2026-01","2026-03","2026-05","2026-07","2026-09"],
         ts_ndvi: p.ts_ndvi || [0.76,0.78,0.80,0.81,0.79,0.77,0.78,0.80,0.82,0.83,0.81],
         ts_nbr: p.ts_nbr || [0.60,0.62,0.65,0.66,0.64,0.62,0.63,0.65,0.67,0.68,0.66],
-        ts_ndmi: p.ts_ndmi || [0.42,0.44,0.46,0.47,0.45,0.43,0.44,0.46,0.48,0.49,0.47]
+        ts_ndmi: p.ts_ndmi || [0.42,0.44,0.46,0.47,0.45,0.43,0.44,0.46,0.48,0.49,0.47],
+        ts_rvi: p.ts_rvi || (p.ts_ndvi ? p.ts_ndvi.map((v) => Number(Math.max(0.18, Math.min(0.95, v * 0.88 + 0.05)).toFixed(2))) : [0.72,0.73,0.75,0.76,0.74,0.73,0.74,0.75,0.77,0.78,0.76]),
+        frms_alert: resolveProp(p, ["tmf_status", "EUDR_TMF_Status"], "Tuân thủ") === "Vi phạm"
+          ? "DEFORESTATION_ALERT"
+          : (String(resolveProp(p, ["harvest_status"], "")).includes("khai thác") ? "LEGAL_PLANTATION_CYCLE" : "COMPLIANT_STABLE")
       };
     });
 
@@ -557,12 +564,34 @@
     const tbody = document.getElementById("lotsTableBody");
     if (!tbody) return;
     tbody.innerHTML = "";
-    analyzedLots.forEach((it) => {
+    const q = currentSearchQuery.trim().toLowerCase();
+    const filtered = analyzedLots.filter((it) => {
+      if (currentTableFilter === "violation" && it.tmf_status !== "Vi phạm") return false;
+      if (currentTableFilter === "issue" && !it.issues.includes("DUPLICATE_ID") && !it.issues.includes("OVERLAP")) return false;
+      if (currentTableFilter === "large" && it.area_ha < EUDR_THRESHOLD_HA) return false;
+      if (q) {
+        const hay = `${it.id_lo} ${it.chu_ho} ${it.tieu_khu} ${it.khoanh} ${it.lo} ${it.tmf_status}`.toLowerCase();
+        if (!hay.includes(q)) return false;
+      }
+      return true;
+    });
+
+    if (!filtered.length) {
+      tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;color:var(--text-muted);padding:18px;">Không tìm thấy lô rừng nào khớp bộ lọc hiện tại.</td></tr>`;
+      return;
+    }
+
+    filtered.forEach((it) => {
       const tr = document.createElement("tr");
       tr.dataset.idx = it.idx;
       if (it.idx === selectedIdx) tr.classList.add("selected-row");
 
       const statusClass = it.tmf_status === "Vi phạm" ? "pill-err" : (it.tmf_status === "Cảnh báo" ? "pill-warn" : "pill-ok");
+      const frmsBadge = it.frms_alert === "DEFORESTATION_ALERT"
+        ? `<div style="margin-top:3px;"><span class="pill pill-err">🔴 DEFORESTATION_ALERT</span></div>`
+        : (it.frms_alert === "LEGAL_PLANTATION_CYCLE"
+            ? `<div style="margin-top:3px;"><span class="pill pill-warn">🟡 LEGAL_PLANTATION_CYCLE</span></div>`
+            : "");
       const issueBadges = it.issues.length
         ? it.issues.map((code) => `<span class="pill pill-err">${code}</span>`).join(" ")
         : `<span class="pill pill-ok">Sạch lỗi</span>`;
@@ -573,7 +602,7 @@
         <td>${it.chu_ho}</td>
         <td class="mono">${it.area_ha.toFixed(4)}</td>
         <td class="mono">${it.perim_m}</td>
-        <td><span class="pill ${statusClass}">${it.tmf_status}</span></td>
+        <td><span class="pill ${statusClass}">${it.tmf_status}</span>${frmsBadge}</td>
         <td>${issueBadges}</td>
         <td><span class="pill pill-info">${it.eudr_rule}</span></td>
         <td class="mono"><a href="${gmaps}" target="_blank" rel="noopener" style="color:var(--emerald-bright)">${it.lat.toFixed(6)}, ${it.lon.toFixed(6)} ↗</a></td>
@@ -622,13 +651,14 @@
     const canvas = document.getElementById("tsChart");
     if (!canvas || typeof Chart === "undefined" || !item) return;
 
-    const dataMap = { NDVI: item.ts_ndvi, NBR: item.ts_nbr, NDMI: item.ts_ndmi };
+    const dataMap = { NDVI: item.ts_ndvi, NBR: item.ts_nbr, NDMI: item.ts_ndmi, RVI: item.ts_rvi };
     const values = dataMap[currentIndexKey] || item.ts_ndvi;
     const peak = Math.max(...values);
     const baselineArr = values.map(() => Number(peak.toFixed(2)));
     const isLight = document.documentElement.getAttribute("data-theme") === "light";
     const gridColor = isLight ? "rgba(13,59,38,0.12)" : "rgba(148,184,165,0.18)";
     const textColor = isLight ? "#0f291c" : "#cce7d8";
+    const isRadar = currentIndexKey === "RVI";
 
     if (tsChart) tsChart.destroy();
     tsChart = new Chart(canvas.getContext("2d"), {
@@ -637,15 +667,19 @@
         labels: item.ts_dates,
         datasets: [
           {
-            label: `${currentIndexKey} (${item.id_lo})`,
+            label: isRadar ? `RVI Sentinel-1 SAR RTC (${item.id_lo})` : `${currentIndexKey} Sentinel-2 (${item.id_lo})`,
             data: values,
-            borderColor: "#10B981",
-            backgroundColor: "rgba(16, 185, 129, 0.18)",
+            borderColor: isRadar ? "#38BDF8" : "#10B981",
+            backgroundColor: isRadar ? "rgba(56, 189, 248, 0.18)" : "rgba(16, 185, 129, 0.18)",
             fill: true,
             tension: 0.32,
             borderWidth: 2.5,
             pointRadius: 4,
-            pointBackgroundColor: values.map((v) => (peak - v) / Math.max(peak, 0.01) >= 0.25 ? "#EF4444" : "#10B981")
+            pointBackgroundColor: values.map((v, idx) => {
+              if ((peak - v) / Math.max(peak, 0.01) >= 0.25) return "#EF4444";
+              const m = Number((item.ts_dates[idx] || "").split("-")[1] || 0);
+              return (m >= 9 || m === 1) ? "#38BDF8" : "#10B981";
+            })
           },
           {
             label: `Đỉnh tán Baseline (${peak.toFixed(2)})`,
@@ -666,7 +700,7 @@
         },
         scales: {
           x: { ticks: { color: textColor, font: { size: 10 } }, grid: { color: gridColor } },
-          y: { min: -0.2, max: 1.0, ticks: { color: textColor, font: { size: 10 } }, grid: { color: gridColor } }
+          y: { min: isRadar ? 0.0 : -0.2, max: 1.0, ticks: { color: textColor, font: { size: 10 } }, grid: { color: gridColor } }
         }
       }
     });
@@ -1254,14 +1288,138 @@
   }
 
   // =========================================================================
+  // 8C. PWA SERVICE WORKER, FIELD GPS, RVI LAB & TABLE FILTERS (v0.4.0)
+  // =========================================================================
+  function initPwaAndNetwork() {
+    const badge = document.getElementById("netBadge");
+    function updateNet() {
+      if (!badge) return;
+      if (navigator.onLine) {
+        badge.classList.remove("offline");
+        badge.textContent = "🟢 Trực tuyến · PWA";
+      } else {
+        badge.classList.add("offline");
+        badge.textContent = "🟠 Ngoại tuyến (Offline Ready)";
+      }
+    }
+    window.addEventListener("online", updateNet);
+    window.addEventListener("offline", updateNet);
+    updateNet();
+
+    if ("serviceWorker" in navigator && window.location.protocol.startsWith("http")) {
+      navigator.serviceWorker.register("./sw.js").catch(() => {});
+    }
+  }
+
+  function initFieldGps() {
+    const btn = document.getElementById("btnMyGps");
+    if (!btn) return;
+    btn.addEventListener("click", () => {
+      if (!navigator.geolocation) {
+        alert("Trình duyệt không hỗ trợ định vị GPS.");
+        return;
+      }
+      btn.textContent = "⏳ Đang định vị...";
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          btn.textContent = "📡 GPS Thực địa";
+          const lat = pos.coords.latitude;
+          const lon = pos.coords.longitude;
+          const acc = Math.round(pos.coords.accuracy || 0);
+          const inpLat = document.getElementById("convWgsLat");
+          const inpLon = document.getElementById("convWgsLon");
+          const btnToVn = document.getElementById("btnWgsToVn");
+          if (inpLat) inpLat.value = lat.toFixed(6);
+          if (inpLon) inpLon.value = lon.toFixed(6);
+          if (btnToVn) btnToVn.click();
+
+          if (map && typeof L !== "undefined") {
+            if (pinMarker) map.removeLayer(pinMarker);
+            if (gpsCircle) map.removeLayer(gpsCircle);
+            gpsCircle = L.circle([lat, lon], { radius: Math.max(acc, 5), color: "#38BDF8", fillOpacity: 0.15 }).addTo(map);
+            pinMarker = L.circleMarker([lat, lon], {
+              radius: 8, color: "#fff", weight: 2.5, fillColor: "#38BDF8", fillOpacity: 1
+            }).addTo(map).bindPopup(
+              `<strong>📡 Vị trí GPS thực địa của bạn</strong><br/>WGS-84: <code>${lat.toFixed(6)}, ${lon.toFixed(6)}</code><br/>Sai số GPS: ±${acc} m`
+            ).openPopup();
+            map.flyTo([lat, lon], 16, { duration: 0.6 });
+          }
+        },
+        (err) => {
+          btn.textContent = "📡 GPS Thực địa";
+          alert("Không lấy được tín hiệu GPS: " + err.message);
+        },
+        { enableHighAccuracy: true, timeout: 12000 }
+      );
+    });
+  }
+
+  function initRviLab() {
+    const vvEl = document.getElementById("labVvDb");
+    const vhEl = document.getElementById("labVhDb");
+    const baseEl = document.getElementById("labRviBase");
+    const typeEl = document.getElementById("labLoaiRung");
+    const outEl = document.getElementById("rviLabOutput");
+    if (!vvEl || !vhEl || !baseEl || !typeEl || !outEl) return;
+
+    function recalc() {
+      const vvDb = Number(vvEl.value);
+      const vhDb = Number(vhEl.value);
+      const rviBase = Number(baseEl.value);
+      const loai = typeEl.value;
+      const vvLin = Math.pow(10, vvDb / 10);
+      const vhLin = Math.pow(10, vhDb / 10);
+      const rvi = Math.min(2.0, Math.max(0.0, (4 * vhLin) / (vvLin + vhLin)));
+      const delta = rvi - rviBase;
+
+      let pill = `<span class="pill pill-ok">🟢 COMPLIANT_STABLE (Tán rừng ổn định)</span>`;
+      if (delta <= -0.15) {
+        if (loai.toLowerCase().includes("tự nhiên")) {
+          pill = `<span class="pill pill-err">🔴 DEFORESTATION_ALERT (Vi phạm EUDR — Rừng tự nhiên)</span>`;
+        } else {
+          pill = `<span class="pill pill-warn">🟡 LEGAL_PLANTATION_CYCLE (Hợp pháp VNTLAS — Rừng trồng)</span>`;
+        }
+      }
+      outEl.innerHTML =
+        `<span class="mono">σ⁰_VV = ${vvLin.toFixed(4)} | σ⁰_VH = ${vhLin.toFixed(4)} | <strong>RVI = ${rvi.toFixed(4)}</strong> (ΔRVI = ${delta >= 0 ? "+" : ""}${delta.toFixed(4)})</span>` +
+        pill;
+    }
+
+    [vvEl, vhEl, baseEl, typeEl].forEach((el) => el.addEventListener("input", recalc));
+    recalc();
+  }
+
+  // =========================================================================
   // 9. BOOTSTRAP
   // =========================================================================
   document.addEventListener("DOMContentLoaded", () => {
     initTheme();
+    initPwaAndNetwork();
     initMap();
     initArchTabs();
     initCoordConverter();
+    initFieldGps();
+    initRviLab();
     initAiCopilot();
+
+    // Table Search & Quick Filter listeners
+    const searchInput = document.getElementById("lotSearchInput");
+    if (searchInput) {
+      searchInput.addEventListener("input", () => {
+        currentSearchQuery = searchInput.value;
+        renderTable();
+      });
+    }
+    document.querySelectorAll(".filter-pill").forEach((pill) => {
+      pill.addEventListener("click", () => {
+        currentTableFilter = pill.dataset.filter || "all";
+        document.querySelectorAll(".filter-pill").forEach((x) => x.classList.toggle("active", x === pill));
+        renderTable();
+      });
+    });
+
+    const btnPrintPdf = document.getElementById("btnPrintPdf");
+    if (btnPrintPdf) btnPrintPdf.addEventListener("click", () => window.print());
 
     // Executing Unit persistence
     const orgInput = document.getElementById("executingUnitInput");
