@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CheckCCRQT v0.3.1 — Cổng Giám sát Rừng Chứng chỉ &amp; Thẩm định EUDR Quảng Trị</title>
-  <meta name="description" content="Hệ thống kiểm tra tính xác thực, giám sát rừng trồng chứng chỉ FSC/PEFC và thẩm định EUDR EU 2023/1115 của Phòng Sử dụng và Phát triển rừng — Chi cục Kiểm lâm tỉnh Quảng Trị." />
+  <title>CheckCCRQT v0.4.0 — Cổng Giám sát Rừng Chứng chỉ &amp; Thẩm định EUDR Quảng Trị</title>
+  <meta name="description" content="Hệ thống kiểm tra tính xác thực, giám sát rừng trồng chứng chỉ FSC/PEFC và thẩm định EUDR EU 2023/1115 (Sentinel-2 + Sentinel-1 SAR RTC + EC JRC GFC2020/TMF) của Phòng Sử dụng và Phát triển rừng — Chi cục Kiểm lâm tỉnh Quảng Trị." />
   <link rel="icon" type="image/png" href="./assets/logo_kiemlam.png" />
 
   <!-- Typography -->
@@ -29,7 +29,7 @@
       <a href="#top" class="brand">
         <img src="./assets/logo_kiemlam.png" alt="Logo Kiểm lâm Việt Nam" />
         <div>
-          <div class="brand-title">CheckCCRQT <span class="badge-ver">v0.3.1</span></div>
+          <div class="brand-title">CheckCCRQT <span class="badge-ver">v0.4.0</span></div>
           <div class="brand-sub">Chi cục Kiểm lâm tỉnh Quảng Trị</div>
         </div>
       </a>
@@ -54,8 +54,8 @@
       <div class="container">
         <div class="hero-card">
           <div class="hero-top">
-            <div class="hero-pill">🌿 CheckCCRQT v0.3.1 • Chuẩn EUDR EU 2023/1115 &amp; RFC 7946 TRACES NT</div>
-            <div class="mono" style="font-size:0.78rem;color:#a7f3d0;">VN-2000 7-Param Helmert · Sentinel-2A/2B/2C · EC JRC TMF v1_2025</div>
+            <div class="hero-pill">🌿 CheckCCRQT v0.4.0 • Chuẩn Kiểm toán EUDR (EU 2023/1115) &amp; VNTLAS</div>
+            <div class="mono" style="font-size:0.78rem;color:#a7f3d0;">Sentinel-2A/2B/2C · Sentinel-1 SAR RTC (RVI) · EC JRC GFC2020 &amp; TMF</div>
           </div>
           <div class="hero-grid">
             <div>
@@ -363,49 +363,97 @@
       </div>
     </section>
 
-    <!-- Scientific Basis & v0.4.0 Roadmap -->
+    <!-- Scientific Basis & v0.4.0 Active Control Board -->
     <section id="science">
       <div class="container">
         <div class="section-head">
           <div>
-            <div class="section-kicker">Nền tảng Học thuật &amp; Pháp lý</div>
-            <h2 class="section-title">06 Nguồn Trích dẫn Khoa học – Pháp lý &amp; Lộ trình v0.4.0</h2>
+            <div class="section-kicker">NỀN TẢNG HỌC THUẬT &amp; PHÁP LÝ • CHUẨN KIỂM TOÁN EUDR</div>
+            <h2 class="section-title">08 Nguồn Trích dẫn Khoa học – Pháp lý &amp; Kiến trúc v0.4.0</h2>
           </div>
         </div>
 
         <div class="sci-grid">
+          <!-- Hàng 1: Nền tảng Khoa học & Viễn thám Đa cảm biến (4 thẻ) -->
           <article class="sci-card">
-            <h4>1. Công trình khoa học gốc EC JRC TMF</h4>
-            <p>Vancutsem, C., Achard, F., Pekel, J.-F., Vieilledent, G., Carboni, S., Simonetti, D., Gallego, J., Aragão, L. E. O. C., &amp; Nasi, R. (2021). <em>Long-term (1990–2019) monitoring of forest cover changes in the humid tropics.</em> Science Advances, 7(10), eabe1603 — mở rộng phiên bản v1_2025.</p>
+            <h4>1. Bản đồ nền chuẩn EUDR (10 m) &amp; EC JRC TMF</h4>
+            <p>Bourgoin, C., et al. (2024), <em>EC JRC Global Forest Cover 2020 (GFC2020)</em> độ phân giải 10 m làm bản đồ nền tham chiếu mốc 31/12/2020; kết hợp chuỗi biến động rừng ẩm nhiệt đới Vancutsem et al. (2021), <em>Science Advances</em>, 7(10), eabe1603 (phiên bản mở rộng <code class="mono">v1_2025</code>) và chuẩn phân loại <em>FAO FRA 2020</em> (Working Paper 188).</p>
           </article>
+
           <article class="sci-card">
-            <h4>2. Quy định chống phá rừng Châu Âu (EUDR)</h4>
-            <p>Regulation (EU) 2023/1115 của Nghị viện và Hội đồng châu Âu: mốc pháp lý 31/12/2020; Điều 2(4) định nghĩa rừng chuẩn FAO (≥0,5 ha, tàn che ≥10%, chiều cao ≥5 m); Điều 9 định vị địa lý GeoJSON phân ngưỡng 4 ha.</p>
+            <h4>2. Viễn thám Quang học Sentinel-2 &amp; Lọc mây Đa lớp</h4>
+            <p>Dữ liệu phản xạ bề mặt ESA Copernicus Sentinel-2A/2B/2C L2A (10–20 m, Drusch et al., 2012), truy xuất qua đặc tả STAC API v1.0 và Cloud-Optimized GeoTIFF (COG) bằng GDAL <code class="mono">/vsicurl/</code>. Khắc phục hạn chế bỏ sót mây ti mỏng của lớp SCL bằng thuật toán lọc mây thế hệ mới <em>Cloud Score+</em> (Pasquarella et al., 2023) / <em>Fmask</em>.</p>
           </article>
+
           <article class="sci-card">
-            <h4>3. Viễn thám ESA Copernicus Sentinel-2A/2B/2C</h4>
-            <p>Sản phẩm phản xạ bề mặt L2A (10–20 m), đặc tả STAC API v1.0 có phân trang, Cloud-Optimized GeoTIFF (COG) qua GDAL <code class="mono">/vsicurl/</code> và mặt nạ mây từ lớp phân loại cảnh SCL.</p>
+            <h4>3. Kiểm định Biến động &amp; Đánh giá Độ chính xác</h4>
+            <p>Áp dụng quy trình chuẩn ước lượng diện tích và kiểm định sai số biến động lớp phủ của Olofsson et al. (2014), <em>Remote Sensing of Environment</em>, 148, 42–57; tính toán chuỗi chỉ số thực vật NBR/NDVI và đối chứng độc lập với bản đồ mất rừng toàn cầu Hansen et al. (2013), <em>Science</em>, 342(6160).</p>
           </article>
+
           <article class="sci-card">
-            <h4>4. Thông tư 25/2022/TT-BNNPTNT &amp; FRMS</h4>
-            <p>Quy định về trồng rừng thay thế và theo dõi diễn biến rừng của Bộ Nông nghiệp và Phát triển nông thôn, kết hợp tương thích từ điển dữ liệu cơ sở dữ liệu FRMS và Quyết định 406/QĐ-CCKL ngày 08/7/2025.</p>
+            <h4>4. Radar Xuyên mây Sentinel-1 SAR (Lõi v0.4.0)</h4>
+            <p>Dữ liệu Radar khẩu độ tổng hợp ESA Sentinel-1 C-band phân cực kép VV/VH (Torres et al., 2012) đã qua <strong>hiệu chỉnh địa hình bức xạ (RTC)</strong> nhằm triệt tiêu nhiễu sườn dốc đồi núi. Ứng dụng thuật toán cảnh báo mất rừng nhiệt đới RADD (Reiche et al., 2021) và chỉ số thực vật Radar tổng hợp <code class="mono">RVI = 4·VH / (VV + VH)</code>.</p>
           </article>
+
+          <!-- Hàng 2: Nền tảng Pháp lý & Chuẩn Dữ liệu Không gian (4 thẻ) -->
           <article class="sci-card">
-            <h4>5. Hệ quy chiếu quốc gia VN-2000</h4>
-            <p>Quyết định 83/2000/QĐ-TTg, Thông tư 973/2001/TT-TCĐC và Quyết định 05/2007/QĐ-BTNMT quy định bộ 7 tham số Helmert tính chuyển giữa WGS-84 và VN-2000 múi 3°.</p>
+            <h4>5. Quy định Chống phá rừng Châu Âu (EUDR)</h4>
+            <p>Regulation (EU) 2023/1115 của Nghị viện và Hội đồng Châu Âu: mốc pháp lý 31/12/2020; Điều 2(4) định nghĩa rừng chuẩn FAO (diện tích <strong>&gt; 0,5 ha</strong>, độ tàn che <strong>&gt; 10%</strong>, chiều cao cây trưởng thành <strong>&gt; 5 m</strong>, không phải đất nông nghiệp/đô thị); Điều 9 quy định định vị địa lý phân ngưỡng <strong>4 ha</strong> kèm <em>EC Guidance Document</em>.</p>
           </article>
+
           <article class="sci-card">
-            <h4>6. Chuẩn dữ liệu mở OGC GeoPackage</h4>
-            <p>ISO/IEC 19100 / OGC 12-128r18 thay thế Shapefile cũ: loại bỏ giới hạn 2 GB, giữ nguyên tên trường tiếng Việt không cắt ngắn 10 ký tự và đóng gói gọn trong 01 tệp duy nhất.</p>
+            <h4>6. Pháp lý Lâm nghiệp &amp; Gỗ hợp pháp Việt Nam (VNTLAS)</h4>
+            <p>Luật Lâm nghiệp số 16/2017/QH14; Nghị định 102/2020/NĐ-CP &amp; Nghị định 120/2024/NĐ-CP về Hệ thống bảo đảm gỗ hợp pháp Việt Nam (VNTLAS); Thông tư 33/2018/TT-BNNPTNT &amp; Thông tư 16/2023/TT-BNNPTNT về theo dõi diễn biến rừng (FRMS); Thông tư 26/2022/TT-BNNPTNT &amp; Quyết định 406/QĐ-CCKL ngày 08/7/2025.</p>
+          </article>
+
+          <article class="sci-card">
+            <h4>7. Hệ quy chiếu Quốc gia VN-2000 &amp; WGS-84</h4>
+            <p>Quyết định 83/2000/QĐ-TTg, Thông tư 973/2001/TT-TCĐC và Quyết định 05/2007/QĐ-BTNMT quy định bộ 7 tham số Helmert chuyển đổi chính xác giữa hệ tọa độ quốc gia VN-2000 múi chiếu 3° (kinh tuyến trục tỉnh Quảng Trị) và hệ tọa độ toàn cầu WGS-84 (EPSG:4326).</p>
+          </article>
+
+          <article class="sci-card">
+            <h4>8. Chuẩn Dữ liệu Mở GeoPackage &amp; GeoJSON</h4>
+            <p>Chuẩn ISO 19100 series / OGC 12-128r18 (GeoPackage) thay thế Shapefile cũ cho lưu trữ nội bộ: loại bỏ giới hạn 2 GB, giữ nguyên trường tiếng Việt có dấu trong 01 tệp SQLite duy nhất. Tự động xuất chuẩn <strong>IETF RFC 7946 (GeoJSON)</strong> làm tròn 6 chữ số thập phân để nộp cổng thông tin EU TRACES NT.</p>
           </article>
         </div>
 
-        <div class="card" style="margin-top:18px;border-color:rgba(212,175,55,0.4);">
-          <div class="section-kicker" style="color:var(--gold);">Định hướng nâng cấp chiến lược • Phiên bản v0.4.0</div>
-          <h3 style="margin:4px 0 8px;">🛰️ Tích hợp Radar khẩu độ tổng hợp xuyên mây Sentinel-1 SAR (C-band, phân cực VV/VH)</h3>
-          <p style="margin:0;color:var(--text-muted);font-size:0.88rem;">
-            Giải quyết triệt để điểm mù thời tiết đặc thù mùa mưa bão kéo dài từ tháng 9 đến tháng 1 hằng năm tại tỉnh Quảng Trị khi ảnh quang học Sentinel-2 bị mây che phủ dày đặc, đảm bảo giám sát biến động tán rừng và khai thác liên tục 24/7 quanh năm.
-          </p>
+        <!-- BẢNG ĐIỀU KHIỂN KIẾN TRÚC V0.4.0 (ĐÃ KÍCH HOẠT) -->
+        <div class="v04-board">
+          <div class="v04-board-head">
+            <div>
+              <div class="section-kicker" style="color:var(--gold);margin:0;">KIẾN TRÚC GIÁM SÁT ĐA CẢM BIẾN QUẢNG TRỊ</div>
+              <h3 style="margin:4px 0 0;font-size:1.18rem;">🛰️ BẢNG ĐIỀU KHIỂN KIẾN TRÚC V0.4.0 — VẬN HÀNH XUYÊN MÂY 12 THÁNG/NĂM</h3>
+            </div>
+            <span class="v04-active-badge">● ĐÃ KÍCH HOẠT • PRODUCTION v0.4.0</span>
+          </div>
+
+          <div class="v04-pillars">
+            <div class="v04-pillar">
+              <h4>1. Chuyển mạch Cảm biến Tự động theo Mùa</h4>
+              <ul>
+                <li><strong>Mùa ít mây (Tháng 2 – Tháng 8):</strong> Ưu tiên <strong>Sentinel-2 L2A</strong> (NDVI/NBR + lọc mây Cloud Score+) làm chuẩn chính giám sát độ che phủ tán rừng.</li>
+                <li><strong>Mùa mưa bão (Tháng 9 – Tháng 1):</strong> Tự động kích hoạt <strong>Sentinel-1 SAR C-band (RTC)</strong> xuyên mây 100%, duy trì giám sát liên tục không gián đoạn 12 tháng/năm tại Quảng Trị.</li>
+              </ul>
+            </div>
+
+            <div class="v04-pillar">
+              <h4>2. Bộ lọc Chống cảnh báo giả (RTC + RVI)</h4>
+              <ul>
+                <li>Sử dụng dữ liệu Radar đã <strong>hiệu chỉnh địa hình bức xạ (RTC)</strong> nhằm triệt tiêu nhiễu tán xạ ngược trên sườn dốc đồi núi miền Trung.</li>
+                <li>Chuyển đổi cường độ từ dB sang thang tuyến tính trước khi tính chỉ số thực vật Radar tổng hợp:</li>
+              </ul>
+              <div class="v04-formula">RVI = (4 · σ⁰_VH) / (σ⁰_VV + σ⁰_VH)</div>
+            </div>
+
+            <div class="v04-pillar">
+              <h4>3. Bộ phân tách Trạng thái Rừng (FRMS Cross-Check)</h4>
+              <ul>
+                <li>Chồng lớp biến động vệ tinh lên bản đồ hiện trạng rừng <strong>FRMS</strong> (TT 33/2018 &amp; QĐ 406/QĐ-CCKL) để tự động phân loại:</li>
+                <li>🔴 <strong>Cảnh báo Đỏ (<code class="mono">DEFORESTATION_ALERT</code>):</strong> Suy giảm sinh khối trên diện tích <em>Rừng tự nhiên</em> sau mốc 31/12/2020 (Vi phạm EUDR).</li>
+                <li>🟡 <strong>Ghi nhận Vàng (<code class="mono">LEGAL_PLANTATION_CYCLE</code>):</strong> Khai thác/trồng lại theo chu kỳ trên <em>Rừng trồng (Keo lai)</em> thuộc đất quy hoạch lâm nghiệp (Hợp pháp VNTLAS).</li>
+              </ul>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -491,7 +539,7 @@
   <footer>
     <div class="container" style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;">
       <div>© 2026 <strong>Phòng Sử dụng và Phát triển rừng — Chi cục Kiểm lâm tỉnh Quảng Trị</strong> (Sở Nông nghiệp và Môi trường tỉnh Quảng Trị).</div>
-      <div class="mono">CheckCCRQT v0.3.1 · GPL-3.0 Open Source · sdptrklqt@gmail.com</div>
+      <div class="mono">CheckCCRQT v0.4.0 · GPL-3.0 Open Source · sdptrklqt@gmail.com</div>
     </div>
   </footer>
 
@@ -503,8 +551,8 @@
   <aside id="aiDrawer" class="ai-drawer" aria-label="Trợ lý AI Kiểm lâm CheckCCRQT">
     <div class="ai-header">
       <div>
-        <div class="ai-header-title">🤖 Trợ lý AI CheckCCRQT v0.3.1</div>
-        <div id="aiModeBadge" class="ai-header-sub">Chế độ: Tri thức nội bộ (Sẵn sàng 24/7)</div>
+        <div class="ai-header-title">🤖 Trợ lý AI CheckCCRQT v0.4.0</div>
+        <div id="aiModeBadge" class="ai-header-sub">Chế độ: Tri thức nội bộ v0.4.0 (Sẵn sàng 24/7)</div>
       </div>
       <div style="display:flex;gap:6px;">
         <button id="aiSettingsBtn" class="ai-icon-btn" type="button" title="Cấu hình API Key (Gemini / DeepSeek / OpenAI)">⚙️ API</button>
@@ -528,10 +576,10 @@
 
     <div class="ai-quick-chips">
       <button class="ai-chip" type="button" data-q="Phân tích chi tiết lô rừng tôi đang chọn trên bản đồ">📍 Phân tích lô đang chọn</button>
-      <button class="ai-chip" type="button" data-q="Quy định Điều 9 EUDR và ngưỡng 4 ha áp dụng thế nào?">🌍 Luật EUDR 4 ha</button>
-      <button class="ai-chip" type="button" data-q="Khai thác rừng trồng keo luân canh có bị coi là phá rừng EUDR không?">🌲 Rừng keo luân canh</button>
-      <button class="ai-chip" type="button" data-q="Cách xử lý lỗi trùng mã lô DUPLICATE_ID và chồng lấn OVERLAP?">⚠️ Lỗi DUPLICATE_ID</button>
-      <button class="ai-chip" type="button" data-q="Hướng dẫn cài đặt CheckCCRQT v0.3.1 trên QGIS">📦 Cách cài QGIS</button>
+      <button class="ai-chip" type="button" data-q="Cơ chế Radar xuyên mây Sentinel-1 RTC, công thức RVI và chuyển mạch theo mùa v0.4.0 hoạt động thế nào?">🛰️ Radar RTC &amp; RVI</button>
+      <button class="ai-chip" type="button" data-q="Phân tách FRMS giữa Cảnh báo Đỏ (rừng tự nhiên) và Ghi nhận Vàng (keo lai VNTLAS) thế nào?">🔴🟡 Phân tách FRMS</button>
+      <button class="ai-chip" type="button" data-q="Quy định Điều 2(4) (>0,5 ha) và Điều 9 EUDR (ngưỡng 4 ha) áp dụng thế nào?">🌍 Luật EUDR &amp; 4 ha</button>
+      <button class="ai-chip" type="button" data-q="Tóm tắt 08 nguồn trích dẫn khoa học và pháp lý chuẩn kiểm toán EUDR v0.4.0">📚 08 Nguồn chuẩn</button>
     </div>
 
     <div id="aiMessages" class="ai-messages"></div>

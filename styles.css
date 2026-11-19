@@ -550,23 +550,148 @@ tbody tr.selected-row { background: rgba(212, 175, 55, 0.16); }
 .arch-panel { display: none; }
 .arch-panel.active { display: grid; grid-template-columns: 1.2fr 1fr; gap: 18px; }
 
-/* Science & Citations */
+/* Science & Citations — v0.4.0 (2 rows x 4 columns desktop grid) */
 .sci-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(4, 1fr);
   gap: 14px;
 }
 
 .sci-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
+  background: #0D2419;
+  border: 1px solid #1B4332;
   border-radius: 14px;
   padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: transform 0.2s ease, border-color 0.2s ease;
 }
 
-.sci-card h4 { margin: 0 0 6px; font-size: 0.94rem; color: var(--emerald-bright); }
-[data-theme="light"] .sci-card h4 { color: var(--forest-mid); }
-.sci-card p { margin: 0; font-size: 0.82rem; color: var(--text-muted); }
+.sci-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(46, 229, 157, 0.55);
+}
+
+.sci-card h4 {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.35;
+  color: #2EE59D;
+}
+
+.sci-card p {
+  margin: 0;
+  font-size: 0.81rem;
+  line-height: 1.55;
+  color: #CBD5E1;
+}
+
+[data-theme="light"] .sci-card {
+  background: #ffffff;
+  border-color: rgba(27, 67, 50, 0.2);
+}
+
+[data-theme="light"] .sci-card h4 { color: #0D3B26; }
+[data-theme="light"] .sci-card p { color: #334155; }
+
+/* Architecture v0.4.0 Active Control Board */
+.v04-board {
+  margin-top: 22px;
+  background: linear-gradient(135deg, rgba(13, 36, 25, 0.96), rgba(16, 48, 33, 0.92));
+  border: 1px solid rgba(46, 229, 157, 0.42);
+  border-radius: 18px;
+  padding: 22px;
+  box-shadow: var(--shadow);
+}
+
+[data-theme="light"] .v04-board {
+  background: linear-gradient(135deg, #f0fdf4, #ecfdf5);
+  border-color: rgba(16, 185, 129, 0.45);
+}
+
+.v04-board-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.v04-active-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: rgba(46, 229, 157, 0.16);
+  border: 1px solid #2EE59D;
+  color: #2EE59D;
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+[data-theme="light"] .v04-active-badge {
+  color: #047857;
+  border-color: #059669;
+  background: rgba(16, 185, 129, 0.12);
+}
+
+.v04-pillars {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+.v04-pillar {
+  background: rgba(7, 23, 16, 0.65);
+  border: 1px solid #1B4332;
+  border-radius: 14px;
+  padding: 15px;
+}
+
+[data-theme="light"] .v04-pillar {
+  background: #ffffff;
+  border-color: rgba(27, 67, 50, 0.18);
+}
+
+.v04-pillar h4 {
+  margin: 0 0 8px;
+  font-size: 0.9rem;
+  color: var(--gold);
+}
+
+[data-theme="light"] .v04-pillar h4 { color: #0D3B26; }
+
+.v04-pillar ul {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 0.81rem;
+  color: #CBD5E1;
+  line-height: 1.55;
+}
+
+[data-theme="light"] .v04-pillar ul { color: #334155; }
+
+.v04-formula {
+  display: inline-block;
+  margin-top: 6px;
+  padding: 4px 10px;
+  border-radius: 8px;
+  background: rgba(46, 229, 157, 0.12);
+  border: 1px solid rgba(46, 229, 157, 0.35);
+  color: #2EE59D;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.79rem;
+  font-weight: 700;
+}
+
+[data-theme="light"] .v04-formula {
+  color: #047857;
+  background: rgba(16, 185, 129, 0.1);
+}
 
 /* QR & Download */
 .install-grid {
@@ -883,11 +1008,15 @@ footer {
   .hero-grid, .workbench-grid, .arch-panel.active, .install-grid {
     grid-template-columns: 1fr;
   }
+  .sci-grid { grid-template-columns: repeat(2, 1fr); }
+  .v04-pillars { grid-template-columns: 1fr; }
   .stat-strip { grid-template-columns: repeat(2, 1fr); }
   #map { height: 420px; }
 }
 
 @media (max-width: 640px) {
+  .sci-grid { grid-template-columns: 1fr; }
+  .v04-board { padding: 14px; }
   .container { padding: 0 14px; }
   .nav-inner { flex-wrap: wrap; gap: 10px; padding: 10px 0; }
   .nav-links {

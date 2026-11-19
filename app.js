@@ -980,19 +980,19 @@
       if (!it) return "Bạn hãy bấm vào một lô rừng trên bản đồ hoặc bảng bên dưới để tôi phân tích chi tiết nhé.";
       const advice = [];
       if (it.tmf_status === "Vi phạm") {
-        advice.push("• Cần lập biên bản kiểm tra thực địa xác minh nguồn gốc đất trước 31/12/2020 (đối chiếu ảnh Sentinel-2 và hồ sơ giao đất/chứng chỉ).");
+        advice.push("• 🔴 CẢNH BÁO ĐỎ (DEFORESTATION_ALERT): Đối chiếu FRMS xác minh rừng tự nhiên mất sau 31/12/2020 (tham chiếu GFC2020 10m & JRC TMF v1_2025).");
       } else if (it.tmf_status === "Cảnh báo") {
-        advice.push("• Lô có biến động tán lớp 50 — cần đối chiếu nhật ký khai thác tỉa thưa/khai thác trắng của chủ rừng.");
+        advice.push("• 🟡 GHI NHẬN VÀNG / CẦN ĐỐI SOÁT: Lô có biến động tán (Lớp 50) — kiểm tra chéo bản đồ FRMS (TT 33/2018) để phân biệt khai thác tỉa thưa rừng trồng hay tác động rừng tự nhiên.");
       } else {
-        advice.push("• Lô đạt trạng thái Tuân thủ EUDR, đủ điều kiện xuất tệp GeoJSON RFC 7946 nạp cổng TRACES NT.");
+        advice.push("• ✅ Lô đạt trạng thái Tuân thủ EUDR, đủ điều kiện xuất tệp GeoJSON chuẩn IETF RFC 7946 nạp cổng EU TRACES NT.");
       }
       if (it.issues.includes("DUPLICATE_ID")) {
-        advice.push("• CẢNH BÁO ĐỎ: Phát hiện trùng mã lô (DUPLICATE_ID) — cần rà soát lại danh sách kê khai chủ rừng để loại bỏ trùng lặp.");
+        advice.push("• CẢNH BÁO ĐỎ: Phát hiện trùng mã lô (DUPLICATE_ID) — cần rà soát lại danh sách kê khai chủ rừng.");
       }
       if (it.issues.includes("OVERLAP")) {
-        advice.push("• Phát hiện chồng lấn ranh giới (OVERLAP) — cần biên tập chỉnh lý ranh giới trong QGIS trước khi xuất hồ sơ.");
+        advice.push("• Phát hiện chồng lấn ranh giới (OVERLAP) — cần chỉnh lý ranh giới trong QGIS trước khi xuất hồ sơ.");
       }
-      advice.push(`• Điều 9 EUDR: ${it.area_ha >= 4.0 ? "Lô ≥ 4,0 ha BẮT BUỘC xuất dạng Polygon khép kín." : "Lô < 4,0 ha có thể xuất Polygon hoặc rút gọn thành điểm Point."}`);
+      advice.push(`• Điều 9 EUDR: ${it.area_ha >= 4.0 ? "Lô ≥ 4,0 ha BẮT BUỘC xuất dạng Polygon khép kín (CCW, 6 số lẻ)." : "Lô < 4,0 ha có thể xuất Polygon hoặc rút gọn thành điểm Point."}`);
       return (
         `📍 PHÂN TÍCH LÔ ${it.id_lo} (${it.chu_ho}):\n` +
         `- Diện tích: ${it.area_ha.toFixed(4)} ha | Chu vi: ${it.perim_m} m\n` +
@@ -1000,71 +1000,106 @@
         `- Trạng thái JRC TMF: ${it.tmf_status}${it.tmf_year ? " (Năm " + it.tmf_year + ")" : ""}\n` +
         `- Hiện trạng Sentinel-2: ${it.harvest_status}${it.harvest_date ? " (" + it.harvest_date + ")" : ""}\n` +
         `- Lỗi không gian: ${it.issues.length ? it.issues.join(", ") : "Sạch lỗi"}\n\n` +
-        `Khuyến nghị nghiệp vụ:\n${advice.join("\n")}`
+        `Khuyến nghị nghiệp vụ v0.4.0:\n${advice.join("\n")}`
       );
     }
 
-    if (q.includes("4 ha") || q.includes("điều 9") || q.includes("eudr") || q.includes("traces")) {
+    if (q.includes("radar") || q.includes("sentinel-1") || q.includes("sar") || q.includes("rvi") || q.includes("rtc") || q.includes("mùa mưa") || q.includes("chuyển mạch")) {
       return (
-        "🌍 QUY ĐỊNH ĐIỀU 9 EUDR (EU 2023/1115) & NGƯỠNG 4 HA:\n" +
-        "• Mốc pháp lý: Không gây mất rừng/suy thoái rừng tự nhiên sau ngày 31/12/2020 (định nghĩa rừng FAO: ≥ 0,5 ha, tàn che ≥ 10%, cao ≥ 5 m).\n" +
-        "• Phân ngưỡng định vị địa lý (GeoJSON RFC 7946 / TRACES NT):\n" +
-        "  - Lô rừng ≥ 4,0 ha: BẮT BUỘC cung cấp đa giác khép kín (Polygon/MultiPolygon), WGS-84 (EPSG:4326), tối thiểu 6 chữ số thập phân, vòng ngoài ngược chiều kim đồng hồ (CCW).\n" +
-        "  - Lô rừng < 4,0 ha: Cho phép xuất Polygon đầy đủ hoặc rút gọn thành 1 tọa độ điểm (Point).\n" +
-        "👉 Bạn có thể bật/tắt công tắc 'Rút gọn lô < 4 ha' ngay trên Trạm EUDR và bấm 'Xuất GeoJSON EUDR' để tải tệp chuẩn."
+        "🛰️ LÕI RADAR XUYÊN MÂY SENTINEL-1 SAR RTC & RVI (v0.4.0):\n" +
+        "• Chuyển mạch cảm biến tự động theo mùa tại Quảng Trị:\n" +
+        "  - Mùa ít mây (Tháng 2 – Tháng 8): Ưu tiên Sentinel-2 L2A (NDVI/NBR + lọc mây Cloud Score+ / Fmask).\n" +
+        "  - Mùa mưa bão (Tháng 9 – Tháng 1): Tự động kích hoạt Sentinel-1 SAR C-band phân cực kép VV/VH xuyên mây 100%.\n" +
+        "• Hiệu chỉnh địa hình bức xạ (RTC): Triệt tiêu nhiễu tán xạ ngược trên sườn dốc đồi núi miền Trung (Torres et al., 2012; RADD — Reiche et al., 2021).\n" +
+        "• Công thức chỉ số thực vật Radar tổng hợp (phải đổi từ dB sang thang tuyến tính σ⁰ = 10^(dB/10) trước khi tính):\n" +
+        "  RVI = (4 · σ⁰_VH) / (σ⁰_VV + σ⁰_VH)."
       );
     }
 
-    if (q.includes("keo") || q.includes("luân canh") || q.includes("tái sinh")) {
+    if (q.includes("frms") || q.includes("phân tách") || q.includes("vntlas") || q.includes("keo") || q.includes("luân canh") || q.includes("rừng tự nhiên") || q.includes("cảnh báo đỏ")) {
       return (
-        "🌲 RỪNG TRỒNG KEO LUÂN CANH & EUDR:\n" +
-        "• Theo Quy định (EU) 2023/1115, việc khai thác rừng trồng keo đến tuổi chu kỳ rồi trồng lại rừng keo mới trên đất rừng sản xuất đã có trước 31/12/2020 KHÔNG bị coi là phá rừng EUDR.\n" +
-        "• Trong CheckCCRQT v0.3.1, thuật toán cửa sổ xác nhận K=2 kỳ liên tiếp (sửa BUG-05) giúp bắt chính xác ngày khai thác ngay cả khi rừng keo trồng lại nhanh và phục hồi xanh cuối kỳ."
+        "🔴🟡 BỘ PHÂN TÁCH TRẠNG THÁI RỪNG FRMS CROSS-CHECK & VNTLAS (v0.4.0):\n" +
+        "Chồng lớp biến động vệ tinh lên bản đồ hiện trạng rừng FRMS (Thông tư 33/2018/TT-BNNPTNT, TT 16/2023/TT-BNNPTNT, QĐ 406/QĐ-CCKL) và khung pháp lý VNTLAS (Luật Lâm nghiệp 16/2017/QH14, NĐ 102/2020/NĐ-CP, NĐ 120/2024/NĐ-CP, TT 26/2022/TT-BNNPTNT):\n" +
+        "• 🔴 Cảnh báo Đỏ (DEFORESTATION_ALERT — Vi phạm EUDR): Suy giảm sinh khối trên diện tích RỪNG TỰ NHIÊN sau mốc 31/12/2020.\n" +
+        "• 🟡 Ghi nhận Vàng (LEGAL_PLANTATION_CYCLE — Hợp pháp VNTLAS): Khai thác/trồng lại theo chu kỳ trên RỪNG TRỒNG (Keo lai) thuộc đất quy hoạch lâm nghiệp — KHÔNG bị coi là phá rừng EUDR."
+      );
+    }
+
+    if (q.includes("08 nguồn") || q.includes("8 nguồn") || q.includes("trích dẫn") || q.includes("khoa học") || q.includes("gfc2020") || q.includes("olofsson") || q.includes("cloud score")) {
+      return (
+        "📚 08 NGUỒN TRÍCH DẪN KHOA HỌC – PHÁP LÝ CHUẨN KIỂM TOÁN EUDR (v0.4.0):\n" +
+        "1. Bourgoin et al. (2024) EC JRC GFC2020 (10 m) + Vancutsem et al. (2021, Science Advances, v1_2025) + FAO FRA 2020 (WP 188).\n" +
+        "2. Sentinel-2A/2B/2C L2A (Drusch et al., 2012), STAC API v1.0, COG /vsicurl/, lọc mây Cloud Score+ (Pasquarella et al., 2023) / Fmask.\n" +
+        "3. Kiểm định biến động Olofsson et al. (2014, RSE) + đối chứng Hansen et al. (2013, Science).\n" +
+        "4. Radar Sentinel-1 SAR RTC (Torres et al., 2012), RADD (Reiche et al., 2021), RVI = 4·VH/(VV+VH).\n" +
+        "5. Regulation (EU) 2023/1115 (EUDR): mốc 31/12/2020, Điều 2(4) (>0,5 ha, >10%, >5 m), Điều 9 (4 ha) + EC Guidance Document.\n" +
+        "6. Pháp lý VNTLAS & FRMS: Luật 16/2017/QH14, NĐ 102/2020 & 120/2024, TT 33/2018 & 16/2023, TT 26/2022, QĐ 406/QĐ-CCKL.\n" +
+        "7. VN-2000 & WGS-84: QĐ 83/2000/QĐ-TTg, TT 973/2001, QĐ 05/2007/QĐ-BTNMT (7 tham số Helmert).\n" +
+        "8. ISO 19100 series / OGC 12-128r18 (GeoPackage) & IETF RFC 7946 (GeoJSON 6 số lẻ nộp TRACES NT)."
+      );
+    }
+
+    if (q.includes("4 ha") || q.includes("điều 9") || q.includes("điều 2") || q.includes("eudr") || q.includes("traces") || q.includes("0,5 ha")) {
+      return (
+        "🌍 QUY ĐỊNH CHỐNG PHÁ RỪNG CHÂU ÂU (EUDR — EU 2023/1115):\n" +
+        "• Mốc pháp lý: 31/12/2020 (tham chiếu bản đồ nền 10 m EC JRC GFC2020 — Bourgoin et al., 2024).\n" +
+        "• Điều 2(4) — Định nghĩa rừng chuẩn FAO: diện tích > 0,5 ha, độ tàn che > 10%, chiều cao cây trưởng thành > 5 m (không phải đất nông nghiệp/đô thị).\n" +
+        "• Điều 9 — Định vị địa lý (IETF RFC 7946 / TRACES NT):\n" +
+        "  - Lô rừng ≥ 4,0 ha: BẮT BUỘC xuất Polygon/MultiPolygon khép kín, WGS-84 (EPSG:4326), làm tròn 6 chữ số thập phân, vòng ngoài CCW.\n" +
+        "  - Lô rừng < 4,0 ha: Cho phép xuất Polygon đầy đủ hoặc rút gọn thành 1 điểm (Point)."
       );
     }
 
     if (q.includes("duplicate") || q.includes("trùng mã") || q.includes("overlap") || q.includes("chồng lấn")) {
       return (
         "⚠️ XỬ LÝ LỖI DUPLICATE_ID & OVERLAP:\n" +
-        "• DUPLICATE_ID (Mức Đỏ): Bắt tự động các lô kê khai trùng mã (đã chuẩn hóa khoảng trắng/hoa-thường) giữa các chủ rừng hoặc nhóm chứng chỉ.\n" +
+        "• DUPLICATE_ID (Mức Đỏ): Bắt tự động các lô kê khai trùng mã (chuẩn hóa khoảng trắng/hoa-thường) giữa các chủ rừng/nhóm chứng chỉ.\n" +
         "• OVERLAP (Chồng lấn): Xác định vùng đa giác chồng đè diện tích thực tế > 1 m².\n" +
-        "👉 Cách xử lý: Dùng Tab 2 trong Plugin QGIS CheckCCRQT v0.3.1 để lọc danh sách lỗi, xuất báo cáo HTML, chỉnh sửa ranh giới/mã lô trên QGIS rồi chạy lại xác thực."
+        "👉 Xử lý trên Tab 2 Plugin QGIS CheckCCRQT → lọc lỗi → chỉnh lý ranh giới/mã lô rồi xuất lại hồ sơ GeoJSON RFC 7946."
       );
     }
 
     if (q.includes("vn-2000") || q.includes("vn2000") || q.includes("helmert") || q.includes("tọa độ") || q.includes("106")) {
       return (
         "🧭 HỆ QUY CHIẾU VN-2000 QUẢNG TRỊ (7 THAM SỐ HELMERT):\n" +
-        "• Quảng Trị (Mới - sau sáp nhập) & Quảng Bình (Cũ): Kinh tuyến trục 106°00' (múi 3°, k=0.9999, x_0=500000).\n" +
-        "• Quảng Trị (Cũ): Kinh tuyến trục 106°15'.\n" +
-        "• CheckCCRQT v0.3.1 đồng bộ đầy đủ 7 tham số Helmert theo QĐ 05/2007/QĐ-BTNMT (+towgs84=-191.90441429,...), loại bỏ hoàn toàn sai số ~105–200m. Bạn có thể thử ngay ở mục 'Bộ Chuyển đổi Tọa độ Sống' trên trang!"
+        "• Cơ sở pháp lý: QĐ 83/2000/QĐ-TTg, TT 973/2001/TT-TCĐC, QĐ 05/2007/QĐ-BTNMT.\n" +
+        "• Quảng Trị (Mới) & Quảng Bình (Cũ): Kinh tuyến trục 106°00' (múi 3°, k=0.9999, x_0=500000); Quảng Trị (Cũ): 106°15'.\n" +
+        "• Đồng bộ đầy đủ 7 tham số Helmert (+towgs84=-191.90441429,...), loại bỏ hoàn toàn sai số dịch chuyển ~105–200m."
       );
     }
 
     if (q.includes("cài") || q.includes("qgis") || q.includes("tải") || q.includes("zip")) {
       return (
-        "📦 HƯỚNG DẪN CÀI ĐẶT CHECKCCRQT v0.3.1 TRÊN QGIS (3.28 LTR → 3.44+):\n" +
-        "1. Bấm nút 'Tải v0.3.1 (.zip)' ở góc trên để tải CheckCCRQT_v0.3.1.zip.\n" +
-        "2. Mở QGIS → chọn Plugins → Manage and Install Plugins...\n" +
-        "3. Chọn thẻ 'Install from ZIP' → chọn tệp CheckCCRQT_v0.3.1.zip → bấm 'Install Plugin'.\n" +
-        "4. Biểu tượng CheckCCRQT sẽ xuất hiện trên thanh công cụ QGIS, hỗ trợ chạy 1-Click EUDR xuất đồng thời 4 tệp (HTML, Excel, PDF, GeoJSON)."
+        "📦 HƯỚNG DẪN CÀI ĐẶT PLUGIN CHECKCCRQT TRÊN QGIS (3.28 LTR → 3.44+):\n" +
+        "1. Bấm nút tải gói .zip sạch ở góc trên.\n" +
+        "2. Mở QGIS → Plugins → Manage and Install Plugins... → Install from ZIP → chọn tệp vừa tải → Install Plugin.\n" +
+        "3. Đối với luồng Radar xuyên mây v0.4.0 (Sentinel-1 RTC + RVI), chạy script Python `scripts/eudr_v04_radar_pipeline.py` kèm `requirements.txt`."
       );
     }
 
     return (
-      "🤖 Tôi là Trợ lý AI CheckCCRQT v0.3.1 (Phòng Sử dụng và Phát triển rừng — Chi cục Kiểm lâm tỉnh Quảng Trị).\n" +
+      "🤖 Tôi là Trợ lý AI CheckCCRQT v0.4.0 (Phòng Sử dụng và Phát triển rừng — Chi cục Kiểm lâm tỉnh Quảng Trị).\n" +
       "Bạn có thể hỏi tôi về:\n" +
       "• Phân tích chi tiết lô rừng đang chọn trên bản đồ\n" +
-      "• Quy định EUDR EU 2023/1115 (ngưỡng 4 ha, mốc 31/12/2020, rừng keo luân canh)\n" +
-      "• Hệ tọa độ VN-2000 Quảng Trị (7 tham số Helmert)\n" +
-      "• Cách xử lý lỗi DUPLICATE_ID, OVERLAP và cài đặt Plugin trên QGIS.\n" +
-      "💡 Mẹo: Bấm nút '⚙️ API' ở góc trên để gắn khóa Gemini / DeepSeek / OpenAI của riêng bạn nếu muốn hỏi đáp mở rộng bằng AI trực tuyến!"
+      "• Radar xuyên mây Sentinel-1 SAR RTC, công thức RVI & chuyển mạch theo mùa v0.4.0\n" +
+      "• Phân tách FRMS: Cảnh báo Đỏ (rừng tự nhiên) vs Ghi nhận Vàng (keo lai VNTLAS)\n" +
+      "• 08 nguồn trích dẫn khoa học – pháp lý chuẩn kiểm toán EUDR (GFC2020, Cloud Score+, Olofsson, Điều 2(4) >0,5 ha, Điều 9 4 ha)\n" +
+      "💡 Bấm '⚙️ API' để kết nối khóa Gemini / DeepSeek / OpenAI cục bộ trên trình duyệt nếu cần hỏi đáp chuyên sâu!"
     );
   }
 
   async function callLiveAiApi(provider, apiKey, userQuestion) {
     const sysPrompt =
-      "Bạn là Trợ lý AI chuyên gia Lâm nghiệp, QGIS, VN-2000 và Quy định EUDR (EU 2023/1115) của Phòng Sử dụng và Phát triển rừng — Chi cục Kiểm lâm tỉnh Quảng Trị (phần mềm CheckCCRQT v0.3.1). " +
+      "Bạn là Kiến trúc sư trưởng GIS Viễn thám & chuyên gia EUDR (Regulation EU 2023/1115) / VNTLAS của Phòng Sử dụng và Phát triển rừng — Chi cục Kiểm lâm tỉnh Quảng Trị (Hệ thống CheckCCRQT v0.4.0). " +
+      "Kiến thức bắt buộc tuân thủ chính xác:\n" +
+      "- 08 nguồn chuẩn: (1) Bourgoin et al. 2024 EC JRC GFC2020 (10m) + Vancutsem et al. 2021 Science Advances (TMF v1_2025) + FAO FRA 2020 WP 188; " +
+      "(2) Sentinel-2A/2B/2C L2A (Drusch et al. 2012), STAC API v1.0, COG /vsicurl/, Cloud Score+ (Pasquarella et al. 2023) / Fmask; " +
+      "(3) Olofsson et al. 2014 RSE + Hansen et al. 2013 Science; " +
+      "(4) Sentinel-1 SAR C-band VV/VH RTC (Torres et al. 2012), RADD (Reiche et al. 2021), RVI = 4*VH/(VV+VH) trên thang tuyến tính; " +
+      "(5) Regulation (EU) 2023/1115: mốc 31/12/2020, Điều 2(4) rừng FAO >0,5 ha, >10% tàn che, >5m chiều cao, Điều 9 ngưỡng 4 ha + EC Guidance; " +
+      "(6) VNTLAS & FRMS: Luật Lâm nghiệp 16/2017/QH14, NĐ 102/2020 & 120/2024, TT 33/2018 & TT 16/2023, TT 26/2022, QĐ 406/QĐ-CCKL; " +
+      "(7) VN-2000 7 tham số Helmert (QĐ 83/2000, TT 973/2001, QĐ 05/2007); (8) ISO 19100 series / OGC 12-128r18 GeoPackage & IETF RFC 7946 GeoJSON 6 số lẻ.\n" +
+      "- Cơ chế v0.4.0: Mùa ít mây T2-T8 dùng Sentinel-2, mùa mưa bão T9-T1 chuyển mạch Sentinel-1 RTC + RVI; chồng lớp FRMS phân tách Cảnh báo Đỏ (DEFORESTATION_ALERT rừng tự nhiên) và Ghi nhận Vàng (LEGAL_PLANTATION_CYCLE rừng trồng keo lai).\n" +
       "Trả lời ngắn gọn, chính xác, chuyên nghiệp bằng tiếng Việt.\n" +
       "Ngữ cảnh lô rừng người dùng đang xem: " + buildSelectedLotContext();
 
@@ -1213,8 +1248,8 @@
     refreshModeBadge();
     appendMsg(
       "bot",
-      "Xin chào! Tôi là Trợ lý AI CheckCCRQT v0.3.1.\n" +
-      "Bấm vào một câu hỏi gợi ý bên trên để tôi phân tích ngay lô rừng bạn đang chọn, hoặc bấm '⚙️ API' để kết nối khóa Gemini / DeepSeek / OpenAI của riêng bạn."
+      "Xin chào! Tôi là Trợ lý AI CheckCCRQT v0.4.0 (Kiến trúc Đa cảm biến Sentinel-2 + Sentinel-1 SAR RTC & Chuẩn Kiểm toán EUDR/VNTLAS).\n" +
+      "Bấm vào một câu hỏi gợi ý bên trên hoặc nhập câu hỏi bất kỳ, hoặc bấm '⚙️ API' để kết nối khóa Gemini / DeepSeek / OpenAI cục bộ."
     );
   }
 
