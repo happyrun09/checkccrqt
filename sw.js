@@ -1,11 +1,12 @@
-/* CheckCCRQT v0.4.0+ — Offline-First PWA Service Worker */
-const CACHE_NAME = "checkccrqt-v040-modular-v2";
+/* CheckCCRQT v0.4.0+ Pro / v0.5.0 — Offline-First PWA Service Worker */
+const CACHE_NAME = "checkccrqt-v050-composer-v1";
 const APP_SHELL = [
   "./",
   "./index.html",
   "./css/style.css",
   "./js/eudr-validator.js",
   "./js/knowledge-base.js",
+  "./js/map-composer.js",
   "./js/app.js",
   "./data/sample-cam-lo.geojson",
   "./manifest.webmanifest",

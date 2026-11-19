@@ -355,7 +355,13 @@
       box.innerHTML = `
         <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;">
           <strong>Lô đang chọn: <span class="mono" style="color:var(--emerald)">${it.id_lo}</span> — ${it.chu_ho}</strong>
-          <a href="${gmaps}" target="_blank" rel="noopener" class="btn btn-outline btn-sm">Mở Google Maps</a>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;">
+            <button id="btnLotPrintComposer" type="button" class="btn btn-emerald btn-sm" title="In Bản đồ Kỹ thuật Khung đôi A4 cho Lô này kèm bảng tọa độ VN-2000">
+              <svg class="svg-ico" viewBox="0 0 24 24"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
+              In Bản đồ A4 Lô này
+            </button>
+            <a href="${gmaps}" target="_blank" rel="noopener" class="btn btn-outline btn-sm">Mở Google Maps</a>
+          </div>
         </div>
         <div style="color:var(--text-muted);font-size:0.77rem;margin-top:4px;">${it.scenario}</div>
         <div class="lot-detail-grid">
@@ -367,6 +373,12 @@
           <div>WGS-84: <strong class="mono">${it.lat.toFixed(6)}, ${it.lon.toFixed(6)}</strong></div>
         </div>
       `;
+      box.querySelector("#btnLotPrintComposer")?.addEventListener("click", () => {
+        const unit = orgInput ? orgInput.value.trim() : V.DEFAULT_ORG;
+        if (global.CheckCCRQTComposer) {
+          global.CheckCCRQTComposer.openDoubleLineMapPrint(it, analyzedLots, unit);
+        }
+      });
     }
     renderChart(it);
   }
@@ -729,15 +741,42 @@
       }
     });
 
-    // Export GeoJSON RFC 7946, CSV, Print PDF
+    // Export GeoJSON RFC 7946, Multi-Sheet Excel, Word, Technical Map, CSV, Print PDF
     document.getElementById("btnExportEudrGeoJson")?.addEventListener("click", () => {
+      if (!analyzedLots.length) return alert("Vui lòng nạp hoặc phân tích lô rừng trước khi xuất GeoJSON!");
       const ptUnder4 = Boolean(document.getElementById("chkPointUnder4Ha")?.checked);
       const unit = orgInput ? orgInput.value.trim() : V.DEFAULT_ORG;
       const fc = V.buildRfc7946Export(analyzedLots, ptUnder4, unit);
       downloadFile("Ho_So_EUDR_TRACES_RFC7946.geojson", JSON.stringify(fc, null, 2), "application/geo+json;charset=utf-8");
     });
 
+    document.getElementById("btnExportMultiSheetExcel")?.addEventListener("click", () => {
+      if (!analyzedLots.length) return alert("Vui lòng nạp hoặc phân tích lô rừng trước khi xuất Excel 3-Sheet!");
+      const unit = orgInput ? orgInput.value.trim() : V.DEFAULT_ORG;
+      if (global.CheckCCRQTComposer) {
+        global.CheckCCRQTComposer.exportFormulaExcel(analyzedLots, unit);
+      }
+    });
+
+    document.getElementById("btnExportWordDoc")?.addEventListener("click", () => {
+      if (!analyzedLots.length) return alert("Vui lòng nạp hoặc phân tích lô rừng trước khi xuất Báo cáo Word!");
+      const unit = orgInput ? orgInput.value.trim() : V.DEFAULT_ORG;
+      if (global.CheckCCRQTComposer) {
+        global.CheckCCRQTComposer.exportForestryWord(analyzedLots, unit);
+      }
+    });
+
+    document.getElementById("btnExportMapComposer")?.addEventListener("click", () => {
+      if (!analyzedLots.length) return alert("Vui lòng nạp hoặc phân tích lô rừng trước khi xuất Bản đồ Kỹ thuật!");
+      const unit = orgInput ? orgInput.value.trim() : V.DEFAULT_ORG;
+      const currentLot = analyzedLots[selectedIdx] || analyzedLots[0];
+      if (global.CheckCCRQTComposer) {
+        global.CheckCCRQTComposer.openDoubleLineMapPrint(currentLot, analyzedLots, unit);
+      }
+    });
+
     document.getElementById("btnExportCsv")?.addEventListener("click", () => {
+      if (!analyzedLots.length) return alert("Vui lòng nạp hoặc phân tích lô rừng trước khi xuất CSV!");
       const headers = ["Ma_Lo", "Chu_Ho", "Loai_Rung_FRMS", "Dien_Tich_Ha", "Chu_Vi_m", "Phan_Loai_v04", "Loi_RFC7946", "Nghia_Vu_Dieu_9", "Vi_Do_WGS84", "Kinh_Do_WGS84"];
       const rows = analyzedLots.map((it) => [
         it.id_lo, it.chu_ho, it.loai_rung, it.area_ha, it.perim_m, it.frms_alert,
