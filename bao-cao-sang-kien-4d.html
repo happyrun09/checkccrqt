@@ -2924,6 +2924,7 @@
   <footer class="bottom-studio-dock">
     <div class="dock-nav-cluster">
       <button class="nav-action-btn" onclick="prevSlide()">◀ Trang Trước</button>
+      <select class="slide-select-dropdown" id="slideJumpSelect" onchange="goToSlide(parseInt(this.value, 10), true)" aria-label="Chọn Slide" style="background:#041509; color:#2ee59d; border:1px solid rgba(46,229,157,0.3); border-radius:6px; padding:3px 8px; font-size:0.75rem; font-weight:700; cursor:pointer; max-width:180px;"></select>
       <div class="dots-wrapper" id="dotsContainer"></div>
     </div>
 
@@ -3649,10 +3650,10 @@
       const track = document.getElementById("slidesTrack");
       const jumpSelect = document.getElementById("slideJumpSelect");
       const dotsContainer = document.getElementById("dotsContainer");
-      if (!track || !jumpSelect || !dotsContainer) return;
+      if (!track || !dotsContainer) return;
 
       track.innerHTML = "";
-      jumpSelect.innerHTML = "";
+      if (jumpSelect) jumpSelect.innerHTML = "";
       dotsContainer.innerHTML = "";
 
       INITIATIVE_SLIDES.forEach((slide, idx) => {
@@ -3760,7 +3761,7 @@
         const opt = document.createElement("option");
         opt.value = String(idx);
         opt.textContent = `${String(idx + 1).padStart(2, "0")}. ${slide.title.replace(/^\d+\.\s*/, '')}`;
-        jumpSelect.appendChild(opt);
+        if (jumpSelect) jumpSelect.appendChild(opt);
 
         const dot = document.createElement("div");
         dot.className = "slide-dot" + (idx === currentSlide ? " active" : "");
@@ -4481,9 +4482,9 @@
       document.documentElement.classList.add("mode-" + mode);
       document.body.classList.add("mode-" + mode);
 
-      document.getElementById("btnModeHorizontal").classList.toggle("active", mode === "horizontal");
-      document.getElementById("btnModeVertical").classList.toggle("active", mode === "vertical");
-      document.getElementById("btnModeScroll").classList.toggle("active", mode === "scroll");
+      const btnH = document.getElementById("btnModeHorizontal"); if (btnH) btnH.classList.toggle("active", mode === "horizontal");
+      const btnV = document.getElementById("btnModeVertical"); if (btnV) btnV.classList.toggle("active", mode === "vertical");
+      const btnS = document.getElementById("btnModeScroll"); if (btnS) btnS.classList.toggle("active", mode === "scroll");
 
       if (currentWorkspace !== "deck") switchWorkspace("deck");
       updateSlidePosition();
@@ -4542,15 +4543,15 @@
     // Speech Narration Dual-Engine
     function setVoiceGender(gender) {
       voiceGender = gender;
-      document.getElementById("btnVoiceMale").classList.toggle("active", gender === "male");
-      document.getElementById("btnVoiceFemale").classList.toggle("active", gender === "female");
+      const btnM = document.getElementById("btnVoiceMale"); if (btnM) btnM.classList.toggle("active", gender === "male");
+      const btnF = document.getElementById("btnVoiceFemale"); if (btnF) btnF.classList.toggle("active", gender === "female");
       showToast(gender === "male" ? "👨 Giọng thuyết minh Nam" : "👩 Giọng thuyết minh Nữ");
       if (isAutoLecturing) playSlideNarration(currentSlide, true);
     }
 
     function onSpeedChange(val) {
       speechRate = parseFloat(val);
-      document.getElementById("topSpeedVal").textContent = speechRate.toFixed(2) + "x";
+      const sVal = document.getElementById("topSpeedVal"); if (sVal) sVal.textContent = speechRate.toFixed(2) + "x";
       if (isAutoLecturing) playSlideNarration(currentSlide, true);
     }
 
