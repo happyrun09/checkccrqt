@@ -947,6 +947,48 @@
       .paper-sheet { padding: 0; box-shadow: none; max-width: 100%; }
       body { background: #fff; color: #000; overflow: visible; }
     }
+  
+    /* Cinema & Splitter Mode Controls */
+    .visual-toolbar-sub {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 6px;
+      margin-bottom: 4px;
+    }
+    .btn-sub-tool {
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(46, 229, 157, 0.4);
+      color: #cbd5e1;
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+    .btn-sub-tool:hover {
+      background: rgba(46, 229, 157, 0.2);
+      color: #2ee59d;
+      border-color: #2ee59d;
+      transform: translateY(-1px);
+    }
+    /* Layout Presets */
+    body.layout-cinema .stage-grid-4d {
+      grid-template-columns: 75% 25% !important;
+    }
+    body.layout-full-cinema .stage-grid-4d {
+      grid-template-columns: 100% 0% !important;
+    }
+    body.layout-full-cinema .panel-deck-content {
+      display: none !important;
+    }
+    .slide-hd-image {
+      transition: transform 0.3s ease;
+      cursor: zoom-in;
+    }
+
   </style>
 </head>
 <body class="mode-horizontal style-forestry workspace-deck">
@@ -1978,13 +2020,26 @@
             </div>
 
             <div class="stage-grid-4d">
-              <div class="panel-visual-16x9">
+              <div class="panel-visual-16x9" id="panelVisual_${idx}">
                 <div class="giant-art-frame" id="artFrame_${idx}">
-                  <div class="visual-svg-stage" onclick="onStageClickRipple(event, ${idx})">
-                    ${getSvgArt(slide.svgTheme, idx)}
+                  <div class="visual-svg-stage" onclick="onStageClickRipple(event, ${idx})" style="position:relative; overflow:hidden;">
+                    <img src="./assets/slides/slide_${String(idx + 1).padStart(2, "0")}.png" 
+                         alt="Slide ${idx + 1} - NotebookLM" 
+                         id="slideImg_${idx}"
+                         class="slide-hd-image"
+                         style="width:100%; height:100%; object-fit:contain; border-radius:10px; display:block;"
+                         onerror="this.style.display='none'; document.getElementById('svgFallback_${idx}').style.display='block';" />
+                    <div id="svgFallback_${idx}" style="display:none; width:100%; height:100%;">
+                      ${getSvgArt(slide.svgTheme, idx)}
+                    </div>
                     <canvas class="fx-living-overlay-canvas" id="fxCanvas_${idx}"></canvas>
                   </div>
                   <div class="magnifier-lens-4d" id="magLens_${idx}"></div>
+                </div>
+                <div class="visual-toolbar-sub">
+                  <button class="btn-sub-tool" onclick="toggleSlideZoom(${idx})" title="Xem Slide cỡ phóng đại HD">🔍 Phóng to Slide</button>
+                  <button class="btn-sub-tool" onclick="toggleCinemaLayout()" title="Kéo dài / Thu hẹp khung hình Cinema">↔ Kéo Dài Khung Hình</button>
+                  <button class="btn-sub-tool" onclick="toggleFullScreen()" title="Toàn màn hình">⛶ Toàn Màn Hình</button>
                 </div>
                 <div class="transform-row-large" onclick="flipAllCardsForSlide(${idx})" title="Nhấp để lật nhanh 4 thẻ đối chiếu">
                   <span class="state-old-lg">${slide.stateOld}</span>
