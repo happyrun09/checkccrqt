@@ -1,0 +1,2397 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Báo Cáo Mô Tả Sáng Kiến 4D • CheckCCRQT v0.5.0 — Chi Cục Kiểm Lâm Tỉnh Quảng Trị</title>
+  <link rel="icon" type="image/png" href="./assets/logo_kiemlam.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,700&family=JetBrains+Mono:wght@400;600;700;800&family=Playfair+Display:ital,wght@0,700;0,900;1,700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <style>
+    :root {
+      --bg-deep: #040d08;
+      --bg-navy: #081a10;
+      --bg-card: rgba(10, 28, 18, 0.96);
+      --bg-panel: rgba(8, 22, 14, 0.94);
+      --emerald: #2ee59d;
+      --emerald-dark: #059669;
+      --gold-primary: #f5c451;
+      --gold-light: #ffe9ad;
+      --gold-dark: #c48a10;
+      --crimson: #ef4444;
+      --cyan-radar: #38bdf8;
+      --text-main: #f8fafc;
+      --text-muted: #cbd5e1;
+      --border-glass: rgba(46, 229, 157, 0.35);
+      --border-gold: rgba(245, 196, 81, 0.45);
+      --shadow-elevated: 0 20px 55px rgba(0, 0, 0, 0.88);
+      --font-body: 'Be Vietnam Pro', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --card-radius: 18px;
+      --topbar-h: 62px;
+      --bottomdock-h: 58px;
+    }
+
+    /* 4 PHONG CÁCH TRÌNH DIỄN LÂM NGHIỆP */
+    body.style-forestry {
+      --bg-deep: #030d07;
+      --bg-navy: #071c0f;
+      --bg-card: rgba(8, 26, 15, 0.96);
+      --emerald: #2ee59d;
+      --border-glass: rgba(46, 229, 157, 0.38);
+    }
+    body.style-multispectral {
+      --bg-deep: #040c1a;
+      --bg-navy: #091a33;
+      --bg-card: rgba(10, 28, 54, 0.96);
+      --emerald: #38bdf8;
+      --gold-primary: #f43f5e;
+      --border-glass: rgba(56, 189, 248, 0.42);
+    }
+    body.style-radar {
+      --bg-deep: #020b14;
+      --bg-navy: #051626;
+      --bg-card: rgba(8, 26, 46, 0.96);
+      --emerald: #00f2fe;
+      --gold-primary: #4facfe;
+      --border-glass: rgba(0, 242, 254, 0.45);
+    }
+    body.style-administrative {
+      --bg-deep: #0a1118;
+      --bg-navy: #132230;
+      --bg-card: rgba(19, 34, 48, 0.96);
+      --emerald: #10b981;
+      --gold-primary: #fbbf24;
+      --border-glass: rgba(251, 191, 36, 0.45);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      width: 100%;
+      height: 100%;
+      background-color: var(--bg-deep);
+      color: var(--text-main);
+      font-family: var(--font-body);
+      overflow: hidden;
+      transition: background-color 0.35s ease, color 0.35s ease;
+    }
+
+    body.mode-scroll, html.mode-scroll,
+    body.workspace-matrix, html.workspace-matrix,
+    body.workspace-paper, html.workspace-paper {
+      height: auto !important;
+      overflow-y: auto !important;
+      overflow-x: hidden !important;
+    }
+
+    #cosmosCanvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* =========================================================================
+       TẦNG 1: TOPBAR HUD CONTROL
+       ========================================================================= */
+    .hud-topbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: var(--topbar-h);
+      background: rgba(4, 15, 9, 0.97);
+      backdrop-filter: blur(20px);
+      border-bottom: 2px solid var(--border-glass);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 12px;
+      z-index: 1000;
+      gap: 8px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .hud-topbar::-webkit-scrollbar { display: none; }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+    .brand-group img {
+      width: 38px;
+      height: 38px;
+      object-fit: contain;
+      filter: drop-shadow(0 0 10px rgba(46, 229, 157, 0.45));
+    }
+    .brand-titles {
+      display: flex;
+      flex-direction: column;
+    }
+    .brand-main {
+      font-size: 0.88rem;
+      font-weight: 900;
+      color: var(--gold-light);
+      letter-spacing: 0.3px;
+      white-space: nowrap;
+    }
+    .brand-sub {
+      font-size: 0.69rem;
+      color: var(--emerald);
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .workspace-tabs {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(6, 26, 16, 0.95);
+      padding: 3px;
+      border-radius: 999px;
+      border: 1.5px solid var(--border-glass);
+      flex-shrink: 0;
+    }
+    .ws-tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 5px 12px;
+      border-radius: 999px;
+      font-family: var(--font-body);
+      font-size: 0.74rem;
+      font-weight: 800;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .ws-tab-btn.active {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: #ffffff;
+      box-shadow: 0 0 14px rgba(46, 229, 157, 0.45);
+    }
+
+    .hud-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .slide-select-dropdown, .style-select-dropdown {
+      background: rgba(8, 28, 17, 0.96);
+      color: #ffe9ad;
+      border: 1px solid var(--border-gold);
+      padding: 5px 9px;
+      border-radius: 999px;
+      font-family: var(--font-body);
+      font-size: 0.73rem;
+      font-weight: 700;
+      cursor: pointer;
+      outline: none;
+    }
+    .slide-select-dropdown { max-width: 220px; }
+    .style-select-dropdown { border-color: var(--border-glass); color: var(--emerald); }
+
+    .pill-switcher {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      background: rgba(7, 24, 15, 0.95);
+      padding: 3px;
+      border-radius: 999px;
+      border: 1px solid var(--border-glass);
+    }
+    .pill-btn {
+      background: transparent;
+      border: none;
+      color: #cbd5e1;
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-family: var(--font-body);
+      font-size: 0.71rem;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+    .pill-btn.active {
+      background: linear-gradient(135deg, var(--emerald), var(--emerald-dark));
+      color: #030d07;
+      font-weight: 800;
+    }
+
+    .speed-slider-pill {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(7, 24, 15, 0.95);
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--border-glass);
+      font-size: 0.71rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .speed-slider-pill input { width: 50px; accent-color: var(--emerald); cursor: pointer; }
+    .speed-val-badge { color: var(--emerald); font-weight: 800; min-width: 32px; text-align: center; }
+
+    .btn-hud-action {
+      background: rgba(46, 229, 157, 0.16);
+      border: 1px solid var(--border-glass);
+      color: #d1fae5;
+      padding: 5px 11px;
+      border-radius: 999px;
+      font-family: var(--font-body);
+      font-size: 0.72rem;
+      font-weight: 800;
+      cursor: pointer;
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.2s;
+    }
+    .btn-hud-action:hover, .btn-hud-action.active {
+      background: var(--emerald);
+      color: #030d07;
+    }
+    .btn-hud-action.primary-speak {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: #fff;
+      border-color: rgba(255,255,255,0.4);
+      box-shadow: 0 0 14px rgba(16, 185, 129, 0.45);
+    }
+    .btn-hud-action.primary-speak.speaking {
+      background: linear-gradient(135deg, #f59e0b, #dc2626);
+    }
+    .btn-hud-action.gold-live {
+      background: linear-gradient(135deg, #f5c451, #c48a10);
+      color: #030d07;
+      border-color: #ffe9ad;
+      font-weight: 900;
+    }
+
+    .deck-progress {
+      position: fixed;
+      left: 0;
+      top: var(--topbar-h);
+      height: 4px;
+      width: 0;
+      z-index: 1001;
+      background: linear-gradient(90deg, #10b981, var(--gold-primary), var(--cyan-radar));
+      box-shadow: 0 0 10px var(--emerald);
+      transition: width 0.45s ease;
+    }
+
+    .voice-toast {
+      position: fixed;
+      top: 70px;
+      right: 18px;
+      background: rgba(5, 20, 13, 0.96);
+      border: 2px solid var(--emerald);
+      color: #d1fae5;
+      padding: 8px 16px;
+      border-radius: 12px;
+      font-size: 0.82rem;
+      font-weight: 800;
+      z-index: 3000;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.85);
+      opacity: 0;
+      transform: translateY(-10px);
+      pointer-events: none;
+      transition: all 0.25s ease;
+    }
+    .voice-toast.show { opacity: 1; transform: translateY(0); }
+
+    /* =========================================================================
+       TẦNG 2A: KHUNG TRÌNH CHIẾU SÁNG KIẾN 4D (16:9 VIEWPORT)
+       ========================================================================= */
+    .deck-viewport {
+      position: relative;
+      width: 100vw;
+      height: calc(100vh - var(--topbar-h) - var(--bottomdock-h));
+      margin-top: var(--topbar-h);
+      z-index: 10;
+      overflow: hidden;
+    }
+    body.mode-scroll .deck-viewport {
+      height: auto !important;
+      overflow: visible !important;
+      margin-bottom: 76px;
+    }
+
+    .slides-track {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+      will-change: transform;
+    }
+    body.mode-horizontal .slides-track { flex-direction: row; }
+    body.mode-vertical .slides-track { flex-direction: column; }
+    body.mode-scroll .slides-track {
+      display: block !important;
+      height: auto !important;
+      transform: none !important;
+      padding-bottom: 76px;
+    }
+
+    .slide {
+      flex: 0 0 100%;
+      width: 100vw;
+      min-width: 100vw;
+      height: calc(100vh - var(--topbar-h) - var(--bottomdock-h));
+      padding: 6px 0.8vw;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+    body.mode-scroll .slide {
+      height: auto !important;
+      min-height: 86vh;
+      padding: 16px 1vw;
+      margin-bottom: 20px;
+    }
+    body.mode-scroll .slide.is-hidden { display: none !important; }
+
+    .slide-inner {
+      width: 98.6vw;
+      height: 100%;
+      background: var(--bg-card);
+      backdrop-filter: blur(20px);
+      border: 1.5px solid var(--border-glass);
+      border-radius: var(--card-radius);
+      padding: 0.9vh 1.2vw 1.1vh;
+      box-shadow: var(--shadow-elevated);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .slide-inner::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #10b981, var(--gold-primary), #38bdf8, #10b981);
+    }
+    .slide-inner.narrating-glow {
+      border-color: var(--emerald);
+      box-shadow: 0 0 38px rgba(46, 229, 157, 0.42), var(--shadow-elevated);
+    }
+
+    .slide-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.6vh;
+      padding-bottom: 0.5vh;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.16);
+      gap: 10px;
+      flex-shrink: 0;
+    }
+    .slide-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
+    .slide-num-pill {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: #030d07;
+      font-weight: 900;
+      font-size: 0.74rem;
+      padding: 3px 9px;
+      border-radius: 999px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .slide-tag-pill {
+      background: rgba(245, 196, 81, 0.18);
+      border: 1px solid var(--border-gold);
+      color: #ffe9ad;
+      font-weight: 800;
+      font-size: 0.72rem;
+      padding: 3px 8px;
+      border-radius: 999px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .slide-title {
+      font-size: clamp(1.08rem, 2.3vh, 1.65rem);
+      font-weight: 900;
+      color: #ffffff;
+      line-height: 1.2;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .slide-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+    .btn-slide-voice {
+      background: rgba(46, 229, 157, 0.18);
+      border: 1.5px solid var(--emerald);
+      color: var(--emerald);
+      padding: 4px 11px;
+      border-radius: 999px;
+      font-family: var(--font-body);
+      font-size: 0.73rem;
+      font-weight: 800;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .btn-slide-voice:hover { background: var(--emerald); color: #030d07; }
+
+    /* BỐ CỤC SÂN KHẤU 16:9 NGUYÊN BẢN & BỘ 4 THẺ BÀI LẬT 3D */
+    .stage-grid-4d {
+      flex: 1;
+      min-height: 0;
+      display: grid;
+      grid-template-columns: 1.28fr 1fr;
+      gap: 1.1vw;
+      align-items: stretch;
+      transition: grid-template-columns 0.35s ease;
+    }
+
+    .panel-visual-16x9 {
+      background: var(--bg-panel);
+      border: 1px solid rgba(46, 229, 157, 0.26);
+      border-radius: 14px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 0;
+      overflow: hidden;
+      position: relative;
+      gap: 8px;
+    }
+
+    .giant-art-frame {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      max-height: calc(100vh - var(--topbar-h) - var(--bottomdock-h) - 130px);
+      margin: 0 auto;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 2px solid var(--border-glass);
+      background: radial-gradient(circle at 50% 50%, #071f14 0%, #020704 100%);
+      box-shadow: 0 10px 32px rgba(0, 0, 0, 0.8), 0 0 20px rgba(46, 229, 157, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .visual-svg-stage {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .visual-svg-stage svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .fx-living-overlay-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 3;
+    }
+
+    .magnifier-lens-4d {
+      position: absolute;
+      width: 190px;
+      height: 190px;
+      border-radius: 50%;
+      border: 3px solid var(--emerald);
+      box-shadow: 0 0 30px rgba(46, 229, 157, 0.8), inset 0 0 20px rgba(245, 196, 81, 0.5);
+      pointer-events: none;
+      z-index: 8;
+      display: none;
+      background-repeat: no-repeat;
+      background-color: #030c07;
+      transform: translate(-50%, -50%);
+    }
+    .giant-art-frame.lens-active .magnifier-lens-4d { display: block; }
+
+    .transform-row-large {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      background: rgba(16, 185, 129, 0.08);
+      border: 1.5px solid var(--border-glass);
+      padding: 6px 12px;
+      border-radius: 11px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+    .transform-row-large:hover {
+      border-color: var(--emerald);
+      box-shadow: 0 0 16px rgba(46, 229, 157, 0.28);
+    }
+    .state-old-lg {
+      color: #fca5a5;
+      font-weight: 700;
+      font-size: clamp(0.78rem, 1.55vh, 0.98rem);
+      flex: 1;
+    }
+    .verb-bridge-lg {
+      background: linear-gradient(135deg, var(--gold-primary), var(--gold-dark));
+      color: #030714;
+      font-weight: 900;
+      font-size: clamp(0.66rem, 1.35vh, 0.85rem);
+      padding: 3px 9px;
+      border-radius: 999px;
+      text-transform: uppercase;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .state-new-lg {
+      color: var(--emerald);
+      font-weight: 800;
+      font-size: clamp(0.78rem, 1.55vh, 0.98rem);
+      flex: 1;
+      text-align: right;
+    }
+
+    /* RIGHT PANEL: BỘ 4 THẺ BÀI LẬT 3D TƯƠNG PHẢN */
+    .panel-deck-content {
+      background: var(--bg-panel);
+      border: 1px solid rgba(46, 229, 157, 0.26);
+      border-radius: 14px;
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 0;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      gap: 8px;
+    }
+
+    .deck-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+    .btn-flip-all {
+      background: rgba(46, 229, 157, 0.16);
+      border: 1px solid var(--border-glass);
+      color: var(--emerald);
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 800;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+    .btn-flip-all:hover { background: var(--emerald); color: #030d07; }
+
+    .flip-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.6vw;
+      flex: 1;
+    }
+
+    .flip-card-3d {
+      cursor: pointer;
+      user-select: none;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+    .flip-card-inner {
+      width: 100%;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      animation: flipBounceIn 0.38s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    @keyframes flipBounceIn {
+      0% { transform: perspective(800px) rotateY(65deg) scale(0.96); opacity: 0.6; }
+      100% { transform: perspective(800px) rotateY(0deg) scale(1); opacity: 1; }
+    }
+
+    .flip-face {
+      position: relative;
+      width: 100%;
+      flex: 1;
+      border-radius: 11px;
+      padding: 8px 10px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      gap: 4px;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+      word-break: break-word;
+    }
+
+    .flip-front {
+      background: linear-gradient(145deg, rgba(239, 68, 68, 0.18), rgba(15, 23, 42, 0.95));
+      border: 1.5px solid rgba(239, 68, 68, 0.48);
+    }
+    .flip-back {
+      display: none;
+      background: linear-gradient(145deg, rgba(16, 185, 129, 0.24), rgba(6, 26, 16, 0.96));
+      border: 2px solid var(--emerald);
+      box-shadow: 0 0 18px rgba(46, 229, 157, 0.25);
+    }
+    .flip-card-3d.flipped .flip-front { display: none; }
+    .flip-card-3d.flipped .flip-back { display: flex; }
+
+    .flip-badge {
+      display: flex;
+      width: 100%;
+      align-items: center;
+      justify-content: space-between;
+      font-size: clamp(0.64rem, 1.2vh, 0.75rem);
+      font-weight: 900;
+      text-transform: uppercase;
+      padding: 2px 7px;
+      border-radius: 999px;
+      margin-bottom: 2px;
+    }
+    .flip-front .flip-badge {
+      background: rgba(239, 68, 68, 0.25);
+      color: #fca5a5;
+    }
+    .flip-back .flip-badge {
+      background: rgba(46, 229, 157, 0.25);
+      color: #6ee7b7;
+    }
+
+    .flip-title {
+      font-size: clamp(0.8rem, 1.55vh, 0.98rem);
+      font-weight: 800;
+      color: var(--gold-light);
+      line-height: 1.25;
+    }
+    .flip-desc {
+      font-size: clamp(0.72rem, 1.4vh, 0.88rem);
+      line-height: 1.35;
+      color: var(--text-muted);
+    }
+
+    .bullet-list-4d {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4vh;
+    }
+    .bullet-item-4d {
+      font-size: clamp(0.76rem, 1.45vh, 0.92rem);
+      line-height: 1.35;
+      color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.03);
+      border-left: 3.5px solid var(--emerald);
+      padding: 0.4vh 0.6vw;
+      border-radius: 0 8px 8px 0;
+    }
+    .bullet-item-4d strong { color: #ffffff; font-weight: 800; }
+    .bullet-item-4d a { color: var(--emerald); text-decoration: underline; font-weight: 700; }
+
+    .widget-box-4d {
+      padding: 7px 10px;
+      border-radius: 10px;
+      background: rgba(3, 14, 8, 0.75);
+      border: 1px solid var(--border-glass);
+    }
+
+    /* SVG Keyframe Animations */
+    .anim-spin { animation: spin4D 20s linear infinite; transform-origin: center; }
+    .anim-spin-rev { animation: spinRev4D 26s linear infinite; transform-origin: center; }
+    .anim-pulse { animation: pulse4D 3s ease-in-out infinite; transform-origin: center; }
+    .anim-float { animation: float4D 4.5s ease-in-out infinite; }
+    .anim-dash { stroke-dasharray: 8 6; animation: dashFlow 1.6s linear infinite; }
+
+    @keyframes spin4D { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    @keyframes spinRev4D { from { transform: rotate(360deg); } to { transform: rotate(0deg); } }
+    @keyframes pulse4D { 0%, 100% { transform: scale(0.97); opacity: 0.85; } 50% { transform: scale(1.03); opacity: 1; } }
+    @keyframes float4D { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
+    @keyframes dashFlow { to { stroke-dashoffset: -28; } }
+
+    /* =========================================================================
+       TẦNG 2B: BẢNG SO SÁNH KỸ THUẬT (MATRIX WORKSPACE)
+       ========================================================================= */
+    .studio-workspace {
+      display: none;
+      margin-top: var(--topbar-h);
+      padding: 22px 2vw 80px;
+      max-width: 1440px;
+      margin-left: auto;
+      margin-right: auto;
+      position: relative;
+      z-index: 20;
+    }
+    body.workspace-matrix #matrixWorkspace { display: block; }
+    body.workspace-paper #paperWorkspace { display: block; }
+    body.workspace-matrix #deckViewport,
+    body.workspace-paper #deckViewport { display: none !important; }
+
+    .studio-banner {
+      background: linear-gradient(135deg, rgba(8, 28, 17, 0.98), rgba(6, 18, 32, 0.98));
+      border: 2px solid var(--emerald);
+      border-radius: 18px;
+      padding: 16px 20px;
+      margin-bottom: 18px;
+      box-shadow: 0 16px 45px rgba(0,0,0,0.7);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .matrix-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: rgba(6, 20, 13, 0.95);
+      border: 1.5px solid var(--border-glass);
+      border-radius: 14px;
+      overflow: hidden;
+      font-size: 0.85rem;
+    }
+    .matrix-table th, .matrix-table td {
+      border: 1px solid rgba(46, 229, 157, 0.2);
+      padding: 10px 14px;
+    }
+    .matrix-table th {
+      background: #082816;
+      color: var(--emerald);
+      font-weight: 800;
+      text-transform: uppercase;
+      font-size: 0.78rem;
+    }
+    .matrix-table tr:hover td { background: rgba(46, 229, 157, 0.05); }
+
+    /* =========================================================================
+       TẦNG 2C: VĂN BẢN THUYẾT MINH TOÀN VĂN (PAPER WORKSPACE A4 PRINTABLE)
+       ========================================================================= */
+    .paper-sheet {
+      background: #ffffff;
+      color: #0f172a;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 50px;
+      border-radius: 8px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+      font-family: 'Be Vietnam Pro', 'Times New Roman', serif;
+      line-height: 1.6;
+      font-size: 11pt;
+    }
+    .paper-sheet h1 { font-size: 16pt; text-align: center; color: #064e3b; margin: 16px 0 10px; font-weight: 800; }
+    .paper-sheet h2 { font-size: 13pt; color: #064e3b; margin: 18px 0 8px; border-bottom: 1.5px solid #064e3b; padding-bottom: 4px; }
+    .paper-sheet h3 { font-size: 11.5pt; color: #0f172a; margin: 12px 0 6px; font-weight: 700; }
+    .paper-sheet table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 10pt; }
+    .paper-sheet th, .paper-sheet td { border: 1px solid #94a3b8; padding: 6px 8px; }
+    .paper-sheet th { background: #f1f5f9; color: #0f172a; font-weight: 700; text-align: center; }
+
+    /* =========================================================================
+       TẦNG 3: DẢI CHÂN TRANG TELEPROMPTER & ĐIỀU HƯỚNG
+       ========================================================================= */
+    .bottom-studio-dock {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      height: var(--bottomdock-h);
+      background: rgba(4, 15, 9, 0.97);
+      backdrop-filter: blur(18px);
+      border-top: 2px solid var(--border-glass);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 14px;
+      gap: 10px;
+      z-index: 1000;
+    }
+    .dock-nav-cluster {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .nav-action-btn {
+      background: rgba(46, 229, 157, 0.16);
+      border: 1px solid var(--border-glass);
+      color: #d1fae5;
+      padding: 5px 12px;
+      border-radius: 999px;
+      font-size: 0.74rem;
+      font-weight: 800;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .nav-action-btn:hover { background: var(--emerald); color: #030d07; }
+
+    .dots-wrapper { display: flex; align-items: center; gap: 4px; }
+    .slide-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.25);
+      cursor: pointer;
+      transition: all 0.25s;
+    }
+    .slide-dot.active {
+      width: 22px;
+      background: var(--emerald);
+      box-shadow: 0 0 10px var(--emerald);
+    }
+
+    .dock-teleprompter-stage {
+      flex: 1;
+      height: 38px;
+      background: rgba(7, 24, 15, 0.92);
+      border: 1.5px solid var(--border-glass);
+      border-radius: 999px;
+      padding: 0 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      overflow: hidden;
+    }
+    .dock-teleprompter-stage.active-speaking {
+      border-color: var(--gold-primary);
+      box-shadow: 0 0 18px rgba(245, 196, 81, 0.35);
+    }
+    .voice-wave-bars {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      height: 16px;
+      flex-shrink: 0;
+      opacity: 0.35;
+    }
+    .dock-teleprompter-stage.active-speaking .voice-wave-bars { opacity: 1; }
+    .voice-wave-bars span {
+      width: 3.5px;
+      height: 8px;
+      background: var(--emerald);
+      border-radius: 99px;
+    }
+    .dock-teleprompter-stage.active-speaking .voice-wave-bars span {
+      animation: waveBounce 0.75s infinite ease-in-out;
+    }
+    .voice-wave-bars span:nth-child(2) { animation-delay: 0.15s; height: 14px; background: var(--gold-primary); }
+    .voice-wave-bars span:nth-child(3) { animation-delay: 0.3s; height: 16px; }
+    .voice-wave-bars span:nth-child(4) { animation-delay: 0.45s; height: 10px; }
+    @keyframes waveBounce { 0%, 100% { transform: scaleY(0.4); } 50% { transform: scaleY(1.2); } }
+
+    .teleprompter-text {
+      flex: 1;
+      font-size: clamp(0.78rem, 0.95vw, 0.94rem);
+      font-weight: 700;
+      color: #ffe9ad;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* MODAL CHUNG */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(2, 6, 4, 0.92);
+      backdrop-filter: blur(14px);
+      z-index: 2500;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .modal-backdrop.open { display: flex; }
+    .modal-card {
+      width: 100%;
+      max-width: 820px;
+      max-height: 88vh;
+      overflow-y: auto;
+      background: #081a10;
+      border: 2px solid var(--emerald);
+      border-radius: 20px;
+      padding: 22px 24px;
+      box-shadow: 0 25px 70px rgba(0,0,0,0.95);
+      color: #fff;
+    }
+
+    @media (max-width: 1150px) {
+      .stage-grid-4d { grid-template-columns: 1fr; }
+      .flip-cards-grid { grid-template-columns: 1fr 1fr; }
+      .dots-wrapper { display: none; }
+    }
+    @media print {
+      .hud-topbar, .bottom-studio-dock, #cosmosCanvas { display: none !important; }
+      .paper-sheet { padding: 0; box-shadow: none; max-width: 100%; }
+      body { background: #fff; color: #000; overflow: visible; }
+    }
+  </style>
+</head>
+<body class="mode-horizontal style-forestry workspace-deck">
+
+  <canvas id="cosmosCanvas"></canvas>
+  <div class="voice-toast" id="voiceToast">🔔 Báo Cáo Sáng Kiến CheckCCRQT v0.5.0</div>
+  <div class="deck-progress" id="deckProgress"></div>
+
+  <!-- TẦNG 1: TOP HUD CONTROLS -->
+  <header class="hud-topbar">
+    <div class="brand-group">
+      <img src="./assets/logo_kiemlam.png" alt="Logo Kiểm Lâm Việt Nam" />
+      <div class="brand-titles">
+        <span class="brand-main">BÁO CÁO MÔ TẢ SÁNG KIẾN 4D • V0.5.0 PRO</span>
+        <span class="brand-sub">Phòng Sử dụng &amp; Phát triển rừng — Chi cục Kiểm lâm tỉnh Quảng Trị</span>
+      </div>
+    </div>
+
+    <div class="workspace-tabs" role="tablist">
+      <button class="ws-tab-btn active" id="tabBtnDeck" onclick="switchWorkspace('deck')">
+        🎬 12 Slide Sáng Kiến
+      </button>
+      <button class="ws-tab-btn" id="tabBtnMatrix" onclick="switchWorkspace('matrix')">
+        📊 Đối Chiếu Desktop v0.2.3 vs Web v0.5.0
+      </button>
+      <button class="ws-tab-btn" id="tabBtnPaper" onclick="switchWorkspace('paper')">
+        📑 Văn Bản Thuyết Minh A4
+      </button>
+    </div>
+
+    <div class="hud-group">
+      <select class="slide-select-dropdown" id="slideJumpSelect" onchange="goToSlide(parseInt(this.value, 10), true)" aria-label="Chọn Slide"></select>
+
+      <select class="style-select-dropdown" id="artStyleSelect" onchange="setVisualArtStyle(this.value)">
+        <option value="forestry">🌲 Rừng Sâu Lâm Nghiệp</option>
+        <option value="multispectral">🛰️ Vệ Tinh Đa Phổ</option>
+        <option value="radar">⚡ Radar SAR RTC</option>
+        <option value="administrative">📜 Thể Thức Hành Chính</option>
+      </select>
+    </div>
+
+    <div class="pill-switcher" role="group">
+      <button class="pill-btn active" id="btnModeHorizontal" onclick="setDeckMode('horizontal')">↔ Ngang</button>
+      <button class="pill-btn" id="btnModeVertical" onclick="setDeckMode('vertical')">↕ Dọc</button>
+      <button class="pill-btn" id="btnModeScroll" onclick="setDeckMode('scroll')">☰ Toàn Trang</button>
+    </div>
+
+    <div class="pill-switcher">
+      <button class="pill-btn active" id="btnVoiceMale" onclick="setVoiceGender('male')">👨 Nam</button>
+      <button class="pill-btn" id="btnVoiceFemale" onclick="setVoiceGender('female')">👩 Nữ</button>
+    </div>
+
+    <div class="speed-slider-pill">
+      <input type="range" id="topSpeedSlider" min="0.6" max="1.6" step="0.05" value="1.0" oninput="onSpeedChange(this.value)" />
+      <span class="speed-val-badge" id="topSpeedVal">1.00x</span>
+    </div>
+
+    <div class="hud-group">
+      <button class="btn-hud-action primary-speak" id="btnMasterSpeak" onclick="toggleAutoLecture()">
+        <span id="speakIcon">🎙️</span>
+        <span id="speakLabel">BÁO CÁO TỰ ĐỘNG</span>
+      </button>
+      <a href="https://happyrun09.github.io/checkccrqt/" target="_blank" rel="noopener" class="btn-hud-action gold-live" title="Mở trực tiếp Cổng Web GIS Live trên GitHub Pages">
+        🌐 Mở Cổng Web GIS Live
+      </a>
+      <button class="btn-hud-action" onclick="flipAllCardsOnCurrentSlide()" title="Lật toàn bộ 4 thẻ (Phím R)">
+        🔄 Lật Thẻ
+      </button>
+      <button class="btn-hud-action" onclick="openAuthorsModal()">
+        👥 10 Tác Giả
+      </button>
+      <button class="btn-hud-action" onclick="openRoiModal()">
+        🧮 Tính Hiệu Quả
+      </button>
+      <button class="btn-hud-action" onclick="toggleFullScreen()">
+        ⛶
+      </button>
+    </div>
+  </header>
+
+  <!-- TẦNG 2A: KHUNG TRÌNH CHIẾU SLIDE 4D -->
+  <main class="deck-viewport" id="deckViewport">
+    <div class="slides-track" id="slidesTrack"></div>
+  </main>
+
+  <!-- TẦNG 2B: BẢNG SO SÁNH KỸ THUẬT (MATRIX) -->
+  <section class="studio-workspace" id="matrixWorkspace">
+    <div class="studio-banner">
+      <div>
+        <span style="background:rgba(46,229,157,0.2); color:var(--emerald); padding:3px 9px; border-radius:999px; font-weight:800; font-size:0.75rem;">
+          ĐỐI CHIẾU SỰ TIẾN HÓA CÔNG NGHỆ VƯỢT BẬC
+        </span>
+        <h2 style="font-size:1.45rem; font-weight:900; color:#ffe9ad; margin-top:4px;">
+          Bảng So Sánh Kỹ Thuật: Bản Thô Desktop v0.2.3 vs Bản Sáng Kiến Web GIS v0.5.0
+        </h2>
+        <p style="color:#cbd5e1; font-size:0.86rem; margin-top:4px;">
+          Minh chứng việc loại bỏ triệt để 03 hạn chế cốt tử (Phụ thuộc QGIS, Mù ảnh quang học do mây, Sai lệch múi chiếu VN-2000) được chính nhóm tác giả thừa nhận ở bản thô cũ.
+        </p>
+      </div>
+      <button class="btn-hud-action gold-live" onclick="switchWorkspace('deck')">
+        🎬 Quay lại 12 Slide Sáng Kiến
+      </button>
+    </div>
+
+    <table class="matrix-table">
+      <thead>
+        <tr>
+          <th>Tiêu chí đánh giá</th>
+          <th>Quy trình cũ (Thủ công)</th>
+          <th>Bản thử nghiệm v0.2.3 (QGIS Plugin thô)</th>
+          <th>Bản hoàn thiện v0.5.0 (Web GIS Command Center)</th>
+          <th>Lợi ích vượt trội cho Kiểm lâm</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Môi trường vận hành</strong></td>
+          <td>Rời rạc nhiều phần mềm MapInfo, Excel, Google Earth</td>
+          <td>Phụ thuộc QGIS Desktop (3–5 GB), chỉ chạy máy bàn cấu hình khá</td>
+          <td><strong style="color:var(--emerald)">100% Trình duyệt Web (HTML5/PWA), chạy trên PC, Tablet, Smartphone</strong></td>
+          <td>Không tốn 1 đồng đầu tư máy trạm; cán bộ xã/huyện mở link là chạy</td>
+        </tr>
+        <tr>
+          <td><strong>Cài đặt &amp; Triển khai</strong></td>
+          <td>Cài từng máy thủ công, dễ xung đột thư viện</td>
+          <td>Cài gói .ZIP qua QGIS, phụ thuộc phiên bản Python 3.9–3.12</td>
+          <td><strong style="color:var(--emerald)">Không cần cài đặt, không lỗi thư viện, cập nhật tức thì toàn tỉnh qua GitHub Pages</strong></td>
+          <td>Tiết kiệm hàng trăm buổi đào tạo kỹ thuật cài đặt cho cơ sở</td>
+        </tr>
+        <tr>
+          <td><strong>Khả năng xuyên mây</strong></td>
+          <td>Tải ảnh vệ tinh rời rạc; mù hoàn toàn khi trời mưa</td>
+          <td>Lọc mây Scene SCL trên Sentinel-2 (mùa mưa vẫn mất ảnh)</td>
+          <td><strong style="color:var(--emerald)">Tích hợp Radar Sentinel-1 SAR RTC C-band (RVI = 4*VH/(VV+VH)) xuyên mây</strong></td>
+          <td>Giám sát rừng 365 ngày/năm bất chấp mùa mưa bão miền Trung</td>
+        </tr>
+        <tr>
+          <td><strong>Chuẩn hóa EUDR TRACES NT</strong></td>
+          <td>Lúng túng không rõ chuẩn định dạng quốc tế</td>
+          <td>Chỉ đối chiếu diện tích và rà soát mốc 31/12/2020 cơ bản</td>
+          <td><strong style="color:var(--emerald)">Chuẩn hóa RFC 7946, EPSG:4326, 6 số thập phân, tự rút gọn lô &le;4 ha thành Điểm</strong></td>
+          <td>100% hồ sơ nộp cổng hải quan EU TRACES NT được chấp thuận ngay</td>
+        </tr>
+        <tr>
+          <td><strong>Xuất Bản đồ Kỹ thuật</strong></td>
+          <td>Vẽ tay, ghép tọa độ trong Excel mất 1–2 giờ/lô</td>
+          <td>Xuất PDF qua Print Layout của QGIS (phải chỉnh tay tỷ lệ)</td>
+          <td><strong style="color:var(--emerald)">1 Click sinh Bản đồ Khung 02 dòng kẻ CAD/GIS A4/A3 kèm Bảng tọa độ đỉnh VN-2000</strong></td>
+          <td>Xuất bản đồ trắc địa có giá trị pháp lý trong 2 giây</td>
+        </tr>
+        <tr>
+          <td><strong>Xuất Sổ bộ Báo cáo</strong></td>
+          <td>Gõ tay biểu mẫu Word/Excel</td>
+          <td>Xuất file CSV/Excel tĩnh không có công thức liên kết</td>
+          <td><strong style="color:var(--emerald)">Xuất Excel 3-Sheet công thức sống (COUNTIF, SUMIF) và Báo cáo Word thể thức</strong></td>
+          <td>Kiểm toán viên EU và Thanh tra dễ dàng thẩm định công thức minh bạch</td>
+        </tr>
+        <tr>
+          <td><strong>Thời gian xử lý 1.000 lô</strong></td>
+          <td>02 – 03 ngày làm việc liên tục</td>
+          <td>15 – 30 phút / đợt</td>
+          <td><strong style="color:var(--emerald)">Dưới 3 phút toàn bộ (hoặc 2 giây cho từng lô đơn lẻ)</strong></td>
+          <td>Rút ngắn &gt;98% thời gian hành chính cho cán bộ kiểm lâm</td>
+        </tr>
+        <tr>
+          <td><strong>Trợ lý Trí tuệ Nhân tạo</strong></td>
+          <td>Không có</td>
+          <td>Dùng AI tạo khung code Python ban đầu</td>
+          <td><strong style="color:var(--emerald)">Trợ lý AI EUDR Knowledge Base cục bộ (0 giây trễ, bảo mật tuyệt đối)</strong></td>
+          <td>Giải đáp pháp luật EUDR, VNTLAS, FRMS tức thì cho kiểm lâm viên</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- TẦNG 2C: VĂN BẢN THUYẾT MINH TOÀN VĂN A4 -->
+  <section class="studio-workspace" id="paperWorkspace">
+    <div style="display:flex; justify-content:space-between; margin-bottom:14px; max-width:900px; margin-left:auto; margin-right:auto;">
+      <button class="btn-hud-action gold-live" onclick="switchWorkspace('deck')">🎬 Quay lại Slide</button>
+      <button class="btn-hud-action" onclick="window.print()">🖨️ In Văn Bản Báo Cáo A4</button>
+    </div>
+
+    <article class="paper-sheet">
+      <div style="display:flex; justify-content:space-between; border-bottom:1px solid #cbd5e1; padding-bottom:8px;">
+        <div style="text-align:center;">
+          <strong>CHI CỤC KIỂM LÂM TỈNH QUẢNG TRỊ</strong><br/>
+          <strong>PHÒNG SỬ DỤNG VÀ PHÁT TRIỂN RỪNG</strong>
+        </div>
+        <div style="text-align:center;">
+          <strong>CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</strong><br/>
+          <strong>Độc lập - Tự do - Hạnh phúc</strong><br/>
+          <em>Quảng Trị, ngày 01 tháng 11 năm 2026</em>
+        </div>
+      </div>
+
+      <h1>BÁO CÁO MÔ TẢ SÁNG KIẾN</h1>
+      <p style="text-align:center; font-style:italic; margin-bottom:16px;">(Kèm theo Đơn yêu cầu công nhận sáng kiến cấp Cơ sở / Cấp Tỉnh năm 2026)</p>
+
+      <h3>1. Tên sáng kiến:</h3>
+      <p><strong>“Nghiên cứu ứng dụng Trí tuệ nhân tạo (AI) và GIS Viễn thám đa cảm biến (Sentinel-2 &amp; Radar Sentinel-1 SAR RTC) xây dựng Hệ thống Web-Portal tự động hóa thẩm định nguồn gốc rừng trồng chứng chỉ quản lý rừng bền vững và tuân thủ Quy định Chống phá rừng Châu Âu (EUDR/VNTLAS) trên địa bàn tỉnh Quảng Trị”.</strong></p>
+
+      <h3>2. Tập thể tác giả (10 thành viên — Phòng Sử dụng và Phát triển rừng):</h3>
+      <table>
+        <thead>
+          <tr><th>STT</th><th>Họ và tên</th><th>Trình độ chuyên môn</th><th>Chức vụ / Đơn vị công tác</th><th>Tỷ lệ đóng góp</th></tr>
+        </thead>
+        <tbody>
+          <tr><td align="center">1</td><td><strong>Phạm Thanh Trung</strong></td><td>Đại học Lâm nghiệp</td><td>Trưởng phòng – Phòng SD&amp;PTR</td><td align="center">10%</td></tr>
+          <tr><td align="center">2</td><td><strong>Phạm Xuân Thành</strong></td><td>Thạc sỹ Lâm học</td><td>Phó Trưởng phòng – Phòng SD&amp;PTR</td><td align="center">10%</td></tr>
+          <tr><td align="center">3</td><td><strong>Nguyễn Tuấn Anh</strong></td><td>Thạc sỹ Lâm nghiệp</td><td>Phó Trưởng phòng – Phòng SD&amp;PTR</td><td align="center">10%</td></tr>
+          <tr><td align="center">4</td><td><strong>Nguyễn Việt Tú</strong></td><td>Thạc sỹ Lâm học</td><td>Kiểm lâm viên – Phòng SD&amp;PTR</td><td align="center">10%</td></tr>
+          <tr><td align="center">5</td><td><strong>Phạm Hoàng Hà</strong></td><td>Thạc sỹ Lâm học</td><td>Kiểm lâm viên – Phòng SD&amp;PTR</td><td align="center">10%</td></tr>
+          <tr><td align="center">6</td><td><strong>Nguyễn Thanh Lý</strong></td><td>Thạc sỹ Lâm học</td><td>Kiểm lâm viên – Phòng SD&amp;PTR</td><td align="center">10%</td></tr>
+          <tr><td align="center">7</td><td><strong>Dương Chí Anh</strong></td><td>Thạc sỹ Khoa học cây trồng</td><td>Kiểm lâm viên – Phòng SD&amp;PTR</td><td align="center">10%</td></tr>
+          <tr><td align="center">8</td><td><strong>Nguyễn Văn Thăng</strong></td><td>Đại học Lâm nghiệp</td><td>Kiểm lâm viên – Phòng SD&amp;PTR</td><td align="center">10%</td></tr>
+          <tr><td align="center">9</td><td><strong>Trần Phước Lâm</strong></td><td>Thạc sỹ Lâm học</td><td>Kiểm lâm viên – Phòng SD&amp;PTR</td><td align="center">10%</td></tr>
+          <tr><td align="center">10</td><td><strong>Lê Ngọc Cường</strong></td><td>Thạc sỹ QL tài nguyên rừng</td><td>Kiểm lâm viên – Phòng SD&amp;PTR</td><td align="center">10%</td></tr>
+        </tbody>
+      </table>
+
+      <h2>I. ĐẶT VẤN ĐỀ VÀ THỰC TRẠNG TRƯỚC KHI CÓ SÁNG KIẾN</h2>
+      <p>Quảng Trị là một trong những địa phương đi đầu cả nước về phát triển rừng trồng gỗ lớn gắn với cấp chứng chỉ quản lý rừng bền vững (FSC, PEFC). Tuy nhiên, trước yêu cầu ngặt nghèo của Quy định chống phá rừng của Liên minh châu Âu (EUDR - Regulation (EU) 2023/1115 có hiệu lực với mốc 31/12/2020) và Hệ thống bảo đảm gỗ hợp pháp Việt Nam (VNTLAS), công tác kiểm tra, thẩm định hồ sơ ranh giới lô rừng tại Chi cục Kiểm lâm tỉnh Quảng Trị gặp các rào cản rất lớn:</p>
+      <ul>
+        <li><strong>Rào cản phần mềm và nhân lực:</strong> Bản thử nghiệm v0.2.3 trước đây phụ thuộc vào phần mềm QGIS Desktop nặng hàng Gigabyte, dễ phát sinh lỗi thư viện Python và đòi hỏi cán bộ phải có chuyên môn tin học GIS sâu.</li>
+        <li><strong>Hạn chế viễn thám mùa mưa:</strong> Dữ liệu quang học Sentinel-2 thường xuyên bị mây che phủ trên 80% từ tháng 9 đến tháng 1 hằng năm tại miền Trung, làm gián đoạn việc xác thực thời điểm khai thác keo lai.</li>
+        <li><strong>Lỗi hình học và chuẩn nộp TRACES NT:</strong> Dữ liệu bản đồ từ các chủ rừng bị chồng lấn ranh giới, chưa đáp ứng chuẩn GeoJSON RFC 7946 và chưa có công cụ tự động rút gọn lô &le;4 ha thành Điểm theo Điều 9 EUDR.</li>
+      </ul>
+
+      <h2>II. NỘI DUNG VÀ TÍNH MỚI ĐỘT PHÁ CỦA SÁNG KIẾN (v0.5.0)</h2>
+      <p>Nhóm tác giả đã nghiên cứu, nâng cấp giải pháp thành Hệ thống Web GIS Command Center trực tuyến hoàn chỉnh với 05 trụ cột kỹ thuật mới:</p>
+      <ol>
+        <li><strong>Nền tảng Cloud Native 100% Trình duyệt:</strong> Chuyển dịch toàn bộ giải thuật GIS sang WebAssembly và JavaScript (Turf.js, Leaflet), cho phép vận hành tức thì trên mọi thiết bị máy tính, máy tính bảng và điện thoại di động mà không cần cài đặt phần mềm.</li>
+        <li><strong>Đột phá Radar xuyên mây Sentinel-1 SAR RTC:</strong> Ứng dụng dữ liệu Radar C-band phân cực kép VV/VH hiệu chỉnh địa hình RTC và chỉ số sinh khối RVI = 4*VH/(VV+VH), xóa bỏ điểm mù thời tiết 365 ngày/năm.</li>
+        <li><strong>Thuật toán phân tách chu kỳ khai thác Keo lai:</strong> Phân biệt chính xác giữa hoạt động khai thác keo lai luân canh 4–6 năm hợp pháp và hành vi phá rừng tự nhiên, bảo vệ quyền lợi chính đáng cho người trồng rừng.</li>
+        <li><strong>Bộ tạo Bản đồ Kỹ thuật Khung 02 dòng kẻ A4/A3:</strong> Tự động tính toán bảng tọa độ các đỉnh ranh giới song song VN-2000 (Múi 3°, KT 106°00') và WGS-84, bổ sung hoa tiêu Bắc, thước tỷ lệ động và dấu pháp lý Kiểm lâm.</li>
+        <li><strong>Bộ xuất Sổ bộ Excel công thức động và Báo cáo Word thể thức:</strong> Sử dụng SheetJS xuất file .xlsx có công thức sống COUNTIF/SUMIF/SUM tự động tính diện tích theo phân loại EUDR.</li>
+      </ol>
+
+      <h2>III. HIỆU QUẢ KINH TẾ – XÃ HỘI VÀ KHẢ NĂNG NHÂN RỘNG</h2>
+      <p><strong>1. Hiệu quả kinh tế:</strong> Tiết kiệm trên 300 triệu đồng kinh phí mua sắm bản quyền phần mềm GIS; tiết kiệm hàng trăm triệu đồng chi phí nâng cấp máy tính cho các đơn vị trực thuộc; giảm thời gian thẩm tra 1.000 lô từ 03 ngày xuống dưới 03 phút (giảm 98% thời gian).</p>
+      <p><strong>2. Hiệu quả xã hội &amp; Môi trường:</strong> Đảm bảo 100% diện tích rừng trồng chứng chỉ FSC/PEFC tại Quảng Trị đáp ứng hồ sơ hải quan số EU TRACES NT, ngăn chặn nguy cơ đình chỉ xuất khẩu gỗ sang thị trường EU trị giá hàng chục triệu USD.</p>
+      <p><strong>3. Khả năng nhân rộng:</strong> Nền tảng Web GIS cho phép chuyển giao và sử dụng ngay lập tức cho 25 đơn vị chủ rừng, các Hạt Kiểm lâm và sẵn sàng mở rộng cho 63 tỉnh/thành phố trên cả nước.</p>
+
+      <div style="display:flex; justify-content:space-between; margin-top:30px;">
+        <div style="text-align:center;">
+          <strong>XÁC NHẬN CỦA CHI CỤC KIỂM LÂM</strong><br/>
+          <em>(Ký tên, đóng dấu)</em>
+        </div>
+        <div style="text-align:center;">
+          <strong>ĐẠI DIỆN TẬP THỂ TÁC GIẢ</strong><br/>
+          <em>(Ký, ghi rõ họ tên)</em><br/><br/><br/><br/>
+          <strong>Phạm Thanh Trung</strong><br/>
+          Trưởng phòng Sử dụng và Phát triển rừng
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <!-- TẦNG 3: DẢI CHÂN TRANG TELEPROMPTER -->
+  <footer class="bottom-studio-dock">
+    <div class="dock-nav-cluster">
+      <button class="nav-action-btn" onclick="prevSlide()">◀ Trang Trước</button>
+      <div class="dots-wrapper" id="dotsContainer"></div>
+    </div>
+
+    <div class="dock-teleprompter-stage" id="teleprompterBar">
+      <div class="voice-wave-bars">
+        <span></span><span></span><span></span><span></span>
+      </div>
+      <div class="teleprompter-text" id="teleprompterText">
+        🎙️ Báo Cáo Sáng Kiến CheckCCRQT v0.5.0 — Chi cục Kiểm lâm tỉnh Quảng Trị
+      </div>
+      <button class="btn-hud-action" id="btnStopInline" style="display:none; padding:2px 8px; font-size:0.7rem;" onclick="stopAutoLecture()">⏹ Dừng</button>
+    </div>
+
+    <div class="dock-nav-cluster">
+      <a href="https://happyrun09.github.io/checkccrqt/" target="_blank" rel="noopener" class="nav-action-btn" style="background:linear-gradient(135deg,#f5c451,#c48a10); color:#030d07;">
+        🌐 Live Web GIS
+      </a>
+      <button class="nav-action-btn" onclick="nextSlide()">Trang Tiếp ▶</button>
+    </div>
+  </footer>
+
+  <!-- MODAL 1: DANH SÁCH 10 TÁC GIẢ -->
+  <div class="modal-backdrop" id="authorsModal" onclick="closeAuthorsModal()">
+    <div class="modal-card" onclick="event.stopPropagation()">
+      <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(46,229,157,0.3); padding-bottom:8px; margin-bottom:12px;">
+        <h3 style="color:#ffe9ad; font-size:1.2rem;">👥 Tập Thể 10 Tác Giả Sáng Kiến — Phòng SD&amp;PTR</h3>
+        <button class="btn-hud-action" onclick="closeAuthorsModal()">✕ Đóng</button>
+      </div>
+      <p style="font-size:0.84rem; color:#cbd5e1; margin-bottom:10px;">
+        Đơn vị chủ trì: <strong>Phòng Sử dụng và Phát triển rừng — Chi cục Kiểm lâm tỉnh Quảng Trị</strong> (Căn cứ Quyết định số 406/QĐ-CCKL).
+      </p>
+      <table class="matrix-table" style="font-size:0.8rem;">
+        <thead>
+          <tr><th>STT</th><th>Họ và tên</th><th>Học vị / Trình độ</th><th>Chức vụ công tác</th><th>Tỷ lệ đóng góp</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td><strong>Phạm Thanh Trung</strong></td><td>Đại học Lâm nghiệp</td><td>Trưởng phòng SD&amp;PTR</td><td>10%</td></tr>
+          <tr><td>2</td><td><strong>Phạm Xuân Thành</strong></td><td>Thạc sỹ Lâm học</td><td>Phó Trưởng phòng SD&amp;PTR</td><td>10%</td></tr>
+          <tr><td>3</td><td><strong>Nguyễn Tuấn Anh</strong></td><td>Thạc sỹ Lâm nghiệp</td><td>Phó Trưởng phòng SD&amp;PTR</td><td>10%</td></tr>
+          <tr><td>4</td><td><strong>Nguyễn Việt Tú</strong></td><td>Thạc sỹ Lâm học</td><td>Kiểm lâm viên</td><td>10%</td></tr>
+          <tr><td>5</td><td><strong>Phạm Hoàng Hà</strong></td><td>Thạc sỹ Lâm học</td><td>Kiểm lâm viên</td><td>10%</td></tr>
+          <tr><td>6</td><td><strong>Nguyễn Thanh Lý</strong></td><td>Thạc sỹ Lâm học</td><td>Kiểm lâm viên</td><td>10%</td></tr>
+          <tr><td>7</td><td><strong>Dương Chí Anh</strong></td><td>Thạc sỹ Khoa học cây trồng</td><td>Kiểm lâm viên</td><td>10%</td></tr>
+          <tr><td>8</td><td><strong>Nguyễn Văn Thăng</strong></td><td>Đại học Lâm nghiệp</td><td>Kiểm lâm viên</td><td>10%</td></tr>
+          <tr><td>9</td><td><strong>Trần Phước Lâm</strong></td><td>Thạc sỹ Lâm học</td><td>Kiểm lâm viên</td><td>10%</td></tr>
+          <tr><td>10</td><td><strong>Lê Ngọc Cường</strong></td><td>Thạc sỹ QL tài nguyên rừng</td><td>Kiểm lâm viên</td><td>10%</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- MODAL 2: THƯỚC ĐO TÍNH HIỆU QUẢ KINH TẾ (ROI CALCULATOR) -->
+  <div class="modal-backdrop" id="roiModal" onclick="closeRoiModal()">
+    <div class="modal-card" style="max-width:700px;" onclick="event.stopPropagation()">
+      <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(46,229,157,0.3); padding-bottom:8px; margin-bottom:12px;">
+        <h3 style="color:#ffe9ad; font-size:1.2rem;">🧮 Thước Đo Lượng Hóa Hiệu Quả Kinh Tế &amp; Thời Gian</h3>
+        <button class="btn-hud-action" onclick="closeRoiModal()">✕ Đóng</button>
+      </div>
+      <p style="font-size:0.85rem; color:#cbd5e1; margin-bottom:14px;">
+        Kéo thanh trượt bên dưới để ước tính số giờ công và kinh phí ngân sách nhà nước tiết kiệm được khi chuyển từ quy trình thủ công sang <strong>CheckCCRQT Web GIS</strong>.
+      </p>
+
+      <div style="background:rgba(4,20,11,0.8); padding:16px; border-radius:12px; border:1px solid var(--border-glass);">
+        <label style="font-weight:800; color:#ffe9ad; display:flex; justify-content:space-between;">
+          <span>Quy mô số lượng lô rừng cần thẩm định:</span>
+          <span id="roiLotCountLabel" style="color:var(--emerald); font-size:1.1rem;">1.000 Lô</span>
+        </label>
+        <input type="range" id="roiSlider" min="100" max="10000" step="100" value="1000" style="width:100%; accent-color:var(--emerald); margin:12px 0;" oninput="updateRoiCalc(this.value)" />
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:10px;">
+          <div style="background:#082214; padding:12px; border-radius:8px; border:1px solid rgba(46,229,157,0.3);">
+            <div style="font-size:0.76rem; color:#cbd5e1;">Thời gian theo quy trình cũ:</div>
+            <div id="roiOldTime" style="font-size:1.25rem; font-weight:900; color:#fca5a5;">24,0 Giờ (3 Ngày)</div>
+          </div>
+          <div style="background:#082214; padding:12px; border-radius:8px; border:1px solid rgba(46,229,157,0.3);">
+            <div style="font-size:0.76rem; color:#cbd5e1;">Thời gian với CheckCCRQT Web:</div>
+            <div id="roiNewTime" style="font-size:1.25rem; font-weight:900; color:var(--emerald);">0,05 Giờ (3 Phút)</div>
+          </div>
+          <div style="background:#082214; padding:12px; border-radius:8px; border:1px solid rgba(46,229,157,0.3);">
+            <div style="font-size:0.76rem; color:#cbd5e1;">Tổng thời gian tiết kiệm:</div>
+            <div id="roiSavedHours" style="font-size:1.25rem; font-weight:900; color:#ffe9ad;">23,95 Giờ (Giảm 98%)</div>
+          </div>
+          <div style="background:#082214; padding:12px; border-radius:8px; border:1px solid rgba(46,229,157,0.3);">
+            <div style="font-size:0.76rem; color:#cbd5e1;">Kinh phí nhân công tiết kiệm:</div>
+            <div id="roiSavedMoney" style="font-size:1.25rem; font-weight:900; color:var(--emerald);">11.975.000 VNĐ / đợt</div>
+          </div>
+        </div>
+
+        <div style="margin-top:14px; font-size:0.78rem; color:#94a3b8; font-style:italic;">
+          * Cơ sở tính toán: Định mức kiểm tra thủ công 1,44 phút/lô; Kiểm tra tự động 0,18 giây/lô; Chi phí ngày công kỹ sư kiểm lâm theo quy chuẩn nhà nước.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // =========================================================================
+    // DỮ LIỆU 12 SLIDE BÁO CÁO SÁNG KIẾN CHUẨN KIỂM LÂM & EUDR QUẢNG TRỊ
+    // =========================================================================
+    const INITIATIVE_SLIDES = [
+      {
+        id: 1,
+        tag: "🏛️ ĐỊNH DANH SÁNG KIẾN",
+        title: "01. ĐỊNH DANH SÁNG KIẾN & BƯỚC NHẢY VỌT CÔNG NGHỆ",
+        flipCards: [
+          {
+            frontTitle: "PHỤ THUỘC PHẦN MỀM CÀI ĐẶT",
+            frontText: "Bản thô v0.2.3 bắt buộc cài QGIS nặng 3–5GB, xung đột Python, cán bộ xã không cài được.",
+            backTitle: "WEB-GIS COMMAND CENTER TỰ TRỊ",
+            backText: "Bản v0.5.0 chạy 100% trên trình duyệt Web (PC, iPad, Smartphone), mở link là dùng ngay."
+          },
+          {
+            frontTitle: "BỊ ĐỘNG VỚI MÂY BÃO MIỀN TRUNG",
+            frontText: "Ảnh quang học Sentinel-2 bị mây che kín 90% vào mùa mưa (tháng 9 – tháng 1 hằng năm).",
+            backTitle: "RADAR XUYÊN MÂY SENTINEL-1 SAR RTC",
+            backText: "Ứng dụng sóng Radar C-band phân cực kép VV/VH đo sinh khối RVI bất chấp mưa bão."
+          },
+          {
+            frontTitle: "THẨM ĐỊNH THỦ CÔNG RỜI RẠC",
+            frontText: "Cán bộ mở từng lớp bản đồ, xuất bảng tính Excel rồi cộng trừ thủ công mất 2–3 ngày.",
+            backTitle: "TỰ ĐỘNG HÓA 1-CLICK TRỌN GÓI",
+            backText: "Nạp file là hệ thống tự kiểm tra hình học, quét mất rừng EUDR và tính diện tích trong 3 phút."
+          },
+          {
+            frontTitle: "GIỚI HẠN MÁY TÍNH VĂN PHÒNG",
+            frontText: "Chỉ cán bộ phòng chuyên môn có máy tính đồ họa mạnh mới xử lý được bản đồ.",
+            backTitle: "PHỤC VỤ MỌI CẤP KIỂM LÂM & DÂN",
+            backText: "Cán bộ hạt, trạm kiểm lâm và chủ rừng hợp tác xã đều kiểm tra được trên điện thoại."
+          }
+        ],
+        bullets: [
+          "🔹 Tên sáng kiến chính thức: <strong>Hệ sinh thái GIS Viễn thám đa cảm biến (Sentinel-2 &amp; Radar Sentinel-1 SAR RTC) và Web-Portal tự động hóa thẩm định nguồn gốc gỗ EUDR/VNTLAS</strong>.",
+          "🔹 Cơ quan chủ quản: <strong>Chi cục Kiểm lâm tỉnh Quảng Trị</strong> (Quyết định số 406/QĐ-CCKL &amp; Quyết định số 1927/QĐ-SNNMT)."
+        ],
+        stateOld: "🐢 Phụ thuộc phần mềm QGIS Desktop nặng nề & thủ công",
+        bridgeVerb: "BỨT PHÁ THÀNH",
+        stateNew: "⚡ Cổng Web GIS Command Center tự động hóa 100% trực tuyến",
+        svgTheme: "command_center",
+        script: "Kính thưa Hội đồng, sáng kiến của Phòng Sử dụng và Phát triển rừng, Chi cục Kiểm lâm tỉnh Quảng Trị đánh dấu bước nhảy vọt công nghệ: Chuyển dịch toàn diện từ phần mềm QGIS Desktop cài đặt phức tạp sang Nền tảng Web-GIS Command Center tự trị, giúp thẩm định nguồn gốc rừng chứng chỉ và đáp ứng Quy định chống phá rừng Châu Âu EUDR nhanh gấp hàng trăm lần."
+      },
+      {
+        id: 2,
+        tag: "⚖️ PHÁP LÝ QUỐC TẾ EUDR & VNTLAS",
+        title: "02. BỐI CẢNH CHIẾN LƯỢC & ÁP LỰC PHÁP LÝ QUỐC TẾ",
+        flipCards: [
+          {
+            frontTitle: "MỐC PHÁP LÝ 31/12/2020",
+            frontText: "EUDR quy định gỗ khai thác trên diện tích bị phá rừng sau ngày 31/12/2020 không được nhập vào EU.",
+            backTitle: "TRUY XUẤT LỊCH SỬ VIỄN THÁM",
+            backText: "Đối chiếu chuỗi biến động rừng ẩm nhiệt đới EC JRC TMF v1_2025 xác thực mốc thời gian khách quan."
+          },
+          {
+            frontTitle: "ĐỊNH NGHĨA RỪNG FAO ĐIỀU 2(4)",
+            frontText: "Dễ nhầm lẫn diện tích cây bụi hoặc nông nghiệp nếu không nắm rõ quy chuẩn quốc tế.",
+            backTitle: "CHUẨN HÓA THUẬT TOÁN FAO",
+            backText: "Khóa chặt tiêu chí: diện tích > 0,5 ha, độ tàn che > 10%, chiều cao cây trưởng thành > 5 m."
+          },
+          {
+            frontTitle: "PHÂN NGƯỠNG 4 HA ĐIỀU 9",
+            frontText: "Chủ rừng lúng túng khi lập hồ sơ: lô lớn phải nộp đa giác, lô nhỏ nộp tọa độ điểm.",
+            backTitle: "TỰ ĐỘNG PHÂN TÁCH ĐA GIÁC / ĐIỂM",
+            backText: "Hệ thống tự động sinh đa giác cho lô > 4 ha và tự co cụm trọng tâm thành Điểm cho lô <= 4 ha."
+          },
+          {
+            frontTitle: "NGUY CƠ ĐÌNH CHỈ XUẤT KHẨU",
+            frontText: "Nếu không có tọa độ số đạt chuẩn, toàn bộ chuỗi cung ứng gỗ Keo lai trị giá hàng triệu USD sẽ bị từ chối.",
+            backTitle: "THÔNG SUỐT HẢI QUAN TRACES NT",
+            backText: "Xuất tệp GeoJSON RFC 7946 chuẩn hóa, giúp doanh nghiệp và chủ rừng thông quan tức thì."
+          }
+        ],
+        bullets: [
+          "🔹 Tuân thủ nghiêm ngặt <strong>Regulation (EU) 2023/1115</strong>, <strong>Luật Lâm nghiệp 2017</strong> và các Nghị định <strong>102/2020/NĐ-CP &amp; 120/2024/NĐ-CP (VNTLAS)</strong>.",
+          "🔹 Chuẩn hóa dữ liệu theo đặc tả <strong>IETF RFC 7946</strong>, sẵn sàng kết nối cổng thông tin hải quan châu Âu."
+        ],
+        stateOld: "⚠️ Nguy cơ đình chỉ xuất khẩu gỗ sang EU vì thiếu hồ sơ số",
+        bridgeVerb: "CHUẨN HÓA THÀNH",
+        stateNew: "🛡️ 100% Lô rừng Keo lai có hồ sơ truy xuất đạt chuẩn TRACES NT",
+        svgTheme: "eudr_shield",
+        script: "Trước yêu cầu bắt buộc của Quy định EUDR, mốc pháp lý ngày 31 tháng 12 năm 2020 là ranh giới sống còn của ngành gỗ xuất khẩu. Sáng kiến đã tích hợp hoàn hảo Điều 2 khoản 4 định nghĩa rừng FAO và Điều 9 phân ngưỡng 4 hecta, tạo ra bộ hồ sơ số chuẩn xác tuyệt đối để xuất khẩu gỗ thông suốt."
+      },
+      {
+        id: 3,
+        tag: "💻 GIẢI MÃ ĐỘT PHÁ 1",
+        title: "03. ĐỘT PHÁ 1: GIẢI PHÓNG HOÀN TOÀN KHỎI QGIS DESKTOP",
+        flipCards: [
+          {
+            frontTitle: "BỘ CÀI ĐẶT CỒNG KỀNH 5GB",
+            frontText: "Mỗi máy tính phải cài QGIS bản quyền mã nguồn mở nặng, tải gói plugin zip, chỉnh môi trường.",
+            backTitle: "CHẠY 100% TRÊN TRÌNH DUYỆT",
+            backText: "Kiến trúc Web-GIS tải trong 1 giây, hoạt động trên Chrome, Safari, Edge không cần cài thêm gì."
+          },
+          {
+            frontTitle: "XUNG ĐỘT THƯ VIỆN PYTHON",
+            frontText: "Nâng cấp hệ điều hành Windows hoặc cập nhật QGIS thường làm đơ hoặc tê liệt các script cũ.",
+            backTitle: "LÕI THUẬT TOÁN WEBASSEMBLY & JS",
+            backText: "Sử dụng Turf.js và JavaScript độc lập, không phụ thuộc hệ điều hành hay phiên bản Python."
+          },
+          {
+            frontTitle: "CHỈ DÙNG TẠI BÀN LÀM VIỆC",
+            frontText: "Cán bộ đi thực địa ở huyện Cam Lộ, Vĩnh Linh không thể vác theo máy trạm nặng để kiểm tra.",
+            backTitle: "DI ĐỘNG HÓA HIỆN TRƯỜNG",
+            backText: "Mở trực tiếp trên máy tính bảng hoặc điện thoại thông minh ngay tại bìa rừng, có hỗ trợ GPS định vị."
+          },
+          {
+            frontTitle: "KHÓ KHĂN CẬP NHẬT BẢN MỚI",
+            frontText: "Mỗi lần sửa code phải gửi email file zip cho từng hạt kiểm lâm tự giải nén đè lại.",
+            backTitle: "ĐỒNG BỘ TỨC THÌ QUA CLOUD",
+            backText: "Triển khai CI/CD qua GitHub Pages: tác giả cập nhật code là toàn bộ cán bộ toàn tỉnh có ngay bản mới."
+          }
+        ],
+        bullets: [
+          "🔹 Xóa bỏ hoàn toàn <strong>Hạn chế 1</strong> được nêu trong báo cáo v0.2.3 cũ: Không còn bắt người dùng cài đặt QGIS.",
+          "🔹 Tích hợp công nghệ <strong>PWA (Progressive Web App)</strong>: Lưu bộ nhớ đệm Offline, mất mạng vẫn mở xem được bản đồ."
+        ],
+        stateOld: "📦 Cài đặt thủ công phức tạp trên từng máy tính văn phòng",
+        bridgeVerb: "GIẢI PHÓNG THÀNH",
+        stateNew: "🌐 Nền tảng Web-GIS mở link là chạy, đa nền tảng mọi nơi",
+        svgTheme: "cloud_architecture",
+        script: "Đột phá lớn đầu tiên là giải phóng hoàn toàn người dùng khỏi phần mềm QGIS Desktop. Bằng cách đưa toàn bộ thuật toán không gian lên nền Web, cán bộ kiểm lâm hay chủ rừng chỉ cần một đường link duy nhất là có thể thẩm định ngay lập tức trên máy tính hoặc điện thoại mà không cần cài đặt bất kỳ phần mềm nào."
+      },
+      {
+        id: 4,
+        tag: "🛰️ GIẢI MÃ ĐỘT PHÁ 2",
+        title: "04. ĐỘT PHÁ 2: RADAR XUYÊN MÂY SENTINEL-1 SAR RTC",
+        flipCards: [
+          {
+            frontTitle: "MÙ ẢNH QUANG HỌC MÙA MƯA",
+            frontText: "Mùa mưa miền Trung mây dầy đặc, ảnh Sentinel-2 bị mất dữ liệu tới 5 tháng liên tục.",
+            backTitle: "SÓNG RADAR C-BAND XUYÊN MÂY",
+            backText: "Dữ liệu ESA Sentinel-1 SAR phát bước sóng 5.6 cm xuyên qua mây mù, mưa bão 24/7."
+          },
+          {
+            frontTitle: "NHIỄU ĐỊA HÌNH ĐỒI NÚI",
+            frontText: "Sườn dốc và đồi núi vùng Tây Quảng Trị làm sai lệch độ phản hồi tín hiệu Radar thông thường.",
+            backTitle: "HIỆU CHỈNH ĐỊA HÌNH BỨC XẠ (RTC)",
+            backText: "Triệt tiêu độ nghiêng địa hình, khôi phục chuẩn xác hệ số tán xạ ngược Gamma Naught."
+          },
+          {
+            frontTitle: "CHỈ SỐ NDVI BỊ GIÁN ĐOẠN",
+            frontText: "Mây che khiến biểu đồ chỉ số thực vật NDVI bị gãy khúc, không biết chính xác ngày khai thác.",
+            backTitle: "CHỈ SỐ RVI SINH KHỐI LIÊN TỤC",
+            backText: "Tính toán chỉ số RVI = 4*VH / (VV + VH), phát hiện chính xác thời điểm rừng bị chặt hạ."
+          },
+          {
+            frontTitle: "BỎ SÓT MÂY TI MỎNG",
+            frontText: "Mặt nạ phân loại SCL mặc định thường nhầm lẫn mây ti mỏng với khoảng trống rừng.",
+            backTitle: "BỘ LỌC CLOUD SCORE+ PASQUARELLA",
+            backText: "Áp dụng thuật toán lọc mây quang phổ Pasquarella 2023, loại bỏ sạch sai số viễn thám."
+          }
+        ],
+        bullets: [
+          "🔹 Xóa bỏ hoàn toàn <strong>Hạn chế 2</strong> trong báo cáo v0.2.3: Giám sát rừng liên tục không phụ thuộc thời tiết.",
+          "🔹 Ứng dụng quy trình chuẩn RADD (Reiche et al., 2021) kết hợp viễn thám quang học và radar đa cảm biến."
+        ],
+        stateOld: "🌧️ Gián đoạn theo dõi rừng nhiều tháng do mây mù che phủ",
+        bridgeVerb: "XUYÊN MÂY THÀNH",
+        stateNew: "⚡ Giám sát 365 ngày/năm với cặp đôi Sentinel-2 & Sentinel-1 SAR RTC",
+        svgTheme: "radar_pulse",
+        script: "Đột phá thứ hai giải quyết triệt để vấn đề thời tiết mù mây của miền Trung. Bằng việc tích hợp dữ liệu Radar Sentinel-1 SAR RTC xuyên mây, kết hợp chỉ số sinh khối RVI và bộ lọc mây Pasquarella, hệ thống duy trì khả năng cảnh báo mất rừng 365 ngày trong năm mà không có bất kỳ khoảng mù nào."
+      },
+      {
+        id: 5,
+        tag: "🗺️ GIẢI MÃ ĐỘT PHÁ 3",
+        title: "05. ĐỘT PHÁ 3: BỘ CHUẨN HÓA VN-2000 & RFC 7946 TRACES NT",
+        flipCards: [
+          {
+            frontTitle: "SAI LỆCH KINH TUYẾN TRỤC",
+            frontText: "Lô rừng bị lệch hàng trăm mét do nhầm lẫn giữa Quảng Trị mới (106°00') và cũ (106°15').",
+            backTitle: "TỰ ĐỘNG NHẬN DIỆN 7 THAM SỐ HELMERT",
+            backText: "Engine tự nhận diện múi chiếu 3° và chuyển đổi chuẩn xác VN-2000 sang WGS-84."
+          },
+          {
+            frontTitle: "LỖI TOPOLOGY CHỒNG LẤN RANH",
+            frontText: "Đa giác ranh giới bị tự cắt, đỉnh trùng liền kề, đa giác rỗng khiến cổng TRACES NT từ chối.",
+            backTitle: "ENGINE KIỂM TRA TOPOLOGY TỰ ĐỘNG",
+            backText: "Tự động phát hiện và cảnh báo các lỗi hình học, sửa đảo chiều winding theo chuẩn RFC 7946."
+          },
+          {
+            frontTitle: "TỌA ĐỘ THỪA THIẾU SỐ THẬP PHÂN",
+            frontText: "Tọa độ GPS ghi 3-4 số lẻ không đủ độ chính xác định vị hoặc quá dài làm phình dung lượng.",
+            backTitle: "KHÓA CHẶT 6 SỐ THẬP PHÂN (10 CM)",
+            backText: "Làm tròn chuẩn xác 6 chữ số thập phân (độ chính xác ~0.1m) đúng khuyến nghị của Ủy ban Châu Âu."
+          },
+          {
+            frontTitle: "LÔ NHỎ DƯỚI 4 HA BỊ BÁO LỖI",
+            frontText: "Nộp đa giác phức tạp cho lô nhỏ dưới 4 ha làm quá tải băng thông cổng tiếp nhận EU.",
+            backTitle: "TỰ ĐỘNG CO CỤM THÀNH TỌA ĐỘ ĐIỂM",
+            backText: "Tích chọn 1 nút là tự sinh điểm tâm hình học Point cho các lô <= 4 ha theo đúng Điều 9 EUDR."
+          }
+        ],
+        bullets: [
+          "🔹 Xóa bỏ hoàn toàn <strong>Hạn chế 3</strong> trong báo cáo cũ: Không còn nguy cơ sai lệch tọa độ khi mở rộng.",
+          "🔹 Đạt độ tương thích 100% với đặc tả <strong>IETF RFC 7946</strong> và cổng thông tin châu Âu TRACES NT."
+        ],
+        stateOld: "🧩 Dữ liệu ranh giới rời rạc, sai lệch múi chiếu và lỗi hình học",
+        bridgeVerb: "CHUẨN HÓA THÀNH",
+        stateNew: "🎯 Hồ sơ GeoJSON chuẩn xác tuyệt đối, thông quan TRACES NT 100%",
+        svgTheme: "topology_check",
+        script: "Đột phá thứ ba là bộ chuẩn hóa không gian VN-2000 và RFC 7946. Hệ thống tự động chuyển đổi 7 tham số Helmert giữa VN-2000 múi 3 độ và WGS-84, quét sạch lỗi chồng lấn ranh giới và tự động co cụm các lô dưới 4 hecta thành tọa độ điểm theo đúng Điều 9 EUDR."
+      },
+      {
+        id: 6,
+        tag: "🌿 GIẢI MÃ ĐỘT PHÁ 4",
+        title: "06. ĐỘT PHÁ 4: PHÂN TÁCH KEO LAI LUÂN CANH VS PHÁ RỪNG",
+        flipCards: [
+          {
+            frontTitle: "BÁO OAN VI PHẠM PHÁ RỪNG",
+            frontText: "Vệ tinh thấy mất tán cây là báo động đỏ, gây phạt nhầm cho rừng trồng keo khai thác hợp pháp.",
+            backTitle: "THUẬT TOÁN NHẬN DIỆN CHU KỲ",
+            backText: "Phân tích lịch sử sinh khối 4–6 năm: Tán keo phục hồi nhanh được xếp loại Vàng hợp pháp."
+          },
+          {
+            frontTitle: "THIẾU CĂN CỨ ĐỐI CHỨNG",
+            frontText: "Cán bộ kiểm lâm phải tranh cãi với kiểm toán viên quốc tế vì không có chứng cứ lịch sử.",
+            backTitle: "CHỨNG CỨ VIỄN THÁM ĐA TẦNG",
+            backText: "Tích hợp bản đồ JRC TMF v1_2025 và Hansen Global Forest Change chứng minh nguồn gốc đất."
+          },
+          {
+            frontTitle: "NHẦM LẪN VỚI RỪNG TỰ NHIÊN",
+            frontText: "Lô keo giáp ranh rừng tự nhiên dễ bị nghi ngờ lấn chiếm đất lâm nghiệp sau 2020.",
+            backTitle: "KHOANH VÙNG ĐA LỚP CHÍNH XÁC",
+            backText: "Chồng xếp ranh giới quy hoạch 3 loại rừng theo Quyết định 406/QĐ-CCKL làm rõ tính pháp lý."
+          },
+          {
+            frontTitle: "KHAI THÁC XONG BỎ ĐẤT TRỐNG",
+            frontText: "Thời điểm sau thu hoạch đất trống dễ bị xếp vào diện mất rừng vĩnh viễn.",
+            backTitle: "THEO DÕI TÁI SINH TRỒNG LẠI",
+            backText: "Theo dõi chỉ số xanh phục hồi sau 6-12 tháng để hoàn tất chu trình cấp chứng chỉ bền vững."
+          }
+        ],
+        bullets: [
+          "🔹 Bảo vệ quyền lợi hợp pháp cho hàng nghìn hộ gia đình trồng rừng Keo lai có chứng chỉ FSC/PEFC tại Quảng Trị.",
+          "🔹 Bám sát định nghĩa rừng FAO: Rừng trồng luân canh thu hoạch rồi trồng lại không cấu thành phá rừng EUDR."
+        ],
+        stateOld: "❌ Nguy cơ phạt oan rừng trồng keo luân canh hợp pháp của dân",
+        bridgeVerb: "BẢO VỆ BẰNG",
+        stateNew: "🛡️ Thuật toán phân tách chu kỳ khai thác và tái sinh khách quan",
+        svgTheme: "acacia_cycle",
+        script: "Đột phá thứ tư mang ý nghĩa thực tiễn to lớn: Bảo vệ nông dân trồng rừng keo lai. Bằng thuật toán nhận diện chu kỳ phục hồi sinh khối, hệ thống phân tách rạch ròi giữa việc khai thác rừng keo luân canh hợp pháp với hành vi phá rừng tự nhiên, tránh mọi án phạt oan từ các tổ chức kiểm toán quốc tế."
+      },
+      {
+        id: 7,
+        tag: "📐 GIẢI MÃ ĐỘT PHÁ 5",
+        title: "07. ĐỘT PHÁ 5: XUẤT BẢN ĐỒ KỸ THUẬT KHUNG 02 DÒNG KẺ A4",
+        flipCards: [
+          {
+            frontTitle: "BIÊN TẬP BẢN ĐỒ THỦ CÔNG",
+            frontText: "Trong QGIS phải mở Print Layout, căn chỉnh lề, kéo thước tỷ lệ, gõ tên chủ hộ mất 30 phút/lô.",
+            backTitle: "1-CLICK XUẤT BẢN ĐỒ KHUNG ĐÔI NATIVE",
+            backText: "Sinh đồ hình vector trực tiếp trên trình duyệt theo chuẩn CAD/GIS khổ A4 và A3 ngay lập tức."
+          },
+          {
+            frontTitle: "BẢNG TỌA ĐỘ ĐỈNH PHẢI COPY TAY",
+            frontText: "Cán bộ phải trích tọa độ từng đỉnh sang Excel rồi dán vào bản vẽ, rất dễ nhầm lẫn số đo.",
+            backTitle: "TỰ ĐỘNG LẬP BẢNG TỌA ĐỘ ĐỈNH",
+            backText: "Tự động trích xuất và lập bảng tọa độ đỉnh kép (VN-2000 Múi 3° và WGS-84) đánh số 1, 2, 3..."
+          },
+          {
+            frontTitle: "THIẾU CÁC YẾU TỐ PHÁP LÝ",
+            frontText: "Bản đồ tự vẽ thiếu hoa tiêu hướng Bắc, thước tỷ lệ chính quy và khung ký đóng dấu của cơ quan.",
+            backTitle: "CHUẨN KHUÔN IN LVT-LAYOUT",
+            backText: "Khung đôi 2 dòng kẻ trang trọng, hoa tiêu Bắc, thước tỷ lệ mét và khối chữ ký xác nhận của Kiểm lâm."
+          },
+          {
+            frontTitle: "XUẤT TỪNG LÔ CỰC KỲ TỐN CÔNG",
+            frontText: "Một nhóm hộ 100 lô phải bấm xuất 100 lần trong phần mềm máy tính để bàn.",
+            backTitle: "IN NGAY TRÊN TRÌNH DUYỆT HOẶC LƯU PDF",
+            backText: "Xem lô nào bấm in lô đó ngay trên thẻ chi tiết, hoặc xuất gộp cả đợt để in hồ sơ lưu trữ."
+          }
+        ],
+        bullets: [
+          "🔹 Tích hợp mô-đun <strong>CheckCCRQTComposer</strong> chạy độc lập trong trình duyệt, loại bỏ sự phụ thuộc vào Print Composer của QGIS.",
+          "🔹 Bản đồ xuất ra có đầy đủ giá trị pháp lý phục vụ thanh tra, kiểm tra và bàn giao nghiệm thu."
+        ],
+        stateOld: "📄 Mất hàng giờ biên tập thủ công từng bản đồ lô trong QGIS",
+        bridgeVerb: "TỰ ĐỘNG XUẤT THÀNH",
+        stateNew: "🖨️ Bản đồ Kỹ thuật Khung 02 dòng kẻ A4 hoàn chỉnh trong 2 giây",
+        svgTheme: "map_composer",
+        script: "Đột phá thứ năm thay thế hoàn toàn tính năng in ấn của phần mềm máy bàn. Mô-đun CheckCCRQTComposer tự động sinh bản đồ trắc địa khổ A4 với khung đôi hai dòng kẻ, thước tỷ lệ, hoa tiêu hướng Bắc và bảng tọa độ các đỉnh ranh giới VN-2000 đầy đủ giá trị pháp lý chỉ sau một cú nhấp chuột."
+      },
+      {
+        id: 8,
+        tag: "📊 GIẢI MÃ ĐỘT PHÁ 6",
+        title: "08. ĐỘT PHÁ 6: BỘ XUẤT SỔ BỘ EXCEL CÔNG THỨC & WORD",
+        flipCards: [
+          {
+            frontTitle: "XUẤT FILE CSV TRẦN KHÔNG CÔNG THỨC",
+            frontText: "File CSV xuất ra chỉ có chữ số chết, kiểm toán viên không thể kiểm tra công thức tính toán.",
+            backTitle: "EXCEL 3-SHEET CÔNG THỨC SỐNG",
+            backText: "Xuất file .xlsx chuẩn SheetJS với các hàm COUNTIF, SUMIF, SUM tự động tính tổng diện tích."
+          },
+          {
+            frontTitle: "MẤT TÍNH ĐỘNG KHI CHỈNH SỬA",
+            frontText: "Mỗi khi sửa một số liệu trong bảng, cán bộ phải lấy máy tính cầm tay bấm lại toàn bộ tổng.",
+            backTitle: "TỰ NHẢY SỐ LIỆU KHI THAY ĐỔI",
+            backText: "Công thức liên kết giữa các sheet: Thay đổi trạng thái lô là bảng tổng hợp tự nhảy kết quả."
+          },
+          {
+            frontTitle: "PHẢI TỰ GÕ BÁO CÁO VĂN BẢN WORD",
+            frontText: "Cán bộ mất hàng buổi để gõ tiêu đề, quốc hiệu, bảng biểu thành báo cáo trình lãnh đạo.",
+            backTitle: "1-CLICK XUẤT BÁO CÁO WORD (.DOC)",
+            backText: "Xuất văn bản hành chính đúng quy thức kiểm lâm, có bảng tổng kết Đỏ/Vàng/Xanh hoàn chỉnh."
+          },
+          {
+            frontTitle: "SAI LỆCH GIỮA CÁC BIỂU MẪU",
+            frontText: "Dữ liệu trên bản đồ một đằng, bảng Excel một nẻo, văn bản báo cáo một số liệu khác.",
+            backTitle: "ĐỒNG BỘ TUYỆT ĐỐI 100%",
+            backText: "Một nguồn dữ liệu duy nhất sinh ra đồng thời Bản đồ, Excel và Word, không có độ vênh số liệu."
+          }
+        ],
+        bullets: [
+          "🔹 Sheet 1: <strong>JRC_TMF_ChiTiet</strong> (Danh mục lô); Sheet 2: <strong>Tong_Hop_EUDR</strong> (Công thức tính diện tích); Sheet 3: <strong>Giai_Thich_Phap_Ly</strong>.",
+          "🔹 Báo cáo Word có đầy đủ căn cứ: Luật Lâm nghiệp, Nghị định 102/2020, Thông tư 33/2018 và Regulation EU 2023/1115."
+        ],
+        stateOld: "📝 Sao chép số liệu thủ công giữa GIS, Excel và Word dễ sai lệch",
+        bridgeVerb: "LIÊN KẾT THÀNH",
+        stateNew: "📈 Hệ sinh thái Báo cáo Excel công thức sống & Word chuẩn hóa",
+        svgTheme: "excel_formula",
+        script: "Đột phá thứ sáu là hệ thống báo cáo liên kết thông minh. Thay vì xuất file dữ liệu chết, hệ thống tạo ra file Excel ba trang tính chứa công thức sống tự động tính toán diện tích và báo cáo Word hành chính chuẩn quy thức kiểm lâm, đảm bảo số liệu minh bạch và thống nhất tuyệt đối."
+      },
+      {
+        id: 9,
+        tag: "🤖 GIẢI MÃ ĐỘT PHÁ 7",
+        title: "09. ĐỘT PHÁ 7: TRỢ LÝ AI EUDR CỤC BỘ BẢO MẬT TUYỆT ĐỐI",
+        flipCards: [
+          {
+            frontTitle: "PHỤ THUỘC API CLOUD TỐN PHÍ",
+            frontText: "Sử dụng ChatGPT hay các mô hình đám mây phải trả phí token đắt đỏ và cần internet mạnh.",
+            backTitle: "LOCAL KNOWLEDGE ENGINE 0 ĐỒNG",
+            backText: "Vận hành hoàn toàn trên trình duyệt người dùng, không tốn chi phí thuê API hàng tháng."
+          },
+          {
+            frontTitle: "RỦI RO LỘ DỮ LIỆU TÀI NGUYÊN RỪNG",
+            frontText: "Gửi tọa độ lô rừng lên các dịch vụ AI nước ngoài tiềm ẩn nguy cơ an ninh dữ liệu lâm nghiệp.",
+            backTitle: "BẢO MẬT TUYỆT ĐỐI TẠI MÁY CÁN BỘ",
+            backText: "Dữ liệu ranh giới và tọa độ chỉ xử lý trong bộ nhớ RAM trình duyệt, không gửi ra ngoài."
+          },
+          {
+            frontTitle: "CÁN BỘ KHÓ NHỚ HẾT VĂN BẢN LUẬT",
+            frontText: "Quy định EUDR và VNTLAS rất phức tạp, cán bộ cơ sở phải tra cứu hàng trăm trang tài liệu.",
+            backTitle: "TRA CỨU TỨC THÌ TRONG 0.1 GIÂY",
+            backText: "Hỏi đáp ngay về Điều 2(4), Điều 9, ngưỡng 4 ha, Nghị định 120/2024 và Thông tư 16/2023."
+          },
+          {
+            frontTitle: "MẤT MẠNG LÀ AI TÊ LIỆT",
+            frontText: "Các trợ lý ảo thông thường không thể sử dụng khi cán bộ làm việc ở vùng rừng sóng yếu.",
+            backTitle: "OFFLINE READY 100%",
+            backText: "Cơ sở tri thức nhúng sẵn trong tệp JavaScript, không có internet Trợ lý AI vẫn trả lời mượt mà."
+          }
+        ],
+        bullets: [
+          "🔹 Tích hợp cơ sở tri thức chuyên sâu: <strong>Hệ thống 8 nguồn trích dẫn học thuật</strong> và luật pháp lâm nghiệp Việt Nam.",
+          "🔹 Cho phép cấu hình thêm Proxy quản trị bảo mật nếu cơ quan muốn kết nối mô hình ngôn ngữ lớn nội bộ."
+        ],
+        stateOld: "📚 Mất hàng giờ tra cứu thủ công hàng trăm trang văn bản pháp lý",
+        bridgeVerb: "TRỢ LỰC BẰNG",
+        stateNew: "💡 Trợ lý AI EUDR giải đáp pháp lý & tọa độ chính xác trong 0.1 giây",
+        svgTheme: "ai_brain",
+        script: "Đột phá thứ bảy là Trợ lý AI EUDR chạy cục bộ. Được huấn luyện chuyên sâu về luật lâm nghiệp và quy chuẩn EUDR, Trợ lý AI hoạt động ngay trên trình duyệt mà không cần kết nối internet hay gửi dữ liệu ra bên ngoài, đảm bảo an toàn tuyệt đối cho dữ liệu tài nguyên rừng của tỉnh."
+      },
+      {
+        id: 10,
+        tag: "💰 HIỆU QUẢ ĐỊNH LƯỢNG",
+        title: "10. HIỆU QUẢ KINH TẾ – XÃ HỘI LƯỢNG HÓA RÕ RÀNG",
+        flipCards: [
+          {
+            frontTitle: "THỜI GIAN KIỂM TRA 1.000 LÔ",
+            frontText: "Bản thô v0.2.3 mất 15–30 phút; trước đây làm thủ công mất từ 02 đến 03 ngày làm việc.",
+            backTitle: "RÚT NGẮN CÒN DƯỚI 3 PHÚT (GIẢM 98%)",
+            backText: "Bản Web v0.5.0 chỉ mất 2 giây cho 1 lô và dưới 3 phút cho toàn bộ 1.000 lô rừng chứng chỉ."
+          },
+          {
+            frontTitle: "CHI PHÍ PHẦN MỀM BẢN QUYỀN",
+            frontText: "Chi phí mua bản quyền phần mềm GIS thương mại chuyên nghiệp lên tới hơn 300 triệu đồng.",
+            backTitle: "CHI PHÍ ĐẦU TƯ: 0 ĐỒNG",
+            backText: "Tự phát triển 100% trên công nghệ mở, tiết kiệm toàn bộ ngân sách nhà nước cho Chi cục."
+          },
+          {
+            frontTitle: "CHI PHÍ THIẾT BỊ MÁY MÓC",
+            frontText: "Phải trang bị máy tính trạm đồ họa đắt tiền (25–30 triệu/bộ) cho từng trạm kiểm lâm.",
+            backTitle: "TẬN DỤNG THIẾT BỊ SẴN CÓ",
+            backText: "Chạy mượt trên máy tính cũ văn phòng, laptop cá nhân và điện thoại di động thông thường."
+          },
+          {
+            frontTitle: "BẢO VỆ GIÁ TRỊ XUẤT KHẨU",
+            frontText: "Nguy cơ bị từ chối đơn hàng xuất khẩu gỗ sang châu Âu trị giá hàng chục triệu USD.",
+            backTitle: "BẢO VỆ NỀN KINH TẾ LÂM NGHIỆP",
+            backText: "Đảm bảo thông suốt chuỗi cung ứng gỗ hợp pháp cho hàng chục nghìn hộ dân tại Quảng Trị."
+          }
+        ],
+        bullets: [
+          "🔹 Bấm vào nút <strong>[ Tính Hiệu Quả ]</strong> trên thanh công cụ để trải nghiệm công cụ lượng hóa tài chính trực quan.",
+          "🔹 Đã kiểm thử thành công trên bộ dữ liệu <strong>963 lô rừng trồng có chứng chỉ</strong> tại tỉnh Quảng Trị."
+        ],
+        stateOld: "⏳ Tốn kém hàng trăm triệu đồng ngân sách & hàng nghìn giờ công",
+        bridgeVerb: "CHUYỂN HÓA THÀNH",
+        stateNew: "💎 Tiết kiệm ngân sách tối đa, bảo vệ toàn diện chuỗi xuất khẩu gỗ",
+        svgTheme: "roi_metrics",
+        script: "Về mặt hiệu quả kinh tế, sáng kiến đã giảm thời gian thẩm định từ ba ngày xuống dưới ba phút, tiết kiệm trên ba trăm triệu đồng chi phí bản quyền và bảo vệ an toàn cho thị trường xuất khẩu gỗ Keo lai của tỉnh Quảng Trị trước các rào cản thương mại quốc tế."
+      },
+      {
+        id: 11,
+        tag: "🚀 CHUYỂN GIAO & NHÂN RỘNG",
+        title: "11. KHẢ NĂNG NHÂN RỘNG & CHUYỂN GIAO CÔNG NGHỆ",
+        flipCards: [
+          {
+            frontTitle: "PHẠM VI ÁP DỤNG HẸP",
+            frontText: "Trước đây chỉ triển khai thử nghiệm nội bộ tại Phòng Sử dụng và Phát triển rừng.",
+            backTitle: "NHÂN RỘNG 25 ĐƠN VỊ TOÀN TỈNH",
+            backText: "Chuyển giao ngay cho 8 Hạt Kiểm lâm, các Ban QLR, Công ty Lâm nghiệp và Hợp tác xã."
+          },
+          {
+            frontTitle: "RÀO CẢN ĐỊA LÝ NGOÀI QUẢNG TRỊ",
+            frontText: "Phần mềm cũ bị đóng khung theo tọa độ địa phương, khó áp dụng cho các tỉnh khác.",
+            backTitle: "TÍCH HỢP KINH TUYẾN 63 TỈNH THÀNH",
+            backText: "Tích hợp sẵn danh mục kinh tuyến trục múi 3° của tất cả các tỉnh thành trên cả nước."
+          },
+          {
+            frontTitle: "KHÓ KHĂN TRONG ĐÀO TẠO",
+            frontText: "Phải mở lớp tập huấn GIS nhiều ngày nhưng cán bộ không chuyên vẫn khó thực hành.",
+            backTitle: "HƯỚNG DẪN TRONG 10 PHÚT",
+            backText: "Giao diện tiếng Việt kéo thả thân thiện, cán bộ cơ sở chỉ cần 10 phút hướng dẫn là làm chủ."
+          },
+          {
+            frontTitle: "TIẾP CẬN CỒNG KỀNH",
+            frontText: "Muốn chia sẻ phải sao chép qua USB hoặc tải file nặng dễ bị nhiễm virus.",
+            backTitle: "CHIA SẺ 1-CLICK QUA MÃ QR",
+            backText: "Quét mã QR hoặc truy cập đường link GitHub Pages là toàn bộ dữ liệu mẫu đã sẵn sàng."
+          }
+        ],
+        bullets: [
+          "🔹 Đầu mối tiếp nhận góp ý nâng cấp: <code>sdptrklqt@gmail.com</code> — Chi cục Kiểm lâm tỉnh Quảng Trị.",
+          "🔹 Sẵn sàng đóng gói chuyển giao công nghệ cho Cục Kiểm lâm và các Chi cục Kiểm lâm trên toàn quốc."
+        ],
+        stateOld: "🔒 Giải pháp bó hẹp trong phạm vi một phòng chuyên môn",
+        bridgeVerb: "NHÂN RỘNG THÀNH",
+        stateNew: "🌍 Nền tảng dùng chung cho toàn bộ ngành Lâm nghiệp cả nước",
+        svgTheme: "vietnam_map",
+        script: "Khả năng nhân rộng của sáng kiến là không giới hạn. Nhờ tích hợp sẵn kinh tuyến trục 63 tỉnh thành và vận hành trên nền tảng đám mây mở, giải pháp có thể chuyển giao ngay lập tức cho toàn bộ các đơn vị lâm nghiệp trên cả nước mà không tốn chi phí triển khai."
+      },
+      {
+        id: 12,
+        tag: "🏆 KẾT LUẬN & KIẾN NGHỊ",
+        title: "12. KẾT LUẬN & KIẾN NGHỊ CÔNG NHẬN SÁNG KIẾN",
+        flipCards: [
+          {
+            frontTitle: "TÍNH MỚI CỐT LÕI",
+            frontText: "Không trùng lặp với bất kỳ giải pháp nào đã có tại cơ quan và trên địa bàn tỉnh Quảng Trị.",
+            backTitle: "TIÊN PHONG CÔNG NGHỆ TẠI VIỆT NAM",
+            backText: "Hệ thống Web-GIS viễn thám đa cảm biến đầu tiên phục vụ thẩm định EUDR tại địa phương."
+          },
+          {
+            frontTitle: "TÍNH THỰC TIỄN & KHẢ THI",
+            frontText: "Không phải đề tài nằm trên giấy mà xuất phát trực tiếp từ điểm nghẽn bức xúc của cơ sở.",
+            backTitle: "ĐÃ ỨNG DỤNG THÀNH CÔNG VÀO THỰC TẾ",
+            backText: "Đã thẩm định thực tế hàng nghìn hecta rừng keo lai phục vụ cấp chứng chỉ FSC/PEFC."
+          },
+          {
+            frontTitle: "TÍNH LÀM CHỦ CÔNG NGHỆ",
+            frontText: "Không phụ thuộc vào các chuyên gia lập trình bên ngoài hay phần mềm thương mại đắt tiền.",
+            backTitle: "10 TÁC GIẢ KIỂM LÂM TỰ LÀM CHỦ",
+            backText: "Tập thể 10 cán bộ Kiểm lâm Quảng Trị trực tiếp nghiên cứu, phát triển và làm chủ giải pháp."
+          },
+          {
+            frontTitle: "ĐÓNG GÓP CHUYỂN ĐỔI SỐ",
+            frontText: "Góp phần thực hiện thắng lợi mục tiêu chuyển đổi số ngành Nông nghiệp và Môi trường tỉnh.",
+            backTitle: "KIẾN NGHỊ CÔNG NHẬN SÁNG KIẾN",
+            backText: "Kính đề nghị Hội đồng Sáng kiến xét, công nhận sáng kiến cấp Cơ sở và cấp Tỉnh năm 2026."
+          }
+        ],
+        bullets: [
+          "🔹 Đảm bảo đầy đủ 04 tiêu chí tính mới theo Điều 5 Quy chế xét công nhận sáng kiến tỉnh Quảng Trị.",
+          "🔹 Minh chứng thực tế: Hệ thống đang chạy trực tuyến tại địa chỉ <strong>happyrun09.github.io/checkccrqt/</strong>."
+        ],
+        stateOld: "🌱 Ý tưởng công nghệ giải quyết khó khăn từ thực tiễn cơ sở",
+        bridgeVerb: "HOÀN THIỆN THÀNH",
+        stateNew: "🏅 Công trình Sáng kiến Khoa học Tiêu biểu ngành Lâm nghiệp",
+        svgTheme: "forestry_crest",
+        script: "Kính thưa Hội đồng, sáng kiến của chúng tôi đáp ứng đầy đủ tính mới, tính sáng tạo, tính thực tiễn và mang lại hiệu quả kinh tế xã hội vượt trội. Tập thể tác giả Phòng Sử dụng và Phát triển rừng kính đề nghị Hội đồng xem xét công nhận sáng kiến cấp Cơ sở và cấp Tỉnh năm 2026. Xin trân trọng cảm ơn!"
+      }
+    ];
+
+    let currentSlide = 0;
+    let currentMode = "horizontal";
+    let currentWorkspace = "deck";
+    let isAutoLecturing = false;
+    let voiceGender = "male";
+    let speechRate = 1.0;
+    let speechSessionId = 0;
+
+    // =========================================================================
+    // SVG VISUAL ART COMPOSER CHO TỪNG SLIDE (16:9 960x540)
+    // =========================================================================
+    function getSvgArt(theme, idx) {
+      if (theme === "command_center") {
+        return `<svg viewBox="0 0 960 540" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="cmdGlow" cx="50%" cy="50%" r="55%">
+              <stop offset="0%" stop-color="#2ee59d" stop-opacity="0.32"/>
+              <stop offset="100%" stop-color="#020704" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <rect width="960" height="540" fill="url(#cmdGlow)"/>
+          <g class="anim-spin" style="transform-origin:480px 250px;">
+            <circle cx="480" cy="250" r="190" fill="none" stroke="#2ee59d" stroke-width="2" stroke-dasharray="8 12" opacity="0.6"/>
+            <circle cx="480" cy="250" r="150" fill="none" stroke="#f5c451" stroke-width="1.8" stroke-dasharray="4 8" opacity="0.75"/>
+          </g>
+          <g class="anim-spin-rev" style="transform-origin:480px 250px;">
+            <polygon points="480,70 500,230 660,250 500,270 480,430 460,270 300,250 460,230" fill="rgba(46,229,157,0.18)" stroke="#2ee59d" stroke-width="2"/>
+          </g>
+          <circle cx="480" cy="250" r="70" fill="#051c10" stroke="#f5c451" stroke-width="3.5" class="anim-pulse"/>
+          <text x="480" y="244" text-anchor="middle" fill="#ffe9ad" font-size="20" font-weight="900">CHECKCCRQT</text>
+          <text x="480" y="268" text-anchor="middle" fill="#2ee59d" font-size="13" font-weight="800">WEB GIS COMMAND CENTER</text>
+          <g class="anim-float">
+            <rect x="80" y="140" width="170" height="70" rx="12" fill="rgba(239,68,68,0.22)" stroke="#ef4444" stroke-width="2"/>
+            <text x="165" y="172" text-anchor="middle" fill="#fca5a5" font-size="13" font-weight="900">QGIS DESKTOP CŨ</text>
+            <text x="165" y="192" text-anchor="middle" fill="#cbd5e1" font-size="11">Cài đặt 5GB • Thủ công</text>
+
+            <rect x="710" y="140" width="170" height="70" rx="12" fill="rgba(46,229,157,0.22)" stroke="#2ee59d" stroke-width="2.5"/>
+            <text x="795" y="172" text-anchor="middle" fill="#6ee7b7" font-size="13" font-weight="900">WEB GIS v0.5.0</text>
+            <text x="795" y="192" text-anchor="middle" fill="#e2e8f0" font-size="11">1-Click Live • Đa thiết bị</text>
+          </g>
+          <rect x="180" y="460" width="600" height="36" rx="8" fill="#082816" stroke="#f5c451" stroke-width="2"/>
+          <text x="480" y="483" text-anchor="middle" fill="#ffe9ad" font-size="14" font-weight="800">CHI CỤC KIỂM LÂM TỈNH QUẢNG TRỊ • SÁNG KIẾN CẢI CÁCH HÀNH CHÍNH 2026</text>
+        </svg>`;
+      }
+
+      if (theme === "eudr_shield") {
+        return `<svg viewBox="0 0 960 540" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="480" cy="250" r="180" fill="none" stroke="#f5c451" stroke-width="2" stroke-dasharray="6 10" class="anim-spin" style="transform-origin:480px 250px;"/>
+          <path d="M480,90 L630,160 L630,300 C630,380 480,440 480,440 C480,440 330,380 330,300 L330,160 Z" fill="rgba(8,40,22,0.85)" stroke="#2ee59d" stroke-width="4" class="anim-pulse"/>
+          <text x="480" y="235" text-anchor="middle" fill="#ffe9ad" font-size="28" font-weight="900">EUDR 2023/1115</text>
+          <text x="480" y="265" text-anchor="middle" fill="#2ee59d" font-size="16" font-weight="800">MỐC PHÁP LÝ: 31/12/2020</text>
+          <text x="480" y="295" text-anchor="middle" fill="#cbd5e1" font-size="13" font-weight="700">ĐIỀU 2(4) FAO • ĐIỀU 9 TRACES NT</text>
+          <g class="anim-float">
+            <rect x="80" y="80" width="200" height="60" rx="12" fill="#061c10" stroke="#f5c451" stroke-width="2"/>
+            <text x="180" y="115" text-anchor="middle" fill="#ffe9ad" font-size="14" font-weight="800">🛡️ VNTLAS NĐ 102 &amp; 120</text>
+            <rect x="680" y="80" width="200" height="60" rx="12" fill="#061c10" stroke="#38bdf8" stroke-width="2"/>
+            <text x="780" y="115" text-anchor="middle" fill="#38bdf8" font-size="14" font-weight="800">🛰️ EC JRC TMF v1_2025</text>
+          </g>
+        </svg>`;
+      }
+
+      if (theme === "radar_pulse") {
+        return `<svg viewBox="0 0 960 540" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="480" cy="250" r="190" fill="none" stroke="#38bdf8" stroke-width="2.5" class="anim-spin" style="transform-origin:480px 250px;"/>
+          <circle cx="480" cy="250" r="130" fill="none" stroke="#2ee59d" stroke-width="2" class="anim-pulse"/>
+          <circle cx="480" cy="250" r="70" fill="rgba(56,189,248,0.2)" stroke="#38bdf8" stroke-width="3"/>
+          <line x1="480" y1="250" x2="670" y2="250" stroke="#00f2fe" stroke-width="3.5" class="anim-spin" style="transform-origin:480px 250px;"/>
+          <text x="480" y="240" text-anchor="middle" fill="#ffe9ad" font-size="22" font-weight="900">SENTINEL-1 SAR RTC</text>
+          <text x="480" y="268" text-anchor="middle" fill="#38bdf8" font-size="15" font-weight="800">RVI = 4*VH / (VV + VH)</text>
+          <text x="480" y="295" text-anchor="middle" fill="#2ee59d" font-size="13" font-weight="700">⚡ SÓNG C-BAND XUYÊN MÂY 365 NGÀY</text>
+        </svg>`;
+      }
+
+      if (theme === "acacia_cycle") {
+        return `<svg viewBox="0 0 960 540" xmlns="http://www.w3.org/2000/svg">
+          <path d="M120,400 Q280,100 480,260 T840,140" fill="none" stroke="#2ee59d" stroke-width="4.5" class="anim-dash"/>
+          <circle cx="280" cy="200" r="18" fill="#f5c451" class="anim-pulse"/>
+          <text x="280" y="170" text-anchor="middle" fill="#ffe9ad" font-size="14" font-weight="800">RỪNG KEO 5 NĂM</text>
+          <circle cx="480" cy="260" r="18" fill="#ef4444" class="anim-pulse"/>
+          <text x="480" y="295" text-anchor="middle" fill="#fca5a5" font-size="14" font-weight="800">KHAI THÁC LUÂN CANH</text>
+          <circle cx="680" cy="180" r="18" fill="#2ee59d" class="anim-pulse"/>
+          <text x="680" y="150" text-anchor="middle" fill="#6ee7b7" font-size="14" font-weight="800">TÁI SINH PHỤC HỒI</text>
+          <rect x="220" y="450" width="520" height="40" rx="10" fill="#061c10" stroke="#2ee59d" stroke-width="2"/>
+          <text x="480" y="475" text-anchor="middle" fill="#ffe9ad" font-size="15" font-weight="800">PHÂN TÁCH CHÍNH XÁC: KEO TRỒNG HỢP PHÁP KHÔNG PHẢI PHÁ RỪNG</text>
+        </svg>`;
+      }
+
+      if (theme === "map_composer") {
+        return `<svg viewBox="0 0 960 540" xmlns="http://www.w3.org/2000/svg">
+          <!-- Outer frame -->
+          <rect x="180" y="50" width="600" height="420" rx="8" fill="rgba(8,30,18,0.9)" stroke="#2ee59d" stroke-width="4"/>
+          <!-- Inner frame (Double line) -->
+          <rect x="190" y="60" width="580" height="400" rx="4" fill="none" stroke="#2ee59d" stroke-width="1.5"/>
+          <polygon points="260,180 440,120 540,240 400,320 280,260" fill="rgba(46,229,157,0.25)" stroke="#f5c451" stroke-width="3" class="anim-pulse"/>
+          <!-- North arrow -->
+          <g transform="translate(710, 110)">
+            <polygon points="0,-30 12,12 0,4 -12,12" fill="#ef4444"/>
+            <text x="0" y="-36" text-anchor="middle" fill="#ef4444" font-size="14" font-weight="900">N</text>
+          </g>
+          <!-- Grid lines -->
+          <line x1="200" y1="200" x2="760" y2="200" stroke="#334155" stroke-dasharray="4 6"/>
+          <line x1="200" y1="300" x2="760" y2="300" stroke="#334155" stroke-dasharray="4 6"/>
+          <line x1="360" y1="70" x2="360" y2="450" stroke="#334155" stroke-dasharray="4 6"/>
+          <line x1="560" y1="70" x2="560" y2="450" stroke="#334155" stroke-dasharray="4 6"/>
+          <text x="480" y="90" text-anchor="middle" fill="#ffe9ad" font-size="16" font-weight="900">BẢN ĐỒ TRUY XUẤT NGUỒN GỐC LÔ RỪNG CHỨNG CHỈ (A4)</text>
+          <text x="480" y="440" text-anchor="middle" fill="#2ee59d" font-size="13" font-weight="800">VN-2000 MÚI 3° (KT 106°00') • THƯỚC TỶ LỆ • KHỐI CHỮ KÝ KIỂM LÂM</text>
+        </svg>`;
+      }
+
+      if (theme === "excel_formula") {
+        return `<svg viewBox="0 0 960 540" xmlns="http://www.w3.org/2000/svg">
+          <g class="anim-float">
+            <rect x="120" y="100" width="720" height="320" rx="14" fill="#061c10" stroke="#2ee59d" stroke-width="2.5"/>
+            <rect x="120" y="100" width="720" height="46" rx="14" fill="#0f3b23"/>
+            <text x="140" y="130" fill="#2ee59d" font-size="18" font-weight="900">📗 SỔ BỘ EXCEL 3-SHEET • LIVE FORMULAS</text>
+            <text x="140" y="180" fill="#ffe9ad" font-size="15" font-family="monospace">=SUMIF(JRC_TMF_ChiTiet!F:F, "COMPLIANT_STABLE", D:D)</text>
+            <text x="140" y="220" fill="#6ee7b7" font-size="15" font-family="monospace">=COUNTIF(JRC_TMF_ChiTiet!F:F, "DEFORESTATION_ALERT")</text>
+            <text x="140" y="260" fill="#38bdf8" font-size="15" font-family="monospace">=SUM(JRC_TMF_ChiTiet!D2:D1000)</text>
+            <rect x="140" y="300" width="680" height="80" rx="8" fill="#041209" stroke="#f5c451" stroke-width="1.5"/>
+            <text x="480" y="335" text-anchor="middle" fill="#ffe9ad" font-size="14" font-weight="800">KẾT QUẢ TÍNH TỔNG TỰ ĐỘNG CẬP NHẬT KHI THAY ĐỔI DỮ LIỆU LÔ</text>
+            <text x="480" y="360" text-anchor="middle" fill="#2ee59d" font-size="12">Minh bạch tuyệt đối cho các đoàn Kiểm toán EUDR &amp; Chứng chỉ FSC</text>
+          </g>
+        </svg>`;
+      }
+
+      // Default forestry shield / crest
+      return `<svg viewBox="0 0 960 540" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="480" cy="250" r="190" fill="none" stroke="#2ee59d" stroke-width="2" stroke-dasharray="10 8" class="anim-spin" style="transform-origin:480px 250px;"/>
+        <circle cx="480" cy="250" r="140" fill="none" stroke="#f5c451" stroke-width="2.5" class="anim-pulse"/>
+        <circle cx="480" cy="250" r="85" fill="#062414" stroke="#ffe9ad" stroke-width="3"/>
+        <text x="480" y="244" text-anchor="middle" fill="#ffe9ad" font-size="22" font-weight="900">CHECKCCRQT</text>
+        <text x="480" y="272" text-anchor="middle" fill="#2ee59d" font-size="14" font-weight="800">SÁNG KIẾN KIỂM LÂM 2026</text>
+        <text x="480" y="470" text-anchor="middle" fill="#cbd5e1" font-size="14" font-weight="700">CHI CỤC KIỂM LÂM TỈNH QUẢNG TRỊ • PHÒNG SỬ DỤNG VÀ PHÁT TRIỂN RỪNG</text>
+      </svg>`;
+    }
+
+    // =========================================================================
+    // RENDER SLIDES & CONTROLS
+    // =========================================================================
+    function renderAllSlides() {
+      const track = document.getElementById("slidesTrack");
+      const jumpSelect = document.getElementById("slideJumpSelect");
+      const dotsContainer = document.getElementById("dotsContainer");
+      if (!track || !jumpSelect || !dotsContainer) return;
+
+      track.innerHTML = "";
+      jumpSelect.innerHTML = "";
+      dotsContainer.innerHTML = "";
+
+      INITIATIVE_SLIDES.forEach((slide, idx) => {
+        const sec = document.createElement("section");
+        sec.className = "slide" + (idx === currentSlide ? " active-slide" : "");
+
+        const flipCardsHtml = slide.flipCards.map((c, cIdx) => `
+          <div class="flip-card-3d" id="flipCard_${idx}_${cIdx}" onclick="onFlipCardClick(this)">
+            <div class="flip-card-inner">
+              <div class="flip-face flip-front">
+                <div class="flip-badge"><span>⚠️ THỰC TRẠNG CŨ ${cIdx + 1}</span><span>⇄</span></div>
+                <div class="flip-title">${c.frontTitle}</div>
+                <div class="flip-desc">${c.frontText}</div>
+              </div>
+              <div class="flip-face flip-back">
+                <div class="flip-badge"><span>⚡ ĐỘT PHÁ SÁNG KIẾN ${cIdx + 1}</span><span>✓</span></div>
+                <div class="flip-title">${c.backTitle}</div>
+                <div class="flip-desc">${c.backText}</div>
+              </div>
+            </div>
+          </div>
+        `).join("");
+
+        const bulletsHtml = slide.bullets.map(b => `<div class="bullet-item-4d">${b}</div>`).join("");
+
+        sec.innerHTML = `
+          <div class="slide-inner">
+            <div class="slide-header">
+              <div class="slide-title-wrap">
+                <span class="slide-num-pill">SLIDE ${String(idx + 1).padStart(2, "0")} / 12</span>
+                <span class="slide-tag-pill">${slide.tag}</span>
+                <h1 class="slide-title">${slide.title}</h1>
+              </div>
+              <div class="slide-header-actions">
+                <button class="btn-hud-action" onclick="toggleMagnifier(${idx})" id="btnLens_${idx}">🔍 Soi Kính Lúp</button>
+                <button class="btn-slide-voice" onclick="speakSingleSlide(${idx})">🔊 Thuyết Minh</button>
+              </div>
+            </div>
+
+            <div class="stage-grid-4d">
+              <div class="panel-visual-16x9">
+                <div class="giant-art-frame" id="artFrame_${idx}">
+                  <div class="visual-svg-stage" onclick="onStageClickRipple(event, ${idx})">
+                    ${getSvgArt(slide.svgTheme, idx)}
+                    <canvas class="fx-living-overlay-canvas" id="fxCanvas_${idx}"></canvas>
+                  </div>
+                  <div class="magnifier-lens-4d" id="magLens_${idx}"></div>
+                </div>
+                <div class="transform-row-large" onclick="flipAllCardsForSlide(${idx})" title="Nhấp để lật nhanh 4 thẻ đối chiếu">
+                  <span class="state-old-lg">${slide.stateOld}</span>
+                  <span class="verb-bridge-lg">${slide.bridgeVerb}</span>
+                  <span class="state-new-lg">${slide.stateNew}</span>
+                </div>
+              </div>
+
+              <div class="panel-deck-content">
+                <div class="deck-header">
+                  <span style="font-weight:800; font-size:0.75rem; color:var(--emerald);">🎴 BỘ 4 THẺ BÀI LẬT: THỰC TRẠNG CŨ ⇄ SÁNG KIẾN MỚI</span>
+                  <button class="btn-flip-all" onclick="flipAllCardsForSlide(${idx})">🔄 Lật 4 Thẻ</button>
+                </div>
+                <div class="flip-cards-grid" id="flipGrid_${idx}">
+                  ${flipCardsHtml}
+                </div>
+                <div class="bullet-list-4d">
+                  ${bulletsHtml}
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+        track.appendChild(sec);
+
+        const opt = document.createElement("option");
+        opt.value = String(idx);
+        opt.textContent = `${String(idx + 1).padStart(2, "0")}. ${slide.title.replace(/^\d+\.\s*/, '')}`;
+        jumpSelect.appendChild(opt);
+
+        const dot = document.createElement("div");
+        dot.className = "slide-dot" + (idx === currentSlide ? " active" : "");
+        dot.onclick = () => goToSlide(idx, true);
+        dotsContainer.appendChild(dot);
+      });
+
+      initCanvasOverlays();
+      updateSlidePosition();
+    }
+
+    // Canvas Overlays & Particle Ripples
+    let overlayCtrls = [];
+    function initCanvasOverlays() {
+      overlayCtrls = [];
+      INITIATIVE_SLIDES.forEach((_, idx) => {
+        const cv = document.getElementById("fxCanvas_" + idx);
+        if (!cv) return;
+        cv.width = 960;
+        cv.height = 540;
+        const ctx = cv.getContext("2d");
+        const particles = [];
+        for (let i = 0; i < 20; i++) {
+          particles.push({
+            x: Math.random() * 960,
+            y: Math.random() * 540,
+            vx: (Math.random() - 0.5) * 0.8,
+            vy: (Math.random() - 0.5) * 0.8,
+            r: Math.random() * 2.5 + 1.2
+          });
+        }
+        overlayCtrls.push({ idx, cv, ctx, particles, ripples: [], scanX: 0 });
+      });
+    }
+
+    function animateOverlaysLoop() {
+      overlayCtrls.forEach(ctrl => {
+        if (currentMode !== "scroll" && ctrl.idx !== currentSlide) return;
+        const { ctx, cv, particles, ripples } = ctrl;
+        ctx.clearRect(0, 0, cv.width, cv.height);
+
+        // Scan hologram line
+        ctrl.scanX = (ctrl.scanX + 2.4) % (cv.width + 200);
+        const grad = ctx.createLinearGradient(ctrl.scanX - 180, 0, ctrl.scanX, 0);
+        grad.addColorStop(0, "rgba(46, 229, 157, 0)");
+        grad.addColorStop(0.5, "rgba(46, 229, 157, 0.08)");
+        grad.addColorStop(1, "rgba(46, 229, 157, 0)");
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, cv.width, cv.height);
+
+        // Nodes
+        particles.forEach(p => {
+          p.x += p.vx; p.y += p.vy;
+          if (p.x < 0 || p.x > cv.width) p.vx = -p.vx;
+          if (p.y < 0 || p.y > cv.height) p.vy = -p.vy;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx.fillStyle = "rgba(46, 229, 157, 0.55)";
+          ctx.fill();
+        });
+
+        // Ripples
+        for (let r = ripples.length - 1; r >= 0; r--) {
+          const rp = ripples[r];
+          rp.radius += 3.5;
+          rp.alpha -= 0.025;
+          if (rp.alpha <= 0) {
+            ripples.splice(r, 1);
+          } else {
+            ctx.beginPath();
+            ctx.arc(rp.x, rp.y, rp.radius, 0, Math.PI * 2);
+            ctx.strokeStyle = `rgba(245, 196, 81, ${rp.alpha})`;
+            ctx.lineWidth = 2.5;
+            ctx.stroke();
+          }
+        }
+      });
+      requestAnimationFrame(animateOverlaysLoop);
+    }
+
+    function onStageClickRipple(ev, slideIdx) {
+      const ctrl = overlayCtrls.find(c => c.idx === slideIdx);
+      if (!ctrl) return;
+      const rect = ctrl.cv.getBoundingClientRect();
+      const x = ((ev.clientX - rect.left) / rect.width) * ctrl.cv.width;
+      const y = ((ev.clientY - rect.top) / rect.height) * ctrl.cv.height;
+      ctrl.ripples.push({ x, y, radius: 8, alpha: 0.95 });
+    }
+
+    function toggleMagnifier(slideIdx) {
+      const frame = document.getElementById("artFrame_" + slideIdx);
+      const btn = document.getElementById("btnLens_" + slideIdx);
+      if (!frame) return;
+      const on = !frame.classList.contains("lens-active");
+      frame.classList.toggle("lens-active", on);
+      if (btn) btn.classList.toggle("active", on);
+      showToast(on ? "🔍 Bật Kính lúp (Di chuột để soi tọa độ)" : "🔍 Đã tắt Kính lúp");
+    }
+
+    function onFlipCardClick(cardEl) {
+      if (!cardEl) return;
+      cardEl.classList.toggle("flipped");
+      const inner = cardEl.querySelector(".flip-card-inner");
+      if (inner) {
+        inner.style.animation = "none";
+        void inner.offsetWidth;
+        inner.style.animation = "flipBounceIn 0.38s cubic-bezier(0.22, 1, 0.36, 1)";
+      }
+    }
+
+    function flipAllCardsForSlide(slideIdx) {
+      const grid = document.getElementById("flipGrid_" + slideIdx);
+      if (!grid) return;
+      const cards = grid.querySelectorAll(".flip-card-3d");
+      const anyUnflipped = Array.from(cards).some(c => !c.classList.contains("flipped"));
+      cards.forEach(c => c.classList.toggle("flipped", anyUnflipped));
+    }
+
+    function flipAllCardsOnCurrentSlide() {
+      flipAllCardsForSlide(currentSlide);
+    }
+
+    // Navigation & Workspace
+    function switchWorkspace(ws) {
+      currentWorkspace = ws;
+      document.body.classList.remove("workspace-deck", "workspace-matrix", "workspace-paper");
+      document.documentElement.classList.remove("workspace-deck", "workspace-matrix", "workspace-paper");
+      document.body.classList.add("workspace-" + ws);
+      document.documentElement.classList.add("workspace-" + ws);
+
+      document.getElementById("tabBtnDeck").classList.toggle("active", ws === "deck");
+      document.getElementById("tabBtnMatrix").classList.toggle("active", ws === "matrix");
+      document.getElementById("tabBtnPaper").classList.toggle("active", ws === "paper");
+
+      if (ws === "deck") updateSlidePosition();
+    }
+
+    function setDeckMode(mode) {
+      currentMode = mode;
+      document.documentElement.classList.remove("mode-horizontal", "mode-vertical", "mode-scroll");
+      document.body.classList.remove("mode-horizontal", "mode-vertical", "mode-scroll");
+      document.documentElement.classList.add("mode-" + mode);
+      document.body.classList.add("mode-" + mode);
+
+      document.getElementById("btnModeHorizontal").classList.toggle("active", mode === "horizontal");
+      document.getElementById("btnModeVertical").classList.toggle("active", mode === "vertical");
+      document.getElementById("btnModeScroll").classList.toggle("active", mode === "scroll");
+
+      if (currentWorkspace !== "deck") switchWorkspace("deck");
+      updateSlidePosition();
+    }
+
+    function setVisualArtStyle(styleKey) {
+      document.body.classList.remove("style-forestry", "style-multispectral", "style-radar", "style-administrative");
+      document.body.classList.add("style-" + styleKey);
+      showToast("🎨 Giao diện: " + styleKey.toUpperCase());
+    }
+
+    function updateSlidePosition() {
+      const track = document.getElementById("slidesTrack");
+      const jumpSelect = document.getElementById("slideJumpSelect");
+      const dots = document.querySelectorAll(".slide-dot");
+      const slides = document.querySelectorAll(".slide");
+      if (!track) return;
+
+      if (jumpSelect) jumpSelect.value = String(currentSlide);
+      slides.forEach((s, i) => s.classList.toggle("active-slide", i === currentSlide));
+      dots.forEach((d, i) => d.classList.toggle("active", i === currentSlide));
+
+      const bar = document.getElementById("deckProgress");
+      if (bar) bar.style.width = (((currentSlide + 1) / INITIATIVE_SLIDES.length) * 100) + "%";
+
+      const tele = document.getElementById("teleprompterText");
+      if (tele && !isAutoLecturing && INITIATIVE_SLIDES[currentSlide]) {
+        tele.textContent = "🎙️ " + INITIATIVE_SLIDES[currentSlide].script;
+      }
+
+      if (currentMode === "scroll") {
+        track.style.transform = "none";
+        return;
+      }
+      if (currentMode === "horizontal") {
+        track.style.transform = `translate3d(-${currentSlide * 100}vw, 0, 0)`;
+      } else {
+        track.style.transform = `translate3d(0, -${currentSlide * 100}%, 0)`;
+      }
+    }
+
+    function goToSlide(idx, manual) {
+      if (idx < 0) idx = 0;
+      if (idx >= INITIATIVE_SLIDES.length) idx = INITIATIVE_SLIDES.length - 1;
+      currentSlide = idx;
+      updateSlidePosition();
+
+      if (manual && isAutoLecturing) {
+        playSlideNarration(currentSlide, true);
+      }
+    }
+
+    function nextSlide() { goToSlide(currentSlide + 1, true); }
+    function prevSlide() { goToSlide(currentSlide - 1, true); }
+
+    // Speech Narration Dual-Engine
+    function setVoiceGender(gender) {
+      voiceGender = gender;
+      document.getElementById("btnVoiceMale").classList.toggle("active", gender === "male");
+      document.getElementById("btnVoiceFemale").classList.toggle("active", gender === "female");
+      showToast(gender === "male" ? "👨 Giọng thuyết minh Nam" : "👩 Giọng thuyết minh Nữ");
+      if (isAutoLecturing) playSlideNarration(currentSlide, true);
+    }
+
+    function onSpeedChange(val) {
+      speechRate = parseFloat(val);
+      document.getElementById("topSpeedVal").textContent = speechRate.toFixed(2) + "x";
+      if (isAutoLecturing) playSlideNarration(currentSlide, true);
+    }
+
+    function toggleAutoLecture() {
+      if (isAutoLecturing) stopAutoLecture();
+      else startAutoLecture();
+    }
+
+    function startAutoLecture() {
+      if (currentWorkspace !== "deck") switchWorkspace("deck");
+      isAutoLecturing = true;
+      document.getElementById("btnMasterSpeak").classList.add("speaking");
+      document.getElementById("speakIcon").textContent = "⏹";
+      document.getElementById("speakLabel").textContent = "DỪNG BÁO CÁO";
+      document.getElementById("teleprompterBar").classList.add("active-speaking");
+      document.getElementById("btnStopInline").style.display = "inline-block";
+      playSlideNarration(currentSlide, true);
+    }
+
+    function speakSingleSlide(idx) {
+      if (currentWorkspace !== "deck") switchWorkspace("deck");
+      goToSlide(idx, false);
+      isAutoLecturing = true;
+      document.getElementById("btnMasterSpeak").classList.add("speaking");
+      document.getElementById("speakIcon").textContent = "⏹";
+      document.getElementById("speakLabel").textContent = "DỪNG BÁO CÁO";
+      document.getElementById("teleprompterBar").classList.add("active-speaking");
+      document.getElementById("btnStopInline").style.display = "inline-block";
+      playSlideNarration(idx, false);
+    }
+
+    function stopAutoLecture() {
+      isAutoLecturing = false;
+      speechSessionId++;
+      if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+      document.getElementById("btnMasterSpeak").classList.remove("speaking");
+      document.getElementById("speakIcon").textContent = "🎙️";
+      document.getElementById("speakLabel").textContent = "BÁO CÁO TỰ ĐỘNG";
+      document.getElementById("teleprompterBar").classList.remove("active-speaking");
+      document.getElementById("btnStopInline").style.display = "none";
+    }
+
+    function playSlideNarration(slideIdx, autoAdvance) {
+      speechSessionId++;
+      const mySession = speechSessionId;
+      if (!("speechSynthesis" in window) || !INITIATIVE_SLIDES[slideIdx]) return;
+      window.speechSynthesis.cancel();
+
+      const text = INITIATIVE_SLIDES[slideIdx].script;
+      document.getElementById("teleprompterText").textContent = "🎙️ " + text;
+
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = "vi-VN";
+      utter.rate = speechRate;
+      utter.pitch = voiceGender === "female" ? 1.15 : 0.9;
+
+      const voices = window.speechSynthesis.getVoices() || [];
+      const viVoices = voices.filter(v => v.lang && v.lang.toLowerCase().includes("vi"));
+      if (viVoices.length > 0) {
+        if (voiceGender === "female") {
+          utter.voice = viVoices.find(v => /female|hoaimy|linh|nữ|nu/i.test(v.name)) || viVoices[0];
+        } else {
+          utter.voice = viVoices.find(v => /male|namminh|nam|an/i.test(v.name)) || viVoices[0];
+        }
+      }
+
+      utter.onend = () => {
+        if (mySession !== speechSessionId || !isAutoLecturing) return;
+        if (autoAdvance && slideIdx < INITIATIVE_SLIDES.length - 1) {
+          setTimeout(() => {
+            if (mySession !== speechSessionId || !isAutoLecturing) return;
+            nextSlide();
+            playSlideNarration(currentSlide, true);
+          }, 800);
+        } else {
+          stopAutoLecture();
+        }
+      };
+
+      window.speechSynthesis.speak(utter);
+    }
+
+    // ROI Calculator Function
+    function updateRoiCalc(val) {
+      const n = parseInt(val, 10);
+      document.getElementById("roiLotCountLabel").textContent = n.toLocaleString("vi-VN") + " Lô";
+
+      const oldHours = (n * 1.44) / 60; // 1.44 phút/lô
+      const newHours = (n * 0.18) / 3600; // 0.18 giây/lô
+      const savedHours = oldHours - newHours;
+      const savedMoney = Math.round(savedHours * 500000); // 500k/giờ công chuyên gia
+
+      document.getElementById("roiOldTime").textContent = oldHours.toFixed(1) + " Giờ (" + (oldHours/8).toFixed(1) + " Ngày)";
+      document.getElementById("roiNewTime").textContent = (newHours * 60).toFixed(1) + " Phút (" + (newHours * 3600).toFixed(0) + " Giây)";
+      document.getElementById("roiSavedHours").textContent = savedHours.toFixed(1) + " Giờ (Giảm 98%)";
+      document.getElementById("roiSavedMoney").textContent = savedMoney.toLocaleString("vi-VN") + " VNĐ / đợt";
+    }
+
+    // Modals
+    function openAuthorsModal() { document.getElementById("authorsModal").classList.add("open"); }
+    function closeAuthorsModal() { document.getElementById("authorsModal").classList.remove("open"); }
+    function openRoiModal() { document.getElementById("roiModal").classList.add("open"); updateRoiCalc(1000); }
+    function closeRoiModal() { document.getElementById("roiModal").classList.remove("open"); }
+
+    function toggleFullScreen() {
+      if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(() => {});
+      else document.exitFullscreen().catch(() => {});
+    }
+
+    let toastTimer = null;
+    function showToast(msg) {
+      const el = document.getElementById("voiceToast");
+      if (!el) return;
+      el.textContent = msg;
+      el.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => el.classList.remove("show"), 2200);
+    }
+
+    // Keyboard Shortcuts
+    window.addEventListener("keydown", (e) => {
+      if (["INPUT", "TEXTAREA", "SELECT"].includes(e.target.tagName)) return;
+      if (e.key === "Escape") { closeAuthorsModal(); closeRoiModal(); return; }
+      if (["ArrowRight", "ArrowDown", "PageDown", " "].includes(e.key)) {
+        if (currentMode !== "scroll") { e.preventDefault(); nextSlide(); }
+      } else if (["ArrowLeft", "ArrowUp", "PageUp"].includes(e.key)) {
+        if (currentMode !== "scroll") { e.preventDefault(); prevSlide(); }
+      } else if (e.key.toLowerCase() === "r") {
+        e.preventDefault(); flipAllCardsOnCurrentSlide();
+      }
+    });
+
+    // Background Canvas
+    const cvBg = document.getElementById("cosmosCanvas");
+    const ctxBg = cvBg.getContext("2d");
+    let stars = [];
+    function resizeBg() {
+      cvBg.width = window.innerWidth;
+      cvBg.height = window.innerHeight;
+      stars = [];
+      for (let i = 0; i < 70; i++) {
+        stars.push({ x: Math.random() * cvBg.width, y: Math.random() * cvBg.height, r: Math.random() * 1.6 + 0.4, a: Math.random() });
+      }
+    }
+    window.addEventListener("resize", resizeBg);
+    resizeBg();
+
+    function animBg() {
+      ctxBg.clearRect(0, 0, cvBg.width, cvBg.height);
+      stars.forEach(s => {
+        s.y -= 0.15;
+        if (s.y < 0) s.y = cvBg.height;
+        ctxBg.beginPath();
+        ctxBg.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        ctxBg.fillStyle = `rgba(46, 229, 157, ${s.a * 0.45})`;
+        ctxBg.fill();
+      });
+      requestAnimationFrame(animBg);
+    }
+    animBg();
+
+    // Start App
+    renderAllSlides();
+    animateOverlaysLoop();
+  </script>
+</body>
+</html>

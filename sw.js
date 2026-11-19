@@ -1,8 +1,9 @@
 /* CheckCCRQT v0.4.0+ Pro / v0.5.0 — Offline-First PWA Service Worker */
-const CACHE_NAME = "checkccrqt-v050-composer-v1";
+const CACHE_NAME = "checkccrqt-v050-report4d-v1";
 const APP_SHELL = [
   "./",
   "./index.html",
+  "./bao-cao-sang-kien-4d.html",
   "./css/style.css",
   "./js/eudr-validator.js",
   "./js/knowledge-base.js",
