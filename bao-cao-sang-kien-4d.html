@@ -989,9 +989,225 @@
       cursor: zoom-in;
     }
 
+  
+    /* =========================================================================
+       MAGNIFIER LENS & HUD CROSSHAIR
+       ========================================================================= */
+    .magnifier-lens-4d {
+      position: absolute;
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      border: 3px solid #2ee59d;
+      box-shadow: 0 0 35px rgba(46, 229, 157, 0.9), inset 0 0 25px rgba(0, 0, 0, 0.7);
+      pointer-events: none;
+      z-index: 100;
+      display: none;
+      background-repeat: no-repeat;
+      background-color: #030c07;
+      transform: translate(-50%, -50%);
+      overflow: hidden;
+    }
+    .magnifier-lens-4d::before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: rgba(46, 229, 157, 0.6);
+      pointer-events: none;
+    }
+    .magnifier-lens-4d::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      background: rgba(46, 229, 157, 0.6);
+      pointer-events: none;
+    }
+    .lens-coords-badge {
+      position: absolute;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(3, 12, 7, 0.88);
+      color: #f5c451;
+      font-size: 11px;
+      font-family: monospace;
+      font-weight: bold;
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(245, 196, 81, 0.5);
+      white-space: nowrap;
+      pointer-events: none;
+    }
+    .giant-art-frame.lens-active {
+      cursor: crosshair !important;
+    }
+    .giant-art-frame.lens-active .magnifier-lens-4d {
+      display: block;
+    }
+
+    /* =========================================================================
+       RESPONSIVE ANTI-CLIPPING & OVERFLOW SAFEGUARDS
+       ========================================================================= */
+    .slide-inner {
+      width: 98.6vw;
+      max-width: 1800px;
+      height: 100%;
+      max-height: calc(100vh - var(--topbar-h) - var(--bottomdock-h) - 12px);
+      background: var(--bg-card);
+      backdrop-filter: blur(20px);
+      border: 1.5px solid var(--border-glass);
+      border-radius: var(--card-radius);
+      padding: 8px 14px 10px;
+      box-shadow: var(--shadow-elevated);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      overflow-x: hidden;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(46, 229, 157, 0.3) transparent;
+    }
+    .giant-art-frame {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      max-height: min(46vh, 430px);
+      margin: 0 auto;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 2px solid var(--border-glass);
+      background: radial-gradient(circle at 50% 50%, #071f14 0%, #020704 100%);
+      box-shadow: 0 10px 32px rgba(0, 0, 0, 0.8), 0 0 20px rgba(46, 229, 157, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .panel-visual-16x9 {
+      background: var(--bg-panel);
+      border: 1px solid rgba(46, 229, 157, 0.26);
+      border-radius: 14px;
+      padding: 8px 10px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 0;
+      overflow: hidden;
+      position: relative;
+      gap: 6px;
+    }
+    .panel-deck-content {
+      background: var(--bg-panel);
+      border: 1px solid rgba(46, 229, 157, 0.26);
+      border-radius: 14px;
+      padding: 8px 12px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 0;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      gap: 6px;
+    }
+    .visual-toolbar-sub {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 4px;
+      margin-bottom: 2px;
+    }
+    .btn-sub-tool {
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(46, 229, 157, 0.4);
+      color: #cbd5e1;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.72rem;
+      cursor: pointer;
+      font-weight: 700;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .btn-sub-tool:hover, .btn-sub-tool.active {
+      background: rgba(46, 229, 157, 0.25);
+      color: #2ee59d;
+      border-color: #2ee59d;
+      box-shadow: 0 0 10px rgba(46, 229, 157, 0.3);
+    }
+
+    /* =========================================================================
+       CINEMA FULLSCREEN & PROJECTION IMMERSIVE MODE
+       ========================================================================= */
+    body.is-true-fullscreen .hud-topbar {
+      display: none !important;
+    }
+    body.is-true-fullscreen .bottom-studio-dock {
+      display: none !important;
+    }
+    body.is-true-fullscreen .deck-viewport {
+      height: 100vh !important;
+      margin-top: 0 !important;
+    }
+    body.is-true-fullscreen .slide {
+      height: 100vh !important;
+      padding: 8px 12px !important;
+    }
+    body.is-true-fullscreen .slide-inner {
+      max-height: calc(100vh - 16px) !important;
+      height: calc(100vh - 16px) !important;
+    }
+    body.is-true-fullscreen .giant-art-frame {
+      max-height: min(62vh, 600px) !important;
+    }
+    .fullscreen-exit-pill {
+      display: none;
+      position: fixed;
+      top: 14px;
+      right: 18px;
+      z-index: 99999;
+      background: rgba(239, 68, 68, 0.88);
+      color: #fff;
+      border: 1px solid #f87171;
+      border-radius: 999px;
+      padding: 6px 14px;
+      font-size: 0.75rem;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(8px);
+    }
+    body.is-true-fullscreen .fullscreen-exit-pill {
+      display: block !important;
+    }
+
+    /* Small Screen Heights Safeguard (e.g. 768p / 1366x768) */
+    @media (max-height: 750px) {
+      :root {
+        --topbar-h: 46px;
+        --bottomdock-h: 58px;
+      }
+      .slide-title { font-size: 1.05rem !important; }
+      .flip-badge { font-size: 0.65rem !important; }
+      .flip-title { font-size: 0.72rem !important; }
+      .flip-desc { font-size: 0.68rem !important; line-height: 1.3 !important; }
+      .bullet-item-4d { font-size: 0.7rem !important; padding: 4px 8px !important; }
+      .giant-art-frame { max-height: 36vh !important; }
+      .transform-row-large { padding: 4px 8px !important; font-size: 0.72rem !important; }
+    }
+
   </style>
 </head>
 <body class="mode-horizontal style-forestry workspace-deck">
+  <button class="fullscreen-exit-pill" onclick="exitTrueFullscreen()">✕ Thoát Rạp Chiếu (ESC)</button>
 
   <canvas id="cosmosCanvas"></canvas>
   <div class="voice-toast" id="voiceToast">🔔 Báo Cáo Sáng Kiến CheckCCRQT v0.5.0</div>
@@ -2037,9 +2253,10 @@
                   <div class="magnifier-lens-4d" id="magLens_${idx}"></div>
                 </div>
                 <div class="visual-toolbar-sub">
-                  <button class="btn-sub-tool" onclick="toggleSlideZoom(${idx})" title="Xem Slide cỡ phóng đại HD">🔍 Phóng to Slide</button>
-                  <button class="btn-sub-tool" onclick="toggleCinemaLayout()" title="Kéo dài / Thu hẹp khung hình Cinema">↔ Kéo Dài Khung Hình</button>
-                  <button class="btn-sub-tool" onclick="toggleFullScreen()" title="Toàn màn hình">⛶ Toàn Màn Hình</button>
+                  <button class="btn-sub-tool" id="btnSubLens_${idx}" onclick="toggleMagnifier(${idx})" title="Bật kính lúp soi chi tiết tọa độ và bản đồ">🔍 Soi Kính Lúp (Z)</button>
+                  <button class="btn-sub-tool" onclick="toggleSlideZoom(${idx})" title="Xem Slide cỡ phóng đại HD">🔎 Phóng To Cực Đại</button>
+                  <button class="btn-sub-tool" onclick="toggleCinemaLayout()" title="Kéo dài / Thu hẹp khung hình Cinema">↔ Kéo Dài Khung Hình (C)</button>
+                  <button class="btn-sub-tool" onclick="toggleTrueFullscreen()" title="Bật Rạp Chiếu Tràn Màn Hình">🖥️ Tràn Toàn Màn Hình (F)</button>
                 </div>
                 <div class="transform-row-large" onclick="flipAllCardsForSlide(${idx})" title="Nhấp để lật nhanh 4 thẻ đối chiếu">
                   <span class="state-old-lg">${slide.stateOld}</span>
@@ -2074,6 +2291,7 @@
         dot.className = "slide-dot" + (idx === currentSlide ? " active" : "");
         dot.onclick = () => goToSlide(idx, true);
         dotsContainer.appendChild(dot);
+        setTimeout(() => initMagnifierForSlide(idx), 50);
       });
 
       initCanvasOverlays();
@@ -2158,15 +2376,7 @@
       ctrl.ripples.push({ x, y, radius: 8, alpha: 0.95 });
     }
 
-    function toggleMagnifier(slideIdx) {
-      const frame = document.getElementById("artFrame_" + slideIdx);
-      const btn = document.getElementById("btnLens_" + slideIdx);
-      if (!frame) return;
-      const on = !frame.classList.contains("lens-active");
-      frame.classList.toggle("lens-active", on);
-      if (btn) btn.classList.toggle("active", on);
-      showToast(on ? "🔍 Bật Kính lúp (Di chuột để soi tọa độ)" : "🔍 Đã tắt Kính lúp");
-    }
+    
 
     function onFlipCardClick(cardEl) {
       if (!cardEl) return;
@@ -2190,6 +2400,126 @@
     function flipAllCardsOnCurrentSlide() {
       flipAllCardsForSlide(currentSlide);
     }
+
+    
+    // =========================================================================
+    // ADVANCED MAGNIFIER LENS ENGINE (SO LỖI BẢN ĐỒ VIỄN THÁM)
+    // =========================================================================
+    function toggleMagnifier(slideIdx) {
+      const frame = document.getElementById("artFrame_" + slideIdx);
+      const btn = document.getElementById("btnLens_" + slideIdx);
+      const subBtn = document.getElementById("btnSubLens_" + slideIdx);
+      if (!frame) return;
+
+      const willBeActive = !frame.classList.contains("lens-active");
+      frame.classList.toggle("lens-active", willBeActive);
+      if (btn) btn.classList.toggle("active", willBeActive);
+      if (subBtn) subBtn.classList.toggle("active", willBeActive);
+
+      const lens = document.getElementById("magLens_" + slideIdx);
+      if (lens) {
+        lens.style.display = willBeActive ? "block" : "none";
+      }
+
+      if (willBeActive) {
+        showToast("🔍 Đã kích hoạt Kính lúp (Di chuột vào ảnh để soi chi tiết tọa độ)");
+      } else {
+        showToast("🔍 Đã tắt Kính lúp");
+      }
+    }
+
+    function initMagnifierForSlide(slideIdx) {
+      const frame = document.getElementById("artFrame_" + slideIdx);
+      const lens = document.getElementById("magLens_" + slideIdx);
+      const img = document.getElementById("slideImg_" + slideIdx);
+      if (!frame || !lens || !img) return;
+
+      // Add coordinate badge inside lens if not present
+      if (!lens.querySelector(".lens-coords-badge")) {
+        const badge = document.createElement("div");
+        badge.className = "lens-coords-badge";
+        badge.textContent = "VN-2000 • 2.5X";
+        lens.appendChild(badge);
+      }
+
+      frame.addEventListener("mousemove", (e) => {
+        if (!frame.classList.contains("lens-active")) return;
+        const rect = frame.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        // Position lens centered at cursor
+        lens.style.left = x + "px";
+        lens.style.top = y + "px";
+        lens.style.display = "block";
+
+        // Calculate zoom
+        const zoom = 2.5;
+        const bgW = rect.width * zoom;
+        const bgH = rect.height * zoom;
+        lens.style.backgroundImage = `url('${img.src}')`;
+        lens.style.backgroundSize = `${bgW}px ${bgH}px`;
+
+        const bgX = -(x * zoom - lens.offsetWidth / 2);
+        const bgY = -(y * zoom - lens.offsetHeight / 2);
+        lens.style.backgroundPosition = `${bgX}px ${bgY}px`;
+
+        // Update coordinate badge dynamically
+        const badge = lens.querySelector(".lens-coords-badge");
+        if (badge) {
+          const pctX = Math.round((x / rect.width) * 100);
+          const pctY = Math.round((y / rect.height) * 100);
+          badge.textContent = `X:${pctX}% Y:${pctY}% • 2.5X`;
+        }
+      });
+
+      frame.addEventListener("mouseleave", () => {
+        lens.style.display = "none";
+      });
+    }
+
+    // =========================================================================
+    // TRUE CINEMA FULLSCREEN MODE
+    // =========================================================================
+    function toggleTrueFullscreen() {
+      const isTrue = document.body.classList.toggle("is-true-fullscreen");
+      if (isTrue) {
+        if (!document.fullscreenElement) {
+          document.documentElement.requestFullscreen().catch(() => {});
+        }
+        showToast("🖥️ Đã bật Chế độ Rạp Chiếu Cinema Tràn Màn Hình");
+      } else {
+        exitTrueFullscreen();
+      }
+    }
+
+    function exitTrueFullscreen() {
+      document.body.classList.remove("is-true-fullscreen");
+      if (document.fullscreenElement) {
+        document.exitFullscreen().catch(() => {});
+      }
+      showToast("⚖️ Đã thoát Chế độ Rạp Chiếu");
+    }
+
+    document.addEventListener("fullscreenchange", () => {
+      if (!document.fullscreenElement && document.body.classList.contains("is-true-fullscreen")) {
+        document.body.classList.remove("is-true-fullscreen");
+      }
+    });
+
+    // Keyboard Shortcuts
+    document.addEventListener("keydown", (e) => {
+      if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
+      if (e.key === "f" || e.key === "F") {
+        toggleTrueFullscreen();
+      } else if (e.key === "z" || e.key === "Z") {
+        toggleMagnifier(currentSlide);
+      } else if (e.key === "c" || e.key === "C") {
+        toggleCinemaLayout();
+      } else if (e.key === "Escape") {
+        exitTrueFullscreen();
+      }
+    });
 
     // Navigation & Workspace
     function switchWorkspace(ws) {
