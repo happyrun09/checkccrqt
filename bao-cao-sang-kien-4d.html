@@ -1690,6 +1690,386 @@
       margin: 0;
     }
 
+  
+    /* =========================================================================
+       BULLETPROOF WORKSPACE DISPLAY OVERRIDE & CINEMA LAYOUT
+       ========================================================================= */
+    body.workspace-video, html.workspace-video,
+    body.workspace-podcast, html.workspace-podcast,
+    body.workspace-matrix, html.workspace-matrix,
+    body.workspace-paper, html.workspace-paper {
+      height: auto !important;
+      min-height: 100vh !important;
+      overflow-y: auto !important;
+      overflow-x: hidden !important;
+    }
+
+    body.workspace-deck .deck-viewport { display: flex !important; }
+    body.workspace-deck #hudDeckBar { display: flex !important; }
+    body.workspace-deck #videoWorkspace { display: none !important; }
+    body.workspace-deck #podcastWorkspace { display: none !important; }
+    body.workspace-deck #matrixWorkspace { display: none !important; }
+    body.workspace-deck #paperWorkspace { display: none !important; }
+
+    body.workspace-video #videoWorkspace { display: block !important; }
+    body.workspace-video .deck-viewport { display: none !important; }
+    body.workspace-video #hudDeckBar { display: none !important; }
+    body.workspace-video #podcastWorkspace { display: none !important; }
+    body.workspace-video #matrixWorkspace { display: none !important; }
+    body.workspace-video #paperWorkspace { display: none !important; }
+
+    body.workspace-podcast #podcastWorkspace { display: block !important; }
+    body.workspace-podcast .deck-viewport { display: none !important; }
+    body.workspace-podcast #hudDeckBar { display: none !important; }
+    body.workspace-podcast #videoWorkspace { display: none !important; }
+    body.workspace-podcast #matrixWorkspace { display: none !important; }
+    body.workspace-podcast #paperWorkspace { display: none !important; }
+
+    body.workspace-matrix #matrixWorkspace { display: block !important; }
+    body.workspace-matrix .deck-viewport { display: none !important; }
+    body.workspace-matrix #hudDeckBar { display: none !important; }
+    body.workspace-matrix #videoWorkspace { display: none !important; }
+    body.workspace-matrix #podcastWorkspace { display: none !important; }
+    body.workspace-matrix #paperWorkspace { display: none !important; }
+
+    body.workspace-paper #paperWorkspace { display: block !important; }
+    body.workspace-paper .deck-viewport { display: none !important; }
+    body.workspace-paper #hudDeckBar { display: none !important; }
+    body.workspace-paper #videoWorkspace { display: none !important; }
+    body.workspace-paper #podcastWorkspace { display: none !important; }
+    body.workspace-paper #matrixWorkspace { display: none !important; }
+
+    /* Cinema Layout: Kéo dài khung hình 16:9 khi ấn (C) */
+    body.cinema-layout-active .stage-grid-4d {
+      grid-template-columns: 2.2fr 1fr !important;
+    }
+    @media (max-width: 1400px) {
+      body.cinema-layout-active .stage-grid-4d {
+        grid-template-columns: 1.8fr 1fr !important;
+      }
+    }
+
+    /* Multimedia Shortcut Banner on Slide Deck */
+    .multimedia-shortcut-banner {
+      display: flex;
+      gap: 12px;
+      margin-top: 10px;
+      margin-bottom: 4px;
+      width: 100%;
+    }
+    .mm-shortcut-card {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(6, 36, 20, 0.85));
+      border: 1px solid rgba(46, 229, 157, 0.35);
+      border-radius: 10px;
+      padding: 8px 14px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      text-decoration: none;
+    }
+    .mm-shortcut-card:hover {
+      transform: translateY(-2px);
+      border-color: #2ee59d;
+      box-shadow: 0 6px 18px rgba(46, 229, 157, 0.25);
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(16, 185, 129, 0.2));
+    }
+    .mm-shortcut-card.video-style {
+      border-color: rgba(245, 196, 81, 0.4);
+    }
+    .mm-shortcut-card.video-style:hover {
+      border-color: #f5c451;
+      box-shadow: 0 6px 18px rgba(245, 196, 81, 0.25);
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(245, 196, 81, 0.15));
+    }
+    .mm-icon-circle {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      background: rgba(255, 255, 255, 0.1);
+      flex-shrink: 0;
+    }
+    .mm-text-wrap {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+    }
+    .mm-title {
+      font-size: 0.82rem;
+      font-weight: 800;
+      color: #f8fafc;
+    }
+    .mm-shortcut-card.video-style .mm-title { color: #f5c451; }
+    .mm-shortcut-card:not(.video-style) .mm-title { color: #2ee59d; }
+    .mm-sub {
+      font-size: 0.7rem;
+      color: #94a3b8;
+    }
+    .mm-pill-action {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 999px;
+      padding: 3px 10px;
+      font-size: 0.7rem;
+      font-weight: 800;
+      color: #cbd5e1;
+      white-space: nowrap;
+    }
+    .mm-shortcut-card:hover .mm-pill-action {
+      background: #2ee59d;
+      color: #030c07;
+      border-color: #2ee59d;
+    }
+    .mm-shortcut-card.video-style:hover .mm-pill-action {
+      background: #f5c451;
+      color: #030c07;
+      border-color: #f5c451;
+    }
+
+    /* Visual Podcast Studio Enhanced */
+    .podcast-visual-studio {
+      display: grid;
+      grid-template-columns: 1.15fr 1fr;
+      gap: 20px;
+      align-items: stretch;
+      margin-bottom: 24px;
+    }
+    @media (max-width: 1050px) {
+      .podcast-visual-studio {
+        grid-template-columns: 1fr;
+      }
+    }
+    .podcast-screen-card {
+      background: #020617;
+      border: 1.5px solid rgba(46, 229, 157, 0.35);
+      border-radius: 18px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7);
+    }
+    .podcast-slide-frame {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: #051009;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid rgba(46, 229, 157, 0.25);
+    }
+    .podcast-slide-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      transition: opacity 0.35s ease;
+    }
+    .podcast-slide-badge {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: rgba(3, 12, 7, 0.88);
+      backdrop-filter: blur(8px);
+      border: 1px solid #2ee59d;
+      color: #2ee59d;
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 3px 10px;
+      border-radius: 999px;
+      z-index: 5;
+    }
+    .podcast-slide-actions {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      display: flex;
+      gap: 6px;
+      z-index: 5;
+    }
+    .podcast-slide-act-btn {
+      background: rgba(3, 12, 7, 0.85);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      color: #f1f5f9;
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .podcast-slide-act-btn:hover {
+      background: #2ee59d;
+      color: #030c07;
+      border-color: #2ee59d;
+    }
+    .podcast-quote-card {
+      margin-top: 12px;
+      background: rgba(15, 23, 42, 0.85);
+      border-left: 3px solid #2ee59d;
+      border-radius: 0 8px 8px 0;
+      padding: 10px 14px;
+    }
+    .podcast-quote-title {
+      font-size: 0.72rem;
+      font-weight: 800;
+      color: #2ee59d;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 2px;
+    }
+    .podcast-quote-text {
+      font-size: 0.78rem;
+      color: #cbd5e1;
+      line-height: 1.4;
+      font-style: italic;
+    }
+
+    /* Chapter Cards with Thumbnails */
+    .podcast-chapters-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      gap: 14px;
+      margin-top: 10px;
+    }
+    .podcast-chapter-card {
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(46, 229, 157, 0.25);
+      border-radius: 12px;
+      padding: 10px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .podcast-chapter-card:hover {
+      border-color: #2ee59d;
+      background: rgba(6, 36, 20, 0.95);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(46, 229, 157, 0.2);
+    }
+    .podcast-chapter-card.active-playing {
+      border-color: #2ee59d !important;
+      background: linear-gradient(135deg, rgba(6, 36, 20, 0.98), rgba(15, 23, 42, 0.98)) !important;
+      box-shadow: 0 0 20px rgba(46, 229, 157, 0.4) !important;
+    }
+    .chapter-thumb-box {
+      width: 105px;
+      aspect-ratio: 16 / 9;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      flex-shrink: 0;
+      background: #020617;
+      position: relative;
+    }
+    .chapter-thumb-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+    }
+    .podcast-chapter-card:hover .chapter-thumb-box img {
+      transform: scale(1.08);
+    }
+    .chapter-thumb-pill {
+      position: absolute;
+      bottom: 2px;
+      right: 2px;
+      background: rgba(0, 0, 0, 0.85);
+      color: #2ee59d;
+      font-size: 0.62rem;
+      font-weight: 800;
+      font-family: monospace;
+      padding: 1px 4px;
+      border-radius: 4px;
+    }
+    .chapter-detail-wrap {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .chapter-header-line {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+    .chapter-slide-tag {
+      font-size: 0.65rem;
+      color: #f5c451;
+      font-weight: 800;
+    }
+    .chapter-title-text {
+      font-size: 0.82rem;
+      font-weight: 800;
+      color: #f8fafc;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .chapter-desc-text {
+      font-size: 0.72rem;
+      color: #94a3b8;
+      line-height: 1.35;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    /* Video chapter items with video frames */
+    .v-chap-item {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      padding: 8px 10px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      margin-bottom: 8px;
+      background: rgba(15, 23, 42, 0.75);
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+    .v-chap-item:hover {
+      background: rgba(245, 196, 81, 0.12);
+      border-color: #f5c451;
+      transform: translateX(3px);
+    }
+    .v-chap-item.active-video-chap {
+      background: rgba(245, 196, 81, 0.2) !important;
+      border-color: #f5c451 !important;
+      box-shadow: 0 0 16px rgba(245, 196, 81, 0.35) !important;
+    }
+    .v-frame-thumb {
+      width: 85px;
+      aspect-ratio: 16 / 9;
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid rgba(245, 196, 81, 0.3);
+      flex-shrink: 0;
+      background: #000;
+    }
+    .v-frame-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .v-chap-content {
+      flex: 1;
+      min-width: 0;
+    }
+
   </style>
 </head>
 <body class="mode-horizontal style-forestry workspace-deck">
@@ -1787,24 +2167,25 @@
   <!-- TẦNG 2D: PHÒNG THU TỌA ĐÀM PODCAST AI (22 PHÚT) -->
   
   <!-- TẦNG 2C: PHÒNG CHIẾU VIDEO THUYẾT MINH SÁNG KIẾN (06:30) -->
-  <section class="studio-workspace" id="videoWorkspace" style="display:none; width:100%; min-height:85vh; padding-top:var(--topbar-h); overflow-y:auto;">
+  <section class="studio-workspace" id="videoWorkspace">
     <div class="video-container">
       <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-bottom:14px;">
         <div>
-          <span style="background:rgba(245,196,81,0.2); color:#f5c451; padding:3px 10px; border-radius:999px; font-weight:800; font-size:0.75rem; border:1px solid rgba(245,196,81,0.5);">
+          <span style="background:rgba(245,196,81,0.2); color:#f5c451; padding:4px 12px; border-radius:999px; font-weight:800; font-size:0.75rem; border:1px solid rgba(245,196,81,0.5); display:inline-flex; align-items:center; gap:6px;">
             🎥 PHÒNG CHIẾU ĐIỆN ẢNH ĐA PHƯƠNG TIỆN • ĐỘ PHÂN GIẢI CAO 720P HD
           </span>
-          <h2 style="margin:6px 0 0; color:#f8fafc; font-size:1.35rem; font-weight:900;">
+          <h2 style="margin:8px 0 0; color:#f8fafc; font-size:1.4rem; font-weight:900; letter-spacing:-0.3px;">
             VIDEO THUYẾT MINH KIẾN TRÚC KỸ THUẬT: CHECKCCRQT &amp; CHUẨN MỰC EUDR
           </h2>
-          <p style="margin:2px 0 0; font-size:0.82rem; color:#94a3b8;">
-            Thời lượng: 06 phút 30 giây • Kèm Bản dịch Thuyết minh Tiếng Việt Chuyên ngành Lâm nghiệp đồng bộ theo mốc thời gian
+          <p style="margin:4px 0 0; font-size:0.84rem; color:#94a3b8;">
+            Thời lượng: 06 phút 30 giây • Kèm Bản dịch Thuyết minh Tiếng Việt Chuyên ngành Lâm nghiệp đồng bộ 7 phân cảnh
           </p>
         </div>
 
         <div style="display:flex; gap:8px;">
           <button class="video-tool-btn" onclick="toggleVideoWideMode()" id="btnVideoWide">↔ Kéo Dài Màn Ảnh Rộng</button>
           <button class="video-tool-btn" onclick="toggleVideoFullscreen()">⛶ Toàn Màn Hình</button>
+          <button class="video-tool-btn" onclick="switchWorkspace('deck')" style="background:rgba(16,185,129,0.2); border-color:#2ee59d; color:#2ee59d;">🎬 Quay lại Slide</button>
         </div>
       </div>
 
@@ -1812,14 +2193,14 @@
         <!-- Cột Trái: Trình Phát Video HD -->
         <div class="video-player-card">
           <div class="video-screen-wrap" id="videoScreenWrap">
-            <video id="mainProjectVideo" controls preload="metadata" playsinline>
+            <video id="mainProjectVideo" controls preload="metadata" playsinline poster="./assets/video_frames/frame_1.jpg">
               <source src="./assets/video_checkccrqt.mp4" type="video/mp4" />
-              Trình duyệt của bạn không hỗ trợ thẻ phát video.
+              Trình duyệt của bạn không hỗ trợ thẻ phát video HTML5.
             </video>
           </div>
           <div class="video-controls-bar">
             <span style="font-size:0.75rem; color:#94a3b8;">
-              💡 <strong>Mẹo:</strong> Nhấp vào các mốc bên phải để nhảy ngay tới đoạn thuyết minh tương ứng.
+              💡 <strong>Mẹo:</strong> Nhấp vào 7 phân cảnh có ảnh minh họa bên phải để nhảy ngay tới đoạn thuyết minh tương ứng.
             </span>
             <div style="display:flex; gap:6px;">
               <button class="video-tool-btn" onclick="setVideoSpeed(1.0)">1.0x</button>
@@ -1831,84 +2212,124 @@
 
         <!-- Cột Phải: Bản Dịch Thuyết Minh Tiếng Việt Chuyên Nghiệp -->
         <div class="video-transcript-card">
-          <div style="border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:10px;">
-            <span style="color:#2ee59d; font-weight:800; font-size:0.95rem; display:block;">
-              📜 BẢN DỊCH THUYẾT MINH TIẾNG VIỆT CHUYÊN NGÀNH
-            </span>
-            <span style="font-size:0.72rem; color:#94a3b8;">
-              Dịch thuật &amp; chuẩn hóa thuật ngữ lâm nghiệp: Mốc 31/12/2020, Radar SAR, Keo lai, RFC 7946
+          <div style="border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:10px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;">
+            <div>
+              <span style="color:#2ee59d; font-weight:800; font-size:0.95rem; display:block;">
+                📜 BẢN DỊCH THUYẾT MINH TIẾNG VIỆT CHUYÊN NGÀNH
+              </span>
+              <span style="font-size:0.72rem; color:#94a3b8;">
+                Dịch thuật &amp; chuẩn hóa thuật ngữ lâm nghiệp theo từng mốc thời gian
+              </span>
+            </div>
+            <span style="font-size:0.7rem; color:#f5c451; font-weight:800; background:rgba(245,196,81,0.15); padding:2px 8px; border-radius:6px; border:1px solid rgba(245,196,81,0.3);">
+              7 Phân Cảnh
             </span>
           </div>
 
-          <div class="video-chapters-scroll">
-            <div class="v-chap-item" onclick="jumpVideo(0)">
-              <div class="v-chap-header">
-                <span class="v-chap-title">1. Mốc Cắt Giảm Mất Rừng EUDR (31/12/2020)</span>
-                <span class="v-chap-time">▶ 00:00</span>
+          <div class="video-chapters-scroll" id="videoChaptersList">
+            <div class="v-chap-item" id="vchap_0" onclick="jumpVideo(0)">
+              <div class="v-frame-thumb">
+                <img src="./assets/video_frames/frame_1.jpg" alt="Mốc EUDR" />
               </div>
-              <p class="v-chap-desc">
-                <strong>Bản dịch:</strong> Quy định EUDR áp đặt thời hạn nghiêm ngặt: Mọi lô gỗ khai thác sau ngày 31/12/2020 nếu liên quan đến phá rừng tự nhiên đều bị cấm nhập khẩu vào châu Âu. Yêu cầu 100% lô rừng phải có tọa độ số đa giác chuẩn xác.
-              </p>
+              <div class="v-chap-content">
+                <div class="v-chap-header">
+                  <span class="v-chap-title">1. Mốc Cắt Giảm Mất Rừng EUDR (31/12/2020)</span>
+                  <span class="v-chap-time">▶ 00:00</span>
+                </div>
+                <p class="v-chap-desc">
+                  <strong>Bản dịch:</strong> Quy định EUDR áp đặt thời hạn nghiêm ngặt: Mọi lô gỗ khai thác sau ngày 31/12/2020 nếu liên quan đến phá rừng tự nhiên đều bị cấm nhập khẩu vào châu Âu. Yêu cầu 100% lô rừng phải có tọa độ số đa giác chuẩn xác.
+                </p>
+              </div>
             </div>
 
-            <div class="v-chap-item" onclick="jumpVideo(55)">
-              <div class="v-chap-header">
-                <span class="v-chap-title">2. Điểm Nghẽn Quy Trình Sổ Sách Giấy &amp; Đo GPS</span>
-                <span class="v-chap-time">▶ 00:55</span>
+            <div class="v-chap-item" id="vchap_1" onclick="jumpVideo(55)">
+              <div class="v-frame-thumb">
+                <img src="./assets/video_frames/frame_2.jpg" alt="Đo GPS thủ công" />
               </div>
-              <p class="v-chap-desc">
-                <strong>Bản dịch:</strong> Phương pháp truyền thống dựa vào đo đạc thực địa bằng máy GPS cầm tay và nhập liệu thủ công vào bảng tính Excel. Quá trình này mất 3–5 ngày/lô, tạo ra hàng núi hồ sơ giấy tờ tồn đọng và tiềm ẩn nguy cơ sai sót tọa độ nghiêm trọng.
-              </p>
+              <div class="v-chap-content">
+                <div class="v-chap-header">
+                  <span class="v-chap-title">2. Điểm Nghẽn Quy Trình Sổ Sách Giấy &amp; Đo GPS</span>
+                  <span class="v-chap-time">▶ 00:55</span>
+                </div>
+                <p class="v-chap-desc">
+                  <strong>Bản dịch:</strong> Phương pháp truyền thống dựa vào đo đạc thực địa bằng máy GPS cầm tay và nhập liệu thủ công vào bảng tính Excel. Quá trình này mất 3–5 ngày/lô, tạo ra hàng núi hồ sơ giấy tờ tồn đọng và tiềm ẩn nguy cơ sai sót tọa độ nghiêm trọng.
+                </p>
+              </div>
             </div>
 
-            <div class="v-chap-item" onclick="jumpVideo(110)">
-              <div class="v-chap-header">
-                <span class="v-chap-title">3. Rào Cản Kỹ Thuật: Bản Cài Nặng &amp; Lỗi Mạng</span>
-                <span class="v-chap-time">▶ 01:50</span>
+            <div class="v-chap-item" id="vchap_2" onclick="jumpVideo(110)">
+              <div class="v-frame-thumb">
+                <img src="./assets/video_frames/frame_3.jpg" alt="Rào cản phần mềm nặng" />
               </div>
-              <p class="v-chap-desc">
-                <strong>Bản dịch:</strong> Các phần mềm máy trạm GIS truyền thống quá nặng nề, đòi hỏi cấu hình máy tính đồ họa mạnh và kỹ năng cài đặt phức tạp. Khi mạng chập chờn hoặc máy tính xã quá yếu, hệ thống thường xuyên bị treo và đứng máy (System Crash).
-              </p>
+              <div class="v-chap-content">
+                <div class="v-chap-header">
+                  <span class="v-chap-title">3. Rào Cản Kỹ Thuật: Bản Cài Nặng &amp; Lỗi Mạng</span>
+                  <span class="v-chap-time">▶ 01:50</span>
+                </div>
+                <p class="v-chap-desc">
+                  <strong>Bản dịch:</strong> Các phần mềm máy trạm GIS truyền thống quá nặng nề, đòi hỏi cấu hình máy tính đồ họa mạnh và kỹ năng cài đặt phức tạp. Khi mạng chập chờn hoặc máy tính xã quá yếu, hệ thống thường xuyên bị treo và đứng máy (System Crash).
+                </p>
+              </div>
             </div>
 
-            <div class="v-chap-item" onclick="jumpVideo(165)">
-              <div class="v-chap-header">
-                <span class="v-chap-title">4. Đột Phá Radar SAR: Xuyên Mây Mù Bão Lũ</span>
-                <span class="v-chap-time">▶ 02:45</span>
+            <div class="v-chap-item" id="vchap_3" onclick="jumpVideo(165)">
+              <div class="v-frame-thumb">
+                <img src="./assets/video_frames/frame_4.jpg" alt="Radar SAR C-band" />
               </div>
-              <p class="v-chap-desc">
-                <strong>Bản dịch:</strong> Ứng dụng vệ tinh Sentinel-1 SAR băng tần C chủ động phát sóng xuyên qua mây mù, mưa bão 24/7/365. Hệ số tán xạ ngược phân biệt rõ rệt giữa tán rừng rậm (-6 dB) và đất trống sau khai thác (-18 dB), giải quyết dứt điểm điểm mù thời tiết tại miền Trung.
-              </p>
+              <div class="v-chap-content">
+                <div class="v-chap-header">
+                  <span class="v-chap-title">4. Đột Phá Radar SAR: Xuyên Mây Mù Bão Lũ</span>
+                  <span class="v-chap-time">▶ 02:45</span>
+                </div>
+                <p class="v-chap-desc">
+                  <strong>Bản dịch:</strong> Ứng dụng vệ tinh Sentinel-1 SAR băng tần C chủ động phát sóng xuyên qua mây mù, mưa bão 24/7/365. Hệ số tán xạ ngược phân biệt rõ rệt giữa tán rừng rậm (-6 dB) và đất trống sau khai thác (-18 dB), giải quyết dứt điểm điểm mù thời tiết tại miền Trung.
+                </p>
+              </div>
             </div>
 
-            <div class="v-chap-item" onclick="jumpVideo(235)">
-              <div class="v-chap-header">
-                <span class="v-chap-title">5. Chu Kỳ Hồi Phục Sinh Học Keo Lai (Biological Recovery)</span>
-                <span class="v-chap-time">▶ 03:55</span>
+            <div class="v-chap-item" id="vchap_4" onclick="jumpVideo(235)">
+              <div class="v-frame-thumb">
+                <img src="./assets/video_frames/frame_5.jpg" alt="Hồi phục sinh học Keo lai" />
               </div>
-              <p class="v-chap-desc">
-                <strong>Bản dịch:</strong> Khác với phá rừng tự nhiên (chỉ số thực vật rớt vĩnh viễn), cây keo lai sau khi khai thác hợp pháp sẽ phục hồi nhanh chóng theo đường chữ V trong 6–12 tháng. Thuật toán nhận diện sự hồi phục sinh học này, loại trừ 100% cảnh báo oan sai.
-              </p>
+              <div class="v-chap-content">
+                <div class="v-chap-header">
+                  <span class="v-chap-title">5. Chu Kỳ Hồi Phục Sinh Học Keo Lai (Biological Recovery)</span>
+                  <span class="v-chap-time">▶ 03:55</span>
+                </div>
+                <p class="v-chap-desc">
+                  <strong>Bản dịch:</strong> Khác với phá rừng tự nhiên (chỉ số thực vật rớt vĩnh viễn), cây keo lai sau khi khai thác hợp pháp sẽ phục hồi nhanh chóng theo đường chữ V trong 6–12 tháng. Thuật toán nhận diện sự hồi phục sinh học này, loại trừ 100% cảnh báo oan sai.
+                </p>
+              </div>
             </div>
 
-            <div class="v-chap-item" onclick="jumpVideo(295)">
-              <div class="v-chap-header">
-                <span class="v-chap-title">6. Chuẩn Hóa Hình Học Topology RFC 7946</span>
-                <span class="v-chap-time">▶ 04:55</span>
+            <div class="v-chap-item" id="vchap_5" onclick="jumpVideo(295)">
+              <div class="v-frame-thumb">
+                <img src="./assets/video_frames/frame_6.jpg" alt="Lõi Topo RFC 7946" />
               </div>
-              <p class="v-chap-desc">
-                <strong>Bản dịch:</strong> Tự động kiểm định ranh giới hình học theo chuẩn quốc tế RFC 7946. Phát hiện và xử lý triệt để lỗi đè ranh (Overlap) và hở ranh (Gap), tự động chuyển đổi tọa độ VN-2000 sang WGS-84 toàn cầu, đảm bảo hồ sơ vượt qua cổng hải quan TRACES NT.
-              </p>
+              <div class="v-chap-content">
+                <div class="v-chap-header">
+                  <span class="v-chap-title">6. Chuẩn Hóa Hình Học Topology RFC 7946</span>
+                  <span class="v-chap-time">▶ 04:55</span>
+                </div>
+                <p class="v-chap-desc">
+                  <strong>Bản dịch:</strong> Tự động kiểm định ranh giới hình học theo chuẩn quốc tế RFC 7946. Phát hiện và xử lý triệt để lỗi đè ranh (Overlap) và hở ranh (Gap), tự động chuyển đổi tọa độ VN-2000 sang WGS-84 toàn cầu, đảm bảo hồ sơ vượt qua cổng hải quan TRACES NT.
+                </p>
+              </div>
             </div>
 
-            <div class="v-chap-item" onclick="jumpVideo(345)">
-              <div class="v-chap-header">
-                <span class="v-chap-title">7. Kết Luận: Nền Tảng Web-GIS Tự Trị Zero-Install</span>
-                <span class="v-chap-time">▶ 05:45</span>
+            <div class="v-chap-item" id="vchap_6" onclick="jumpVideo(345)">
+              <div class="v-frame-thumb">
+                <img src="./assets/video_frames/frame_7.jpg" alt="Web-GIS Zero-Install" />
               </div>
-              <p class="v-chap-desc">
-                <strong>Bản dịch:</strong> Hệ thống CheckCCRQT v0.5.0 chạy hoàn toàn phía Client trên mọi trình duyệt web, không tốn chi phí bản quyền, bảo mật dữ liệu tuyệt đối trên RAM. Minh chứng cho ý chí tự lực làm chủ công nghệ của tập thể 10 cán bộ Kiểm lâm Quảng Trị.
-              </p>
+              <div class="v-chap-content">
+                <div class="v-chap-header">
+                  <span class="v-chap-title">7. Kết Luận: Nền Tảng Web-GIS Tự Trị Zero-Install</span>
+                  <span class="v-chap-time">▶ 05:45</span>
+                </div>
+                <p class="v-chap-desc">
+                  <strong>Bản dịch:</strong> Hệ thống CheckCCRQT v0.5.0 chạy hoàn toàn phía Client trên mọi trình duyệt web, không tốn chi phí bản quyền, bảo mật dữ liệu tuyệt đối trên RAM. Minh chứng cho ý chí tự lực làm chủ công nghệ của tập thể 10 cán bộ Kiểm lâm Quảng Trị.
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -1916,130 +2337,267 @@
     </div>
   </section>
 
-  <section class="studio-workspace" id="podcastWorkspace" style="display:none; width:100%; min-height:85vh; padding-top:var(--topbar-h); overflow-y:auto;">
+  <section class="studio-workspace" id="podcastWorkspace">
     <div class="podcast-container">
-      <div class="podcast-hero-card">
-        <div class="podcast-header-row">
+      <!-- Header Bar của Podcast -->
+      <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-bottom:16px;">
+        <div>
           <div class="podcast-badge-live">
             <span class="podcast-dot-pulse"></span>
-            <span>PODCAST ĐỐI THOẠI CHUYÊN SÂU • 22 PHÚT 12 GIÂY</span>
+            <span>PODCAST ĐỐI THOẠI CHUYÊN SÂU • 22 PHÚT 12 GIÂY • ĐỒNG BỘ ẢNH MINH HỌA</span>
           </div>
-          <span style="font-size:0.8rem; color:#f5c451; font-weight:700;">Google NotebookLM Deep Dive AI</span>
-        </div>
-        
-        <div>
-          <h2 class="podcast-title">HÀNH TRÌNH TỰ LỰC NỘI SINH: CHECKCCRQT &amp; BÀI TOÁN EUDR QUẢNG TRỊ</h2>
-          <p class="podcast-subtitle">
-            Cuộc đối thoại chuyên sâu giữa 2 chuyên gia AI bằng tiếng Việt, phân tích bản chất cuộc khủng hoảng EUDR, 
-            thách thức thời tiết sương mù đặc thù miền Trung, và quá trình tự thân nghiên cứu của 10 cán bộ Chi cục Kiểm lâm Quảng Trị 
-            từ bản thử nghiệm v0.2.3 đến hệ sinh thái viễn thám đa cảm biến v0.5.0.
+          <h2 class="podcast-title" style="margin:8px 0 2px;">HÀNH TRÌNH TỰ LỰC NỘI SINH: CHECKCCRQT &amp; BÀI TOÁN EUDR</h2>
+          <p class="podcast-subtitle" style="margin:0;">
+            Phân tích bản chất cuộc khủng hoảng EUDR, rào cản thời tiết sương mù miền Trung, và quá trình tự lực của 10 cán bộ Kiểm lâm Quảng Trị
           </p>
         </div>
 
-        <!-- Audio Player Box -->
-        <div class="podcast-player-box">
-          <audio id="mainPodcastAudio" preload="metadata">
-            <source src="./assets/podcast_checkccrqt.m4a" type="audio/mp4" />
-            <source src="./assets/podcast_checkccrqt.m4a" type="audio/x-m4a" />
-          </audio>
+        <div style="display:flex; gap:8px;">
+          <button class="video-tool-btn" onclick="switchWorkspace('deck')" style="background:rgba(16,185,129,0.2); border-color:#2ee59d; color:#2ee59d;">🎬 Xem 12 Slide</button>
+          <button class="video-tool-btn" onclick="switchWorkspace('video')" style="background:rgba(245,196,81,0.2); border-color:#f5c451; color:#f5c451;">🎥 Xem Video Thuyết Minh</button>
+        </div>
+      </div>
 
-          <div class="podcast-ctrl-row">
-            <button class="btn-podcast-play" id="btnPodcastPlay" onclick="togglePodcastPlayback()">▶</button>
-            
-            <div class="podcast-progress-wrap">
-              <div class="podcast-progress-bar" id="podcastProgressBar" onclick="seekPodcast(event)">
-                <div class="podcast-progress-fill" id="podcastProgressFill"></div>
+      <!-- Khung Studio Đa Phương Tiện: Bên Trái là Khung Ảnh Minh Họa Đồng Bộ, Bên Phải là Trình Phát Âm Thanh -->
+      <div class="podcast-visual-studio">
+        <!-- Khung Ảnh Minh Họa Đồng Bộ 16:9 -->
+        <div class="podcast-screen-card">
+          <div class="podcast-slide-frame" id="podcastSlideFrame">
+            <span class="podcast-slide-badge" id="podcastSlideBadge">
+              🖼️ ĐANG CHIẾU: SLIDE 02/12 • MỐC CẮT GIẢM EUDR
+            </span>
+            <div class="podcast-slide-actions">
+              <button class="podcast-slide-act-btn" onclick="openLightboxFromPodcast()" title="Phóng to soi chi tiết độ phân giải cực đại">
+                🔍 Soi Chi Tiết HD
+              </button>
+              <button class="podcast-slide-act-btn" onclick="openCurrentPodcastSlideInDeck()" title="Chuyển sang xem Slide này trong Rạp chiếu">
+                🎬 Mở Trong Slide
+              </button>
+            </div>
+            <img id="podcastSlidePreviewImg" src="./assets/slides/slide_02.png" alt="Ảnh minh họa Podcast" />
+          </div>
+
+          <div class="podcast-quote-card">
+            <div class="podcast-quote-title" id="podcastQuoteTitle">💡 THÔNG ĐIỆP ĐỐI THOẠI TRỌNG TÂM</div>
+            <div class="podcast-quote-text" id="podcastQuoteText">
+              "EUDR không chấp nhận giải thích lòng vòng. Hoặc là có dữ liệu không gian chứng minh không mất rừng sau 31/12/2020, hoặc là bị cấm xuất khẩu vĩnh viễn sang châu Âu."
+            </div>
+          </div>
+        </div>
+
+        <!-- Trình Điều Khiển Âm Thanh Công Nghệ Cao -->
+        <div class="podcast-hero-card" style="margin-bottom:0; justify-content:space-between;">
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+              <span style="font-size:0.78rem; color:#f5c451; font-weight:800; display:flex; align-items:center; gap:6px;">
+                🎙️ CHUYÊN GIA AI ĐỐI THOẠI (GOOGLE NOTEBOOKLM)
+              </span>
+              <span style="font-size:0.72rem; color:#94a3b8; font-family:monospace;">
+                Bitrate: 128kbps AAC • 22:12
+              </span>
+            </div>
+            <h3 style="font-size:1.15rem; color:#f8fafc; font-weight:800; margin:0 0 6px;" id="podcastActiveHeading">
+              Chương 1: Bối Cảnh &amp; Tối Hậu Thư EUDR 2023/1115
+            </h3>
+            <p style="font-size:0.78rem; color:#94a3b8; line-height:1.45; margin:0;" id="podcastActiveSummary">
+              Sức ép mốc 31/12/2020, điều kiện thời tiết sương mù 8 tháng/năm tại miền Trung làm ảnh vệ tinh quang học bị mù hoàn toàn, tạo nên điểm nghẽn sinh tử cho ngành gỗ.
+            </p>
+          </div>
+
+          <!-- Audio Player Box -->
+          <div class="podcast-player-box">
+            <audio id="mainPodcastAudio" preload="metadata">
+              <source src="./assets/podcast_checkccrqt.m4a" type="audio/mp4" />
+              <source src="./assets/podcast_checkccrqt.m4a" type="audio/x-m4a" />
+            </audio>
+
+            <div class="podcast-ctrl-row">
+              <button class="btn-podcast-play" id="btnPodcastPlay" onclick="togglePodcastPlayback()" title="Phát / Tạm dừng">▶</button>
+              
+              <div class="podcast-progress-wrap">
+                <div class="podcast-progress-bar" id="podcastProgressBar" onclick="seekPodcast(event)">
+                  <div class="podcast-progress-fill" id="podcastProgressFill"></div>
+                </div>
+                <div class="podcast-time-row">
+                  <span id="podcastCurTime">00:00</span>
+                  <span id="podcastTotalTime">22:12</span>
+                </div>
               </div>
-              <div class="podcast-time-row">
-                <span id="podcastCurTime">00:00</span>
-                <span id="podcastTotalTime">22:12</span>
+
+              <div style="display:flex; gap:5px; align-items:center;">
+                <button class="podcast-speed-btn active" id="spd1" onclick="setPodcastSpeed(1.0)">1.0x</button>
+                <button class="podcast-speed-btn" id="spd125" onclick="setPodcastSpeed(1.25)">1.25x</button>
+                <button class="podcast-speed-btn" id="spd15" onclick="setPodcastSpeed(1.5)">1.5x</button>
               </div>
             </div>
+          </div>
 
-            <div style="display:flex; gap:6px; align-items:center;">
-              <button class="podcast-speed-btn active" id="spd1" onclick="setPodcastSpeed(1.0)">1.0x</button>
-              <button class="podcast-speed-btn" id="spd125" onclick="setPodcastSpeed(1.25)">1.25x</button>
-              <button class="podcast-speed-btn" id="spd15" onclick="setPodcastSpeed(1.5)">1.5x</button>
+          <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:10px; padding:10px 14px; display:flex; align-items:center; justify-content:space-between; gap:10px;">
+            <div style="font-size:0.74rem; color:#cbd5e1;">
+              💡 <strong>Tương tác:</strong> Ảnh minh họa bên trái sẽ tự động chuyển đổi đồng bộ theo từng chương thảo luận của 2 chuyên gia.
+            </div>
+            <div class="mini-wave-bars" style="height:14px; display:flex; align-items:flex-end; gap:3px;">
+              <div class="wave-bar" style="width:3px; background:#2ee59d; height:60%;"></div>
+              <div class="wave-bar" style="width:3px; background:#2ee59d; height:100%;"></div>
+              <div class="wave-bar" style="width:3px; background:#2ee59d; height:40%;"></div>
+              <div class="wave-bar" style="width:3px; background:#2ee59d; height:80%;"></div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Chapter Navigation -->
-      <h3 style="color:#2ee59d; font-size:1.05rem; margin-bottom:12px; display:flex; align-items:center; gap:8px;">
-        📌 MỤC LỤC CÁC CHỦ ĐỀ THẢO LUẬN (BẤM ĐỂ PHÁT NGAY ĐOẠN ĐÓ):
-      </h3>
-
-      <div class="podcast-chapters-grid">
-        <div class="podcast-chapter-card" onclick="jumpPodcast(0)">
-          <span class="chapter-time-pill">00:00</span>
-          <div class="chapter-info">
-            <h4>Bối Cảnh &amp; Tối Hậu Thư EUDR</h4>
-            <p>Sức ép mốc 31/12/2020 và thách thức thời tiết sương mù 8 tháng/năm tại Quảng Trị.</p>
-          </div>
+      <!-- Danh Sách 9 Chương Thảo Luận Có Ảnh Minh Họa Cụ Thể -->
+      <div style="margin-top:26px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+          <h3 style="color:#2ee59d; font-size:1.05rem; margin:0; display:flex; align-items:center; gap:8px;">
+            📌 MỤC LỤC 9 CHỦ ĐỀ THẢO LUẬN KÈM ẢNH MINH HỌA (BẤM ĐỂ PHÁT NGAY):
+          </h3>
+          <span style="font-size:0.75rem; color:#94a3b8;">Nhấp vào thẻ để nghe và xem ảnh minh họa tương ứng</span>
         </div>
 
-        <div class="podcast-chapter-card" onclick="jumpPodcast(140)">
-          <span class="chapter-time-pill">02:20</span>
-          <div class="chapter-info">
-            <h4>Điểm Nghẽn Thủ Công &amp; 10 Cán Bộ</h4>
-            <p>GPS cầm tay 3-5 ngày/lô và quyết tâm đồng đều của 10 tác giả phòng nghiệp vụ.</p>
+        <div class="podcast-chapters-grid" id="podcastChaptersGrid">
+          <!-- 1. Bối cảnh EUDR -->
+          <div class="podcast-chapter-card active-playing" id="pchap_0" onclick="jumpPodcast(0, 1)">
+            <div class="chapter-thumb-box">
+              <img src="./assets/slides/slide_02.png" alt="Mốc EUDR" />
+              <span class="chapter-thumb-pill">00:00</span>
+            </div>
+            <div class="chapter-detail-wrap">
+              <div class="chapter-header-line">
+                <span class="chapter-slide-tag">Slide 02 • Mốc 31/12/2020</span>
+                <span class="chapter-time-pill">▶ 00:00</span>
+              </div>
+              <div class="chapter-title-text">1. Bối Cảnh &amp; Tối Hậu Thư EUDR</div>
+              <div class="chapter-desc-text">Sức ép mốc 31/12/2020 và thách thức thời tiết sương mù 8 tháng/năm tại Quảng Trị.</div>
+            </div>
           </div>
-        </div>
 
-        <div class="podcast-chapter-card" onclick="jumpPodcast(330)">
-          <span class="chapter-time-pill">05:30</span>
-          <div class="chapter-info">
-            <h4>Khởi Nguyên v0.2.3 &amp; 4 Hạn Chế</h4>
-            <p>Kiểm nghiệm 963 lô rừng thực tế và bài học "thiết kế ngược" đập đi xây lại.</p>
+          <!-- 2. Điểm nghẽn đo thủ công -->
+          <div class="podcast-chapter-card" id="pchap_1" onclick="jumpPodcast(140, 0)">
+            <div class="chapter-thumb-box">
+              <img src="./assets/slides/slide_01.png" alt="10 Cán bộ tự lực" />
+              <span class="chapter-thumb-pill">02:20</span>
+            </div>
+            <div class="chapter-detail-wrap">
+              <div class="chapter-header-line">
+                <span class="chapter-slide-tag">Slide 01 • Tự Lực Nội Sinh</span>
+                <span class="chapter-time-pill">▶ 02:20</span>
+              </div>
+              <div class="chapter-title-text">2. Điểm Nghẽn Thủ Công &amp; 10 Cán Bộ</div>
+              <div class="chapter-desc-text">Đo GPS cầm tay 3-5 ngày/lô và quyết tâm đồng đều của 10 tác giả phòng nghiệp vụ.</div>
+            </div>
           </div>
-        </div>
 
-        <div class="podcast-chapter-card" onclick="jumpPodcast(495)">
-          <span class="chapter-time-pill">08:15</span>
-          <div class="chapter-info">
-            <h4>Web-GIS Zero-Install &amp; Radar SAR</h4>
-            <p>Chạy Client-side mượt mà và sóng C-band xuyên mây bão 24/7/365.</p>
+          <!-- 3. Khởi nguyên v0.2.3 -->
+          <div class="podcast-chapter-card" id="pchap_2" onclick="jumpPodcast(330, 2)">
+            <div class="chapter-thumb-box">
+              <img src="./assets/slides/slide_03.png" alt="Thực trạng v0.2.3" />
+              <span class="chapter-thumb-pill">05:30</span>
+            </div>
+            <div class="chapter-detail-wrap">
+              <div class="chapter-header-line">
+                <span class="chapter-slide-tag">Slide 03 • 4 Điểm Nghẽn Cũ</span>
+                <span class="chapter-time-pill">▶ 05:30</span>
+              </div>
+              <div class="chapter-title-text">3. Khởi Nguyên v0.2.3 &amp; 4 Hạn Chế</div>
+              <div class="chapter-desc-text">Kiểm nghiệm 963 lô rừng thực tế và bài học "thiết kế ngược" đập đi xây lại.</div>
+            </div>
           </div>
-        </div>
 
-        <div class="podcast-chapter-card" onclick="jumpPodcast(680)">
-          <span class="chapter-time-pill">11:20</span>
-          <div class="chapter-info">
-            <h4>Chu Kỳ Sinh Học Keo Lai (NDVI)</h4>
-            <p>Đường cong sinh học 4-6 năm phân biệt thu hoạch rừng trồng với phá rừng.</p>
+          <!-- 4. Web-GIS & Radar SAR -->
+          <div class="podcast-chapter-card" id="pchap_3" onclick="jumpPodcast(495, 5)">
+            <div class="chapter-thumb-box">
+              <img src="./assets/slides/slide_06.png" alt="Radar SAR Xuyên mây" />
+              <span class="chapter-thumb-pill">08:15</span>
+            </div>
+            <div class="chapter-detail-wrap">
+              <div class="chapter-header-line">
+                <span class="chapter-slide-tag">Slide 06 • Radar Sentinel-1</span>
+                <span class="chapter-time-pill">▶ 08:15</span>
+              </div>
+              <div class="chapter-title-text">4. Web-GIS Zero-Install &amp; Radar SAR</div>
+              <div class="chapter-desc-text">Chạy Client-side mượt mà và sóng C-band xuyên mây bão 24/7/365.</div>
+            </div>
           </div>
-        </div>
 
-        <div class="podcast-chapter-card" onclick="jumpPodcast(825)">
-          <span class="chapter-time-pill">13:45</span>
-          <div class="chapter-info">
-            <h4>Lõi Topo RFC 7946 &amp; Map Composer</h4>
-            <p>Chống đè ranh, hở ranh 1mm², xuất bản đồ CAD khung đôi và Excel/Word tự động.</p>
+          <!-- 5. Chu kỳ sinh học keo lai -->
+          <div class="podcast-chapter-card" id="pchap_4" onclick="jumpPodcast(680, 6)">
+            <div class="chapter-thumb-box">
+              <img src="./assets/slides/slide_07.png" alt="Chu kỳ keo lai" />
+              <span class="chapter-thumb-pill">11:20</span>
+            </div>
+            <div class="chapter-detail-wrap">
+              <div class="chapter-header-line">
+                <span class="chapter-slide-tag">Slide 07 • Sinh Học Chữ V</span>
+                <span class="chapter-time-pill">▶ 11:20</span>
+              </div>
+              <div class="chapter-title-text">5. Chu Kỳ Sinh Học Keo Lai (NDVI)</div>
+              <div class="chapter-desc-text">Đường cong sinh học 4-6 năm phân biệt thu hoạch rừng trồng với phá rừng.</div>
+            </div>
           </div>
-        </div>
 
-        <div class="podcast-chapter-card" onclick="jumpPodcast(975)">
-          <span class="chapter-time-pill">16:15</span>
-          <div class="chapter-info">
-            <h4>Trợ Lý AI Cục Bộ (Local Edge AI)</h4>
-            <p>Tra cứu Nghị định 102, 120 VNTLAS, bảo mật dữ liệu tuyệt đối trên RAM máy tính.</p>
+          <!-- 6. Lõi Topo RFC 7946 -->
+          <div class="podcast-chapter-card" id="pchap_5" onclick="jumpPodcast(825, 7)">
+            <div class="chapter-thumb-box">
+              <img src="./assets/slides/slide_08.png" alt="Lõi Topo RFC 7946" />
+              <span class="chapter-thumb-pill">13:45</span>
+            </div>
+            <div class="chapter-detail-wrap">
+              <div class="chapter-header-line">
+                <span class="chapter-slide-tag">Slide 08 • Topo &amp; Map Composer</span>
+                <span class="chapter-time-pill">▶ 13:45</span>
+              </div>
+              <div class="chapter-title-text">6. Lõi Topo RFC 7946 &amp; Map Composer</div>
+              <div class="chapter-desc-text">Chống đè ranh, hở ranh 1mm², xuất bản đồ CAD khung đôi và Excel/Word tự động.</div>
+            </div>
           </div>
-        </div>
 
-        <div class="podcast-chapter-card" onclick="jumpPodcast(1105)">
-          <span class="chapter-time-pill">18:25</span>
-          <div class="chapter-info">
-            <h4>Hiệu Quả Làm Lợi &amp; Kinh Tế</h4>
-            <p>Giảm trên 98% thời gian thẩm định (dưới 5 phút) và tiết kiệm trên 300 triệu/năm.</p>
+          <!-- 7. Trợ lý AI Cục bộ -->
+          <div class="podcast-chapter-card" id="pchap_6" onclick="jumpPodcast(975, 8)">
+            <div class="chapter-thumb-box">
+              <img src="./assets/slides/slide_09.png" alt="AI Cục bộ Edge AI" />
+              <span class="chapter-thumb-pill">16:15</span>
+            </div>
+            <div class="chapter-detail-wrap">
+              <div class="chapter-header-line">
+                <span class="chapter-slide-tag">Slide 09 • An Toàn RAM Cục Bộ</span>
+                <span class="chapter-time-pill">▶ 16:15</span>
+              </div>
+              <div class="chapter-title-text">7. Trợ Lý AI Cục Bộ &amp; An Toàn RAM</div>
+              <div class="chapter-desc-text">Tra cứu Nghị định 102, 120 VNTLAS, bảo mật dữ liệu tuyệt đối trên RAM máy tính.</div>
+            </div>
           </div>
-        </div>
 
-        <div class="podcast-chapter-card" onclick="jumpPodcast(1225)">
-          <span class="chapter-time-pill">20:25</span>
-          <div class="chapter-info">
-            <h4>Thông Điệp Tự Lực &amp; Nhân Rộng</h4>
-            <p>Sức mạnh của ý chí con người, mã nguồn mở và tầm nhìn số hóa lâm nghiệp quốc gia.</p>
+          <!-- 8. Hiệu quả làm lợi -->
+          <div class="podcast-chapter-card" id="pchap_7" onclick="jumpPodcast(1105, 10)">
+            <div class="chapter-thumb-box">
+              <img src="./assets/slides/slide_11.png" alt="Hiệu quả làm lợi 300 triệu" />
+              <span class="chapter-thumb-pill">18:25</span>
+            </div>
+            <div class="chapter-detail-wrap">
+              <div class="chapter-header-line">
+                <span class="chapter-slide-tag">Slide 11 • Giảm 98% Thời Gian</span>
+                <span class="chapter-time-pill">▶ 18:25</span>
+              </div>
+              <div class="chapter-title-text">8. Hiệu Quả Làm Lợi &amp; Kinh Tế</div>
+              <div class="chapter-desc-text">Giảm trên 98% thời gian thẩm định (dưới 3 phút) và tiết kiệm trên 300 triệu/năm.</div>
+            </div>
+          </div>
+
+          <!-- 9. Thông điệp tự lực -->
+          <div class="podcast-chapter-card" id="pchap_8" onclick="jumpPodcast(1225, 11)">
+            <div class="chapter-thumb-box">
+              <img src="./assets/slides/slide_12.png" alt="Khẳng định bản lĩnh" />
+              <span class="chapter-thumb-pill">20:25</span>
+            </div>
+            <div class="chapter-detail-wrap">
+              <div class="chapter-header-line">
+                <span class="chapter-slide-tag">Slide 12 • Tầm Nhìn Quốc Gia</span>
+                <span class="chapter-time-pill">▶ 20:25</span>
+              </div>
+              <div class="chapter-title-text">9. Thông Điệp Tự Lực &amp; Nhân Rộng</div>
+              <div class="chapter-desc-text">Sức mạnh của ý chí con người, mã nguồn mở và tầm nhìn số hóa lâm nghiệp quốc gia.</div>
+            </div>
           </div>
         </div>
       </div>
@@ -3028,6 +3586,25 @@
                   <button class="btn-sub-tool" onclick="toggleCinemaLayout()" title="Kéo dài / Thu hẹp khung hình Cinema">↔ Kéo Dài Khung Hình (C)</button>
                   <button class="btn-sub-tool" onclick="toggleTrueFullscreen()" title="Bật Rạp Chiếu Tràn Màn Hình">🖥️ Tràn Toàn Màn Hình (F)</button>
                 </div>
+                <div class="multimedia-shortcut-banner">
+                  <div class="mm-shortcut-card video-style" onclick="switchWorkspace('video')">
+                    <div class="mm-icon-circle">🎥</div>
+                    <div class="mm-text-wrap">
+                      <span class="mm-title">Video Thuyết Minh (06:30)</span>
+                      <span class="mm-sub">Phòng chiếu HD 720p &amp; 7 phân cảnh có dịch Tiếng Việt</span>
+                    </div>
+                    <span class="mm-pill-action">Xem Video ▶</span>
+                  </div>
+                  <div class="mm-shortcut-card" onclick="switchWorkspace('podcast')">
+                    <div class="mm-icon-circle">🎙️</div>
+                    <div class="mm-text-wrap">
+                      <span class="mm-title">Tọa Đàm Podcast AI (22:12)</span>
+                      <span class="mm-sub">9 chủ đề chuyên sâu có ảnh minh họa đồng bộ</span>
+                    </div>
+                    <span class="mm-pill-action">Nghe Ngay ▶</span>
+                  </div>
+                </div>
+
                 <div class="transform-row-large" onclick="flipAllCardsForSlide(${idx})" title="Nhấp để lật nhanh 4 thẻ đối chiếu">
                   <span class="state-old-lg">${slide.stateOld}</span>
                   <span class="verb-bridge-lg">${slide.bridgeVerb}</span>
@@ -3172,82 +3749,6 @@
     }
 
     
-    // =========================================================================
-    // ADVANCED MAGNIFIER LENS ENGINE (SO LỖI BẢN ĐỒ VIỄN THÁM)
-    // =========================================================================
-    function toggleMagnifier(slideIdx) {
-      const frame = document.getElementById("artFrame_" + slideIdx);
-      const btn = document.getElementById("btnLens_" + slideIdx);
-      const subBtn = document.getElementById("btnSubLens_" + slideIdx);
-      if (!frame) return;
-
-      const willBeActive = !frame.classList.contains("lens-active");
-      frame.classList.toggle("lens-active", willBeActive);
-      if (btn) btn.classList.toggle("active", willBeActive);
-      if (subBtn) subBtn.classList.toggle("active", willBeActive);
-
-      const lens = document.getElementById("magLens_" + slideIdx);
-      if (lens) {
-        lens.style.display = willBeActive ? "block" : "none";
-      }
-
-      if (willBeActive) {
-        showToast("🔍 Đã kích hoạt Kính lúp (Di chuột vào ảnh để soi chi tiết tọa độ)");
-      } else {
-        showToast("🔍 Đã tắt Kính lúp");
-      }
-    }
-
-    function initMagnifierForSlide(slideIdx) {
-      const frame = document.getElementById("artFrame_" + slideIdx);
-      const lens = document.getElementById("magLens_" + slideIdx);
-      const img = document.getElementById("slideImg_" + slideIdx);
-      if (!frame || !lens || !img) return;
-
-      // Add coordinate badge inside lens if not present
-      if (!lens.querySelector(".lens-coords-badge")) {
-        const badge = document.createElement("div");
-        badge.className = "lens-coords-badge";
-        badge.textContent = "VN-2000 • 2.5X";
-        lens.appendChild(badge);
-      }
-
-      frame.addEventListener("mousemove", (e) => {
-        if (!frame.classList.contains("lens-active")) return;
-        const rect = frame.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-
-        // Position lens centered at cursor
-        lens.style.left = x + "px";
-        lens.style.top = y + "px";
-        lens.style.display = "block";
-
-        // Calculate zoom
-        const zoom = 2.5;
-        const bgW = rect.width * zoom;
-        const bgH = rect.height * zoom;
-        lens.style.backgroundImage = `url('${img.src}')`;
-        lens.style.backgroundSize = `${bgW}px ${bgH}px`;
-
-        const bgX = -(x * zoom - lens.offsetWidth / 2);
-        const bgY = -(y * zoom - lens.offsetHeight / 2);
-        lens.style.backgroundPosition = `${bgX}px ${bgY}px`;
-
-        // Update coordinate badge dynamically
-        const badge = lens.querySelector(".lens-coords-badge");
-        if (badge) {
-          const pctX = Math.round((x / rect.width) * 100);
-          const pctY = Math.round((y / rect.height) * 100);
-          badge.textContent = `X:${pctX}% Y:${pctY}% • 2.5X`;
-        }
-      });
-
-      frame.addEventListener("mouseleave", () => {
-        lens.style.display = "none";
-      });
-    }
-
     // =========================================================================
     // TRUE CINEMA FULLSCREEN MODE
     // =========================================================================
@@ -3469,15 +3970,55 @@
     // =========================================================================
     
     // =========================================================================
-    // VIDEO CONTROLS & CHAPTER NAVIGATION
+    // =========================================================================
+    // CINEMA LAYOUT CONTROLLER (KÉO DÀI KHUNG HÌNH 16:9 KHI ẤN PHÍM C)
+    // =========================================================================
+    let isCinemaLayoutActive = false;
+    function toggleCinemaLayout() {
+      isCinemaLayoutActive = !isCinemaLayoutActive;
+      document.body.classList.toggle("cinema-layout-active", isCinemaLayoutActive);
+      showToast(isCinemaLayoutActive ? "↔ Đã mở rộng Khung hình Cinema 16:9" : "⚖️ Đã trở về Tỷ lệ Tiêu chuẩn");
+    }
+
+    // =========================================================================
+    // VIDEO CONTROLS & SYNCHRONIZED CHAPTER NAVIGATION (7 PHÂN CẢNH)
     // =========================================================================
     const vPlayer = document.getElementById("mainProjectVideo");
+    const VIDEO_CHAPTERS = [0, 55, 110, 165, 235, 295, 345];
+    let activeVideoChapIdx = 0;
 
     function jumpVideo(seconds) {
       if (!vPlayer) return;
       vPlayer.currentTime = seconds;
       vPlayer.play().catch(() => {});
       showToast("🎥 Đã chuyển đến " + formatPodcastTime(seconds) + " của Video");
+      syncVideoChapters(seconds);
+    }
+
+    function syncVideoChapters(currentTime) {
+      let matchedIdx = 0;
+      for (let i = VIDEO_CHAPTERS.length - 1; i >= 0; i--) {
+        if (currentTime >= VIDEO_CHAPTERS[i]) {
+          matchedIdx = i;
+          break;
+        }
+      }
+
+      if (matchedIdx !== activeVideoChapIdx) {
+        activeVideoChapIdx = matchedIdx;
+        for (let i = 0; i < VIDEO_CHAPTERS.length; i++) {
+          const item = document.getElementById("vchap_" + i);
+          if (item) {
+            item.classList.toggle("active-video-chap", i === matchedIdx);
+          }
+        }
+      }
+    }
+
+    if (vPlayer) {
+      vPlayer.addEventListener("timeupdate", () => {
+        syncVideoChapters(vPlayer.currentTime);
+      });
     }
 
     function setVideoSpeed(spd) {
@@ -3505,7 +4046,8 @@
       }
     }
 
-    // PODCAST AUDIO PLAYER ENGINE
+    // =========================================================================
+    // PODCAST AUDIO PLAYER & SYNCHRONIZED VISUAL ILLUSTRATION ENGINE
     // =========================================================================
     const pAudio = document.getElementById("mainPodcastAudio");
     const pPlayBtn = document.getElementById("btnPodcastPlay");
@@ -3516,11 +4058,159 @@
     const pTotal = document.getElementById("podcastTotalTime");
     const pMiniStatus = document.getElementById("miniPodcastStatus");
 
+    const PODCAST_CHAPTERS = [
+      {
+        time: 0,
+        title: "1. Bối Cảnh & Tối Hậu Thư EUDR 2023/1115",
+        slideIdx: 1,
+        slideNum: "SLIDE 02/12",
+        slideName: "MỐC CẮT GIẢM EUDR 31/12/2020",
+        image: "./assets/slides/slide_02.png",
+        summary: "Sức ép mốc 31/12/2020, điều kiện thời tiết sương mù 8 tháng/năm tại miền Trung làm ảnh quang học bị mù, tạo điểm nghẽn sinh tử.",
+        quote: '\"EUDR không chấp nhận giải thích lòng vòng. Hoặc là có dữ liệu không gian chứng minh không mất rừng sau 31/12/2020, hoặc là bị cấm xuất khẩu vĩnh viễn sang châu Âu.\"'
+      },
+      {
+        time: 140,
+        title: "2. Điểm Nghẽn Thủ Công & 10 Cán Bộ Tự Lực",
+        slideIdx: 0,
+        slideNum: "SLIDE 01/12",
+        slideName: "TẬP THỂ 10 CÁN BỘ & TỰ LỰC NỘI SINH",
+        image: "./assets/slides/slide_01.png",
+        summary: "Đo GPS cầm tay 3-5 ngày/lô và quyết tâm đồng đều của 10 tác giả phòng nghiệp vụ, mỗi người đóng góp 10% tạo nên bước nhảy vọt.",
+        quote: '\"10 con người, mỗi người đóng góp 10% trí tuệ và công sức, tạo nên một cỗ máy tự lực nội sinh hoàn chỉnh.\"'
+      },
+      {
+        time: 330,
+        title: "3. Khởi Nguyên v0.2.3 & 4 Hạn Chế Máy Trạm",
+        slideIdx: 2,
+        slideNum: "SLIDE 03/12",
+        slideName: "4 ĐIỂM NGHẼN BẢN MÁY TRẠM V0.2.3",
+        image: "./assets/slides/slide_03.png",
+        summary: "Kiểm nghiệm 963 lô rừng thực tế phát lộ 4 điểm nghẽn: Bản cài nặng 2.5GB, treo đơ máy tính xã, phụ thuộc mạng và thao tác thủ công phức tạp.",
+        quote: '\"Thực tế kiểm nghiệm chỉ ra rằng mang máy tính cấu hình khủng về cấp xã là phi thực tế. Phải đưa công nghệ lên Web, mở link là dùng ngay.\"'
+      },
+      {
+        time: 495,
+        title: "4. Web-GIS Zero-Install & Radar SAR Xuyên Mây",
+        slideIdx: 5,
+        slideNum: "SLIDE 06/12",
+        slideName: "ĐỘT PHÁ RADAR SENTINEL-1 SAR RTC",
+        image: "./assets/slides/slide_06.png",
+        summary: "Kiến trúc Zero-Install chạy 100% Client-side. Sóng vệ tinh Sentinel-1 SAR C-band xuyên mây mù, mưa bão bất chấp thời tiết 24/7/365.",
+        quote: '\"Khi bão lũ làm mây phủ kín không thể chụp ảnh quang học, Radar SAR vẫn bắn sóng xuyên mây, đo chính xác từng decibel tán xạ sinh khối.\"'
+      },
+      {
+        time: 680,
+        title: "5. Chu Kỳ Hồi Phục Sinh Học Keo Lai (NDVI)",
+        slideIdx: 6,
+        slideNum: "SLIDE 07/12",
+        slideName: "MÔ HÌNH HỒI PHỤC SINH HỌC CHỮ V",
+        image: "./assets/slides/slide_07.png",
+        summary: "Đường cong sinh học 4-6 năm phân biệt thu hoạch rừng trồng với phá rừng tự nhiên, phục hồi mạnh sau 6-12 tháng thu hoạch.",
+        quote: '\"Khác với phá rừng tự nhiên cây mất vĩnh viễn, keo lai khai thác xong sẽ tái sinh cực nhanh. Thuật toán nhận diện đường cong sinh học này để giải oan cho dân.\"'
+      },
+      {
+        time: 825,
+        title: "6. Lõi Topo RFC 7946 & Map Composer Tự Động",
+        slideIdx: 7,
+        slideNum: "SLIDE 08/12",
+        slideName: "KIẾN TRÚC TOPO ENGINE & BẢN ĐỒ CAD",
+        image: "./assets/slides/slide_08.png",
+        summary: "Kiểm định hình học topology chuẩn quốc tế RFC 7946. Tự động sửa lỗi đè ranh, hở ranh và đóng gói bản đồ CAD khung đôi xuất file 1 click.",
+        quote: '\"Một sai sót hình học 1mm² cũng có thể khiến cả lô hàng gỗ bị trả về từ cảng Hamburg hay Rotterdam. Lõi Topo đảm bảo tính toàn vẹn 100%.\"'
+      },
+      {
+        time: 975,
+        title: "7. Trợ Lý AI Cục Bộ (Dual-Engine AI) & An Toàn RAM",
+        slideIdx: 8,
+        slideNum: "SLIDE 09/12",
+        slideName: "DUAL-ENGINE LOCAL AI TRÊN RAM",
+        image: "./assets/slides/slide_09.png",
+        summary: "Trợ lý AI song hành đối soát Nghị định 102, 120 VNTLAS. Toàn bộ tính toán diễn ra trên RAM của máy trạm, không đẩy dữ liệu mật lên đám mây.",
+        quote: '\"Dữ liệu vị trí rừng và chủ rừng là thông tin nhạy cảm. Chạy hoàn toàn trên bộ nhớ đệm RAM cục bộ là cam kết an toàn thông tin cao nhất.\"'
+      },
+      {
+        time: 1105,
+        title: "8. Hiệu Quả Làm Lợi & Kinh Tế (Thẩm Định 3 Phút)",
+        slideIdx: 10,
+        slideNum: "SLIDE 11/12",
+        slideName: "HIỆU QUẢ KINH TẾ & TIẾT KIỆM 300 TRIỆU",
+        image: "./assets/slides/slide_11.png",
+        summary: "Rút ngắn thời gian thẩm định từ 3-5 ngày xuống dưới 3 phút (giảm 98%). Làm lợi trên 300 triệu đồng ngân sách hàng năm cho tỉnh.",
+        quote: '\"Không tốn 1 đồng mua bản quyền phần mềm ngoại, tiết kiệm hàng trăm ngày công mỗi năm, đó chính là giá trị thực tiễn phụng sự nhân dân.\"'
+      },
+      {
+        time: 1225,
+        title: "9. Khẳng Định Bản Lĩnh & Tầm Nhìn Chuyển Đổi Số",
+        slideIdx: 11,
+        slideNum: "SLIDE 12/12",
+        slideName: "KHẲNG ĐỊNH BẢN LĨNH KIỂM LÂM QUẢNG TRỊ",
+        image: "./assets/slides/slide_12.png",
+        summary: "Sản phẩm của trí tuệ, lòng tự trọng nghề nghiệp và tinh thần đổi mới sáng tạo của tập thể cán bộ Chi cục Kiểm lâm Quảng Trị.",
+        quote: '\"Chúng tôi làm ra CheckCCRQT không chỉ để giải bài toán EUDR trước mắt, mà để chứng minh cán bộ kiểm lâm hoàn toàn làm chủ công nghệ cao.\"'
+      }
+    ];
+
+    let activePodcastChapIndex = 0;
+
     function formatPodcastTime(sec) {
       if (isNaN(sec)) return "00:00";
       const m = Math.floor(sec / 60);
       const s = Math.floor(sec % 60);
       return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+    }
+
+    function syncPodcastVisuals(currentTime) {
+      let matchedIdx = 0;
+      for (let i = PODCAST_CHAPTERS.length - 1; i >= 0; i--) {
+        if (currentTime >= PODCAST_CHAPTERS[i].time) {
+          matchedIdx = i;
+          break;
+        }
+      }
+
+      if (matchedIdx !== activePodcastChapIndex) {
+        activePodcastChapIndex = matchedIdx;
+        const chap = PODCAST_CHAPTERS[matchedIdx];
+
+        // Update Now Playing visual frame
+        const pImg = document.getElementById("podcastSlidePreviewImg");
+        const pBadge = document.getElementById("podcastSlideBadge");
+        const pQuote = document.getElementById("podcastQuoteText");
+        const pHeading = document.getElementById("podcastActiveHeading");
+        const pSummary = document.getElementById("podcastActiveSummary");
+
+        if (pImg) {
+          pImg.style.opacity = "0.3";
+          setTimeout(() => {
+            pImg.src = chap.image;
+            pImg.style.opacity = "1";
+          }, 150);
+        }
+        if (pBadge) pBadge.textContent = `🖼️ ĐANG CHIẾU: ${chap.slideNum} • ${chap.slideName}`;
+        if (pQuote) pQuote.textContent = chap.quote.replace(/^\"|\"$/g, '');
+        if (pHeading) pHeading.textContent = chap.title;
+        if (pSummary) pSummary.textContent = chap.summary;
+
+        // Update active state in chapters list
+        for (let i = 0; i < PODCAST_CHAPTERS.length; i++) {
+          const card = document.getElementById("pchap_" + i);
+          if (card) card.classList.toggle("active-playing", i === matchedIdx);
+        }
+      }
+    }
+
+    function openLightboxFromPodcast() {
+      const chap = PODCAST_CHAPTERS[activePodcastChapIndex];
+      if (chap) openLightbox(chap.slideIdx);
+    }
+
+    function openCurrentPodcastSlideInDeck() {
+      const chap = PODCAST_CHAPTERS[activePodcastChapIndex];
+      if (chap) {
+        switchWorkspace("deck");
+        goToSlide(chap.slideIdx, true);
+      }
     }
 
     function togglePodcastPlayback() {
@@ -3553,6 +4243,7 @@
         if (pMiniStatus && !pAudio.paused) {
           pMiniStatus.textContent = formatPodcastTime(pAudio.currentTime) + " / " + formatPodcastTime(pAudio.duration);
         }
+        syncPodcastVisuals(pAudio.currentTime);
       });
 
       pAudio.addEventListener("loadedmetadata", () => {
@@ -3571,14 +4262,16 @@
       const clickX = e.clientX - rect.left;
       const pct = clickX / rect.width;
       pAudio.currentTime = pct * pAudio.duration;
+      syncPodcastVisuals(pAudio.currentTime);
     }
 
-    function jumpPodcast(seconds) {
+    function jumpPodcast(seconds, slideIdx) {
       if (!pAudio) return;
       pAudio.currentTime = seconds;
       if (pAudio.paused) {
         togglePodcastPlayback();
       }
+      syncPodcastVisuals(seconds);
       showToast("⏩ Đã chuyển đến " + formatPodcastTime(seconds));
     }
 
@@ -3592,23 +4285,65 @@
       showToast("⚡ Tốc độ podcast: " + spd + "x");
     }
 
-    // Navigation & Workspace
-        function switchWorkspace(ws) {
+    // =========================================================================
+    // BULLETPROOF WORKSPACE SWITCHER
+    // =========================================================================
+    function switchWorkspace(ws) {
       currentWorkspace = ws;
-      document.body.classList.remove("workspace-deck", "workspace-matrix", "workspace-paper", "workspace-podcast", "workspace-video");
-      document.documentElement.classList.remove("workspace-deck", "workspace-matrix", "workspace-paper", "workspace-podcast", "workspace-video");
+      
+      const allWs = ["workspace-deck", "workspace-matrix", "workspace-paper", "workspace-podcast", "workspace-video"];
+      document.body.classList.remove(...allWs);
+      document.documentElement.classList.remove(...allWs);
       document.body.classList.add("workspace-" + ws);
       document.documentElement.classList.add("workspace-" + ws);
 
-      document.getElementById("tabBtnDeck").classList.toggle("active", ws === "deck");
-      const vTab = document.getElementById("tabBtnVideo");
-      if (vTab) vTab.classList.toggle("active", ws === "video");
-      const pTab = document.getElementById("tabBtnPodcast");
-      if (pTab) pTab.classList.toggle("active", ws === "podcast");
-      document.getElementById("tabBtnMatrix").classList.toggle("active", ws === "matrix");
-      document.getElementById("tabBtnPaper").classList.toggle("active", ws === "paper");
+      // Explicitly set DOM display properties to eliminate any CSS specificity override
+      const dView = document.getElementById("deckViewport");
+      const vSec = document.getElementById("videoWorkspace");
+      const pSec = document.getElementById("podcastWorkspace");
+      const mSec = document.getElementById("matrixWorkspace");
+      const aSec = document.getElementById("paperWorkspace");
+      const hudBar = document.getElementById("hudDeckBar");
 
-      if (ws === "deck") updateSlidePosition();
+      if (dView) dView.style.display = (ws === "deck") ? "flex" : "none";
+      if (hudBar) hudBar.style.display = (ws === "deck") ? "flex" : "none";
+      if (vSec) vSec.style.display = (ws === "video") ? "block" : "none";
+      if (pSec) pSec.style.display = (ws === "podcast") ? "block" : "none";
+      if (mSec) mSec.style.display = (ws === "matrix") ? "block" : "none";
+      if (aSec) aSec.style.display = (ws === "paper") ? "block" : "none";
+
+      // Toggle tab button active classes
+      const dTab = document.getElementById("tabBtnDeck");
+      const vTab = document.getElementById("tabBtnVideo");
+      const pTab = document.getElementById("tabBtnPodcast");
+      const mTab = document.getElementById("tabBtnMatrix");
+      const aTab = document.getElementById("tabBtnPaper");
+
+      if (dTab) dTab.classList.toggle("active", ws === "deck");
+      if (vTab) vTab.classList.toggle("active", ws === "video");
+      if (pTab) pTab.classList.toggle("active", ws === "podcast");
+      if (mTab) mTab.classList.toggle("active", ws === "matrix");
+      if (aTab) aTab.classList.toggle("active", ws === "paper");
+
+      // Coordination of audio/video when switching
+      if (ws === "video") {
+        if (pAudio && !pAudio.paused) {
+          pAudio.pause();
+          updatePodcastUI(false);
+        }
+      } else if (ws === "podcast") {
+        if (vPlayer && !vPlayer.paused) {
+          vPlayer.pause();
+        }
+      }
+
+      if (ws === "deck") {
+        document.body.style.overflow = "hidden";
+        updateSlidePosition();
+      } else {
+        document.body.style.overflow = "auto";
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
     }
 
     function setDeckMode(mode) {
@@ -3852,6 +4587,7 @@
     // Start App
     renderAllSlides();
     animateOverlaysLoop();
+    switchWorkspace('deck');
   </script>
   <!-- HD PAN-ZOOM LIGHTBOX MODAL -->
   <div id="hdLightboxModal">
